@@ -1,54 +1,107 @@
-import { canvas, getCanvasFrontIndex, canvasBrush } from '../canvas'
+import { canvas, getCanvasFrontIndex, canvasBrush, markObjectOwner } from '../canvas'
 import { fabric } from 'fabric'
 
-import { isActice } from './realia'
-import { getFootPoint, getPointInLine, pointToPointDistance } from '../../helper/math'
-import { canvasIndex } from 'src/helper/enum'
+import { getFootPointInfo } from '../../helper/math'
 
 let realiaObject = null
 
 let isInit = false
+let isActive = false
 
 let isDrawing = false
+let isDrawingTop = false
+let isDrawingBottom = false
 let drawingObject = null
 const moveFrom = { x: 0, y: 0 }
 
+let isControlOpr = false
+
+// const rulerImg = require('../../assets/images/ruler_A.svg')
+const rulerImg = require('../../assets/images/ruler.png')
+
 export const initRuler = () => {
+    isActive = true
+
     if (realiaObject) {
-        canvas.insertAt(realiaObject, canvasIndex.FRONT)
+        canvas.add(realiaObject)
     } else {
-        const rulerImg = require('../../assets/images/ruler.svg')
-        fabric.loadSVGFromURL(rulerImg, (objects, options) => {
-            const img = fabric.util.groupSVGElements(objects, options)
+        // fabric.loadSVGFromURL(rulerImg, (objects, options) => {
+        //     const rulerObject = fabric.util.groupSVGElements(objects, options)
 
-            img.left = 300
-            img.top = 500
-            img.selectable = false
-            img.evented = false
+        //     rulerObject.left = 70
+        //     rulerObject.top = 70
 
-            img.isRealia = true
+        //     rulerObject.hasBorders = false
+        //     rulerObject.perPixelTargetFind = true
 
-            canvas.insertAt(img, canvasIndex.FRONT)
+        //     rulerObject.isRealia = true
+        //     rulerObject.excludeFromExport = true
 
-            realiaObject = img
+        //     rulerObject.forEachControl(control => {
+        //         control.mouseDownHandler = () => {
+        //             isControlOpr = true
+        //         }
+        //         control.mouseUpHandler = () => {
+        //             isControlOpr = false
+        //         }
+        //     })
+
+        //     rulerObject.setControlVisible('mt', false)
+        //     rulerObject.setControlVisible('mb', false)
+        //     rulerObject.setControlVisible('ml', false)
+        //     rulerObject.setControlVisible('mr', false)
+
+        //     canvas.add(rulerObject)
+
+        //     realiaObject = rulerObject
+        // })
+
+        fabric.Image.fromURL(rulerImg, rulerObject => {
+            rulerObject.hasBorders = false
+            rulerObject.perPixelTargetFind = true
+            rulerObject.lockScalingFlip = true
+            rulerObject.scaleX = 0.5
+            rulerObject.scaleY = 0.5
+
+            rulerObject.isRealia = true
+            rulerObject.excludeFromExport = true
+
+            rulerObject.forEachControl(control => {
+                control.mouseDownHandler = () => {
+                    isControlOpr = true
+                }
+                control.mouseUpHandler = () => {
+                    isControlOpr = false
+                }
+            })
+
+            rulerObject.setControlVisible('mt', false)
+            rulerObject.setControlVisible('mb', false)
+            rulerObject.setControlVisible('ml', false)
+            rulerObject.setControlVisible('mr', false)
+
+            canvas.add(rulerObject)
+            canvas.viewportCenterObject(rulerObject)
+
+            realiaObject = rulerObject
         })
     }
 
     if (!isInit) {
         canvas.on('mouse:down', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseDown(options.e)
         })
         canvas.on('mouse:up', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseUp(options.e)
         })
         canvas.on('mouse:move', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseMove(options.e)
@@ -58,10 +111,15 @@ export const initRuler = () => {
     }
 }
 
-export const unInitRuler = () => {
+export const uninitRuler = () => {
+    isInit = false
+}
+
+export const inactiveRuler = () => {
+    isActive = false
+
     if (realiaObject) {
         canvas.remove(realiaObject)
-        realiaObject = null
     }
 }
 
@@ -71,17 +129,18 @@ const mouseDown = e => {
     }
 
     const pointer = canvas.getPointer(e, true)
-    const footPoint = getRulerFootPoint(pointer)
 
-    if (!footPoint) {
-        return
-    }
+    const footPointInfoTop = getRulerTopFootPointInfo(pointer)
+    const footPointInfoBottom = getRulerBottomFootPointInfo(pointer)
 
-    const distance = pointToPointDistance(pointer, footPoint)
-
-    if (distance < 30) {
-        [moveFrom.x, moveFrom.y] = [footPoint.x, footPoint.y]
+    if (footPointInfoTop && footPointInfoTop.distance < 70 && footPointInfoTop.isSameDir) {
+        [moveFrom.x, moveFrom.y] = [footPointInfoTop.footPoint.x, footPointInfoTop.footPoint.y]
         isDrawing = true
+        isDrawingTop = true
+    } else if (footPointInfoBottom && footPointInfoBottom.distance < 70 && footPointInfoBottom.isSameDir) {
+        [moveFrom.x, moveFrom.y] = [footPointInfoBottom.footPoint.x, footPointInfoBottom.footPoint.y]
+        isDrawing = true
+        isDrawingBottom = true
     }
 }
 
@@ -91,20 +150,40 @@ const mouseUp = e => {
     }
     isDrawing = false
 
+    isDrawingTop = false
+    isDrawingBottom = false
+
     if (drawingObject) {
         drawingObject = null
     }
 }
 
 const mouseMove = e => {
-    if (!realiaObject || !isDrawing) {
+    const pointer = canvas.getPointer(e, true)
+
+    const footPointInfoTop = getRulerTopFootPointInfo(pointer)
+    const footPointInfoBottom = getRulerBottomFootPointInfo(pointer)
+
+    if (footPointInfoTop && footPointInfoTop.distance < 70 && footPointInfoTop.isSameDir) {
+        canvas.defaultCursor = 'crosshair'
+    } else if (footPointInfoBottom && footPointInfoBottom.distance < 70 && footPointInfoBottom.isSameDir) {
+        canvas.defaultCursor = 'crosshair'
+    } else {
+        canvas.defaultCursor = 'auto'
+    }
+
+    if (!realiaObject || !isDrawing || isControlOpr) {
         return
     }
 
-    const pointer = canvas.getPointer(e, true)
-    const footPoint = getRulerFootPoint(pointer)
+    let footPointInfo = null
+    if (isDrawingTop) {
+        footPointInfo = getRulerTopFootPointInfo(pointer)
+    } else if (isDrawingBottom) {
+        footPointInfo = getRulerBottomFootPointInfo(pointer)
+    }
 
-    if (!footPoint) {
+    if (!footPointInfo) {
         return
     }
 
@@ -114,36 +193,44 @@ const mouseMove = e => {
     }
 
     const moveFromDraw = canvas.restorePointerVpt(moveFrom)
-    const moveToDraw = canvas.restorePointerVpt(footPoint)
+    const moveToDraw = canvas.restorePointerVpt(footPointInfo.footPoint)
 
     const line = new fabric.Path(`M ${moveFromDraw.x} ${moveFromDraw.y} L ${moveToDraw.x} ${moveToDraw.y}`, {
-        stroke: canvasBrush.color,
-        strokeWidth: canvasBrush.size,
+        stroke: canvasBrush.strokeColorCalc,
+        strokeWidth: canvasBrush.strokeSize,
+        strokeDashArray: canvasBrush.strokeDash,
         selectable: false,
-        evented: false
+        evented: false,
+        strokeUniform: true
     })
 
     drawingObject = line
 
     canvas.insertAt(line, getCanvasFrontIndex())
+
+    markObjectOwner(line)
 }
 
-const getRulerFootPoint = (pointer) => {
+const getRulerTopFootPointInfo = (pointer) => {
     realiaObject.setCoords()
 
-    const p1 = new fabric.Point(pointer.x, pointer.y)
-    const p2 = realiaObject.oCoords.tl
-    const p3 = realiaObject.oCoords.tr
+    const pointerLineL = realiaObject.oCoords.tl
+    const pointerLineR = realiaObject.oCoords.tr
 
-    const footPoint = getFootPoint(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+    const pointDirFrom = realiaObject.oCoords.mt
+    const pointDirTo = realiaObject.oCoords.mb
 
-    if (!footPoint) {
-        return false
-    }
+    return getFootPointInfo(pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, canvasBrush.strokeSize / 2)
+}
 
-    const length = pointToPointDistance(p1, footPoint)
+const getRulerBottomFootPointInfo = (pointer) => {
+    realiaObject.setCoords()
 
-    const fpOffset = getPointInLine(p1, footPoint, length)
+    const pointerLineL = realiaObject.oCoords.bl
+    const pointerLineR = realiaObject.oCoords.br
 
-    return new fabric.Point(fpOffset.x, fpOffset.y)
+    const pointDirFrom = realiaObject.oCoords.mb
+    const pointDirTo = realiaObject.oCoords.mt
+
+    return getFootPointInfo(pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, canvasBrush.strokeSize / 2)
 }

@@ -1,6 +1,10 @@
 <template>
-    <q-btn icon="undo" text-color="primary" @click="undo" />
-    <q-btn icon="redo" text-color="primary" @click="redo" />
+    <q-btn class="overflow-hidden" style="width:50px" @click="undo">
+        <img style="height:26px;width:26px" :src="iconUndo" />
+    </q-btn>
+    <q-btn class="overflow-hidden" style="width:50px" @click="redo">
+        <img style="height:26px;width:26px" :src="iconRedo" />
+    </q-btn>
 </template>
 
 <script>
@@ -11,7 +15,8 @@ export default {
     name: 'ToolBar-UndoRedo',
     data() {
         return {
-
+            iconUndo: require('../../assets/icons/icon_undo.svg'),
+            iconRedo: require('../../assets/icons/icon_redo.svg')
         }
     },
     methods: {
@@ -25,4 +30,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
 </style>

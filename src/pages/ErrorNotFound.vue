@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div class="errorPage text-white text-center q-pa-md flex flex-center">
     <div>
       <div style="font-size: 30vh">
         404
@@ -9,23 +9,23 @@
         Oops. Nothing here...
       </div>
 
-      <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        label="Go Home"
-        no-caps
-      />
+      <q-btn square unelevated size="lg" class="q-mt-xl q-mb-xs" label="BACK TO LOGIN" type="button" to="/"
+        color="black" />
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-
 export default defineComponent({
-  name: 'ErrorNotFound'
+  name: 'ErrorNotFound',
+  mounted() {
+    // setTimeout(() => this.$router.push({ path: '/' }), 1000)
+  }
 })
 </script>
+<style lang="sass" scoped>
+  .errorPage
+    background: #69b7c3
+    height: calc(100vh - 150px)
+</style>

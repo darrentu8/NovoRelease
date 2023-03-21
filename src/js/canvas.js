@@ -1,89 +1,114 @@
 import { fabric } from 'fabric'
-import { debounce, Notify } from 'quasar'
+import { debounce, throttle, is, extend, Notify } from 'quasar'
 
 import store from '../store'
-import { canvasIndex, toolType } from 'src/helper/enum'
+import { canvasIndex, canvasPropertiesToInclude, strokeType, toolType } from 'src/helper/enum'
 import { mitt } from 'src/boot/bus'
 import { showOprBar } from './operationBar'
+import {
+    setWhiteboardThumbnail
+} from 'src/api/whiteboard'
+import { webSocket } from './websocket'
+import { isEditor } from 'src/helper/project'
+
+import { enterEditing } from 'src/js/toolbar/text'
 // import { capitalizeFirstLetter } from 'src/helper/string'
 
 export let canvas = null
+
 export const canvasBrush = {
-    color: '#000000',
-    size: 10
+    strokeColor: '#3A87FD',
+    strokeColorCalc: '#3A87FDFF',
+    strokeSize: 5,
+    strokeType: strokeType.SOLID,
+    strokeDash: [],
+    strokeOpacity: 100,
+    fillColor: '#3A87FD',
+    fillColorCalc: '#3A87FD00',
+    fillOpacity: 0
 }
 
-let isDrag = false
-
-const canvasData = {}
+let canvasData = {}
 const canvasHistorys = {}
 
 let copyObject = null
 
+let lastCanvasData = null
+
 export const initCanvas = domId => {
+    // canvas = new fabric.StaticCanvas(domId)
     canvas = new fabric.Canvas(domId, {
         selection: false,
         fireRightClick: true,
         stopContextMenu: true,
         preserveObjectStacking: true,
-        renderOnAddRemove: true
+        renderOnAddRemove: true,
+        backgroundColor: '#FEFFFE'
     })
 
-    canvas.on('mouse:down', options => {
-        dragBeginCanvas(options.e)
-    })
+    window.onbeforeunload = function () {
+        setContent()
+        leaveWhiteBoard()
+    }
 
-    canvas.on('mouse:move', options => {
-        draggingCanvas(options.e)
-    })
+    canvas.on('before:render', () => {
+        const activeObject = canvas.getActiveObject()
 
-    canvas.on('mouse:up', options => {
-        dragEndCanvas(options.e)
-    })
-
-    canvas.on('mouse:wheel', options => {
-        zoomCanvas(options.e)
+        if (activeObject && activeObject.type === 'group') { // only way to real update group
+            activeObject.setOptions({ scaleX: activeObject.scaleX + (Math.random() > 0.5 ? 0.00001 : -0.00001) })
+        }
     })
 
     canvas.on('after:render', debounce(options => {
-        const data = canvas.toJSON(['evented', 'selectable', '_controlsVisibility', 'isRealia', 'isCompass', 'isLocked',
-            'hasBorders', 'hasControls', 'lockMovementX', 'lockMovementY', 'lockRotatio'])
-
-        data.objects = data.objects.filter(o => !o.isRealia)
-
-        data.objects.forEach(object => { // text 編輯的時候保存加載後無法移動
-            if (object.type === 'textbox') {
-                object.lockMovementX = false
-                object.lockMovementY = false
-            }
-        })
-
-        const pageId = store.state.common.page
-
-        canvasData[pageId] = data
-
-        if (!canvasHistorys[pageId]) {
-            canvasHistorys[pageId] = {}
-            canvasHistorys[pageId].datas = [data]
-            canvasHistorys[pageId].index = 0
-        } else {
-            const isEqual = JSON.stringify(canvasHistorys[pageId].datas[canvasHistorys[pageId].index].objects) === JSON.stringify(data.objects)
-            if (!isEqual) {
-                canvasHistorys[pageId].datas = canvasHistorys[pageId].datas.slice(0, canvasHistorys[pageId].index + 1)
-                canvasHistorys[pageId].datas.push(data)
-                canvasHistorys[pageId].index = canvasHistorys[pageId].datas.length - 1
-            }
-        }
+        setContent()
+        saveHistory()
     }, 200))
 
-    window.addEventListener('keyup', e => {
-        const activeObject = canvas.getActiveObject()
+    canvas.on('object:modified', o => {
+        markObjectLastModifiedUser(o.target)
+    })
 
-        if (!activeObject) {
+    canvas.on('mouse:dblclick', options => {
+        const activeObject = canvas.getActiveObject()
+        if (activeObject && activeObject.isText) {
+            enterEditing(activeObject)
+        }
+    })
+
+    canvas.on('object:scaling', options => {
+
+    })
+
+    canvas.on('mouse:move', throttle(options => {
+        // console.log(options.pointer, options.absolutePointer)
+        // console.log(restorePointerVptInvert(options.absolutePointer, canvas.viewportTransform))
+        // absolutePointer =  canvas.restorePointerVpt(options.pointer)
+        // pointer = restorePointerVptInvert(absolutePointer,viewportTransform)
+        if (!isEditor()) {
             return
         }
 
-        if (activeObject.isEditing) {
+        if (store.state.user.userList.length <= 1) {
+            return
+        }
+
+        if (webSocket && webSocket.readyState === 1) {
+            const pid = store.state.common.pid
+            const pageId = store.state.common.page
+            webSocket.send(JSON.stringify({ command: 'USER_MOUSE_POSITION', pid, page_id: pageId, data: JSON.stringify(options.absolutePointer) }))
+        }
+    }, 33))
+
+    window.addEventListener('keyup', e => {
+        let isEditing = false
+
+        canvas.getObjects().forEach(o => {
+            if (o.isEditing) {
+                isEditing = true
+            }
+        })
+
+        if (isEditing) {
             return
         }
 
@@ -101,12 +126,100 @@ export const initCanvas = domId => {
     })
 
     fabric.Object.prototype.transparentCorners = false
-    fabric.Object.prototype.cornerColor = 'blue'
+    fabric.Object.prototype.cornerColor = '#14A028'
+    fabric.Object.prototype.cornerStrokeColor = '#FFFFFF'
+    fabric.Object.prototype.cornerStyle = 'circle'
+    fabric.Object.prototype.cornerSize = 15
+    fabric.Object.prototype.borderColor = '#BBBBBB'
 
-    fabric.Object.prototype.setControlVisible('mt', false)
-    fabric.Object.prototype.setControlVisible('mb', false)
-    fabric.Object.prototype.setControlVisible('ml', false)
-    fabric.Object.prototype.setControlVisible('mr', false)
+    const rotateSvg = require('../assets/icons/icon_canvas_rotate.svg')
+    const icon = document.createElement('img')
+    icon.src = rotateSvg
+
+    fabric.Object.prototype.controls.mtr.render = (ctx, left, top, styleOverride, fabricObject) => {
+        const size = 30
+        ctx.save()
+        ctx.translate(left, top)
+        ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle))
+        ctx.drawImage(icon, -size / 2, -size / 2, size, size)
+        ctx.restore()
+    }
+    fabric.Object.prototype.controls.mtr.cursorStyle = 'pointer'
+    // fabric.Object.prototype.controls.mtr.x = 0.5
+    // fabric.Object.prototype.controls.mtr.y = 0
+    // fabric.Object.prototype.controls.mtr.offsetX = 30
+    // fabric.Object.prototype.controls.mtr.offsetY = 0
+}
+
+export const setContent = () => {
+    const pageData = canvas.toJSON(canvasPropertiesToInclude)
+
+    const pageId = store.state.common.page
+
+    canvasData[pageId] = pageData
+
+    const pid = store.state.common.pid
+    const uid = store.getters['auth/getUID']
+
+    if (!lastCanvasData) {
+        lastCanvasData = extend(true, {}, canvasData)
+        return
+    }
+
+    if (pid && uid && !is.deepEqual(canvasData, lastCanvasData)) {
+        if (!isEditor()) {
+            Notify.create({
+                timeout: 2000,
+                message: 'Since you are viewer,all operations will not be synchronized to cloud',
+                position: 'top',
+                type: 'negative'
+            })
+            return
+        }
+
+        if (webSocket && webSocket.readyState === 1) {
+            webSocket.send(JSON.stringify({ command: 'CONTENT_PAGE_UPDATE', pid, page_id: pageId, data: JSON.stringify(pageData) }))
+            lastCanvasData = extend(true, {}, canvasData)
+            setThumbnail()
+        }
+    }
+}
+
+export const setPageList = () => {
+    if (!isEditor()) {
+        Notify.create({
+            timeout: 2000,
+            message: 'Since you are viewer,all operations will not be synchronized to cloud',
+            position: 'top',
+            type: 'negative'
+        })
+        return
+    }
+
+    const pages = store.state.common.pages
+    const pid = store.state.common.pid
+    if (webSocket && webSocket.readyState === 1) {
+        webSocket.send(JSON.stringify({ command: 'CONTENT_PAGE_LIST', pid, data: JSON.stringify(pages) }))
+    }
+}
+
+const saveHistory = () => {
+    const data = canvas.toJSON(canvasPropertiesToInclude)
+
+    const pageId = store.state.common.page
+
+    if (!canvasHistorys[pageId]) {
+        canvasHistorys[pageId] = {}
+        canvasHistorys[pageId].datas = [data]
+        canvasHistorys[pageId].index = 0
+    } else {
+        const isEqual = is.deepEqual(canvasHistorys[pageId].datas[canvasHistorys[pageId].index].objects, data.objects)
+        if (!isEqual) {
+            canvasHistorys[pageId].datas = canvasHistorys[pageId].datas.slice(0, canvasHistorys[pageId].index + 1)
+            canvasHistorys[pageId].datas.push(data)
+            canvasHistorys[pageId].index = canvasHistorys[pageId].datas.length - 1
+        }
+    }
 }
 
 export const getCanvasFrontIndex = () => {
@@ -115,57 +228,23 @@ export const getCanvasFrontIndex = () => {
     canvas.getObjects().forEach((object, index) => {
         if (object.isRealia && !isFound) {
             isFound = true
-            frontIndex = index - 1
+            frontIndex = index
         }
     })
 
     return frontIndex
 }
 
-const dragBeginCanvas = e => {
-    if (e.which !== 3) {
-        return
-    }
-
-    isDrag = true
-}
-
-const draggingCanvas = e => {
-    if (!isDrag) {
-        return
-    }
-
-    const delta = new fabric.Point(e.movementX, e.movementY)
-    canvas.relativePan(delta)
-}
-
-const dragEndCanvas = e => {
-    isDrag = false
-}
-
-const zoomCanvas = e => {
-    const pointer = canvas.getPointer(e, true)
-
-    let zoom = store.state.common.canvasZoom
-
-    zoom += e.wheelDelta > 0 ? (zoom >= 100 ? 20 : 10) : (zoom > 1 ? -20 : -10)
-
-    if (zoom < 50) {
-        zoom = 50
-    } else if (zoom > 200) {
-        zoom = 200
-    }
-
-    canvas.zoomToPoint(pointer, zoom / 100)
-
-    store.commit('common/SET_CANVAS_ZOOM', zoom)
-
-    canvas.renderAll()
-}
-
 export const setCanvasZoom = zoom => {
     canvas.zoomToPoint(canvas.getVpCenter(), zoom / 100)
 
+    canvas.renderAll()
+
+    mitt.emit('dealDraggableRects')
+}
+
+export const setCanvasRestoreViewport = zoom => {
+    canvas.viewportTransform = [1, 0, 0, 1, 0, 0]
     canvas.renderAll()
 }
 
@@ -178,12 +257,15 @@ export const adjustCursor = (val) => {
         canvas.defaultCursor = 'pointer'
     } else if (val === toolType.TEXT) {
         canvas.defaultCursor = 'text'
+    } else if (val === toolType.MOVE) {
+        canvas.defaultCursor = 'grab'
     }
 }
 
 export const loadCanvas = (pageId) => {
     const data = canvasData[pageId] || {
         objects: [],
+        backgroundColor: '#FEFFFE',
         version: '5.2.1'
     }
 
@@ -191,22 +273,53 @@ export const loadCanvas = (pageId) => {
     renderCanvasData(data)
 }
 
+export const setCanvasDataAndRender = (data, id) => {
+    if (is.deepEqual(canvasData, data)) {
+        return
+    }
+
+    canvasData = data
+    lastCanvasData = extend(true, {}, canvasData)
+
+    for (const pid in canvasData) {
+        const pages = store.state.common.pages
+        const index = pages.findIndex(o => o.id === pid)
+        if (index < 0) {
+            delete canvasData[pid]
+        }
+    }
+
+    renderCanvasData(canvasData[id])
+}
+
+export const setPageDataAndRender = (data, pageId) => {
+    if (is.deepEqual(canvasData[pageId], data)) {
+        return
+    }
+
+    canvasData[pageId] = data
+    lastCanvasData = extend(true, {}, canvasData)
+
+    if (store.state.common.page === pageId) {
+        renderCanvasData(canvasData[pageId])
+    }
+}
+
 const renderCanvasData = data => {
-    // 这个方式可以忽略background,减少渲染时间,适用于本机
-    // clearCanvas()
-
-    // data.objects.forEach(o => {
-    //     const typeName = capitalizeFirstLetter(o.type)
-    //     fabric[typeName].fromObject(o, e => {
-    //         canvas.insertAt(e, getCanvasFrontIndex())
-    //     })
-    // })
-
-    // 这个方式会渲染background
-    canvas.loadFromJSON(data)
+    canvas.loadFromJSON(data, () => {
+        canvas.renderAll.bind(canvas)
+        mitt.emit('dealDraggableRects')
+    }, (o, object) => {
+        if (o.type === 'textbox' && !o.isLocked) { // 正在编辑的textbox
+            o.lockMovementX = false
+            o.lockMovementY = false
+        }
+    })
 }
 
 export const clearCanvas = () => {
+    store.commit('common/CLEAR_DRAGGABLE_OBJECT')
+
     canvas.getObjects().map(o => o).forEach(object => {
         if (!object.isRealia) {
             canvas.remove(object)
@@ -231,17 +344,13 @@ export const clearCanvasObject = () => {
 }
 
 export const removeCanvas = (pageId) => {
-    delete (canvasData.pageId)
+    delete canvasData[pageId]
 }
 
 export const setActiveObjectClose = () => {
     const activeObject = canvas.getActiveObject()
 
     if (!activeObject) {
-        return
-    }
-
-    if (activeObject.isRealia) {
         return
     }
 
@@ -253,17 +362,37 @@ export const setActiveObjectClose = () => {
     } else {
         canvas.remove(activeObject)
     }
+
+    showOprBar(false)
 }
 
 export const setBackgroundColor = (color) => {
     canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas))
 }
 
+export const clearBackgroundPattern = () => {
+    // canvas.backgroundImage = null
+    // canvas.renderAll()
+    canvas.getObjects().forEach(o => {
+        if (o.isBackground) {
+            canvas.remove(o)
+        }
+    })
+}
+
 export const setBackgroundPattern = (patternSrc, isRepeat) => {
-    canvas.setBackgroundColor({
-        source: patternSrc,
-        repeat: isRepeat ? 'repeat' : 'no-repeat'
-    }, canvas.renderAll.bind(canvas))
+    // canvas.setBackgroundImage(patternSrc, canvas.renderAll.bind(canvas))
+    clearBackgroundPattern()
+    fabric.Image.fromURL(patternSrc, backgroundObject => {
+        backgroundObject.evented = false
+        backgroundObject.selectable = false
+        backgroundObject.isBackground = true
+
+        canvas.add(backgroundObject)
+        canvas.centerObject(backgroundObject)
+
+        backgroundObject.sendToBack()
+    })
 }
 
 export const setUndoCanvas = () => {
@@ -323,57 +452,70 @@ export const setActiveObjectSendToBack = () => {
         return
     }
 
-    activeObject.sendToBack()
+    const backgroundImage = canvas.getObjects().find(o => o.isBackground)
+
+    if (backgroundImage) {
+        activeObject.moveTo(1)
+    } else {
+        activeObject.moveTo(0)
+    }
 }
 
-export const setActiveObjectColor = color => {
+export const setActiveObjectStrokeColor = color => {
     const activeObject = canvas.getActiveObject()
     if (!activeObject) {
         return
     }
 
-    if (activeObject.type === 'activeSelection') {
-        activeObject.getObjects().forEach(o => {
-            setObjectColor(o, color)
-        })
-    } else {
-        setObjectColor(activeObject, color)
-    }
-}
-
-const setObjectColor = (object, color) => {
-    if (object.type === 'textbox') {
-        const selectedText = object.getSelectedText()
-        if (selectedText === '') {
-            object.setOptions({ fill: color })
+    if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
+        if (activeObject.isText) {
+            setTextGroupStrokeColor(activeObject, color)
         } else {
-            object.setSelectionStyles({
-                fill: color
+            activeObject.getObjects().forEach(o => {
+                setObjectStrokeColor(o, color)
             })
         }
     } else {
-        object.setOptions({ stroke: color })
+        setObjectStrokeColor(activeObject, color)
     }
 
     canvas.renderAll()
 }
 
-export const setActiveObjectSize = size => {
+const setObjectStrokeColor = (object, color) => {
+    if (object.type === 'textbox') {
+        object.setOptions({ fill: color })
+    } else {
+        object.setOptions({ stroke: color })
+    }
+}
+
+const setTextGroupStrokeColor = (textGroup, color) => {
+    textGroup.getObjects().forEach(o => {
+        if (o.type === 'textbox') {
+            o.setOptions({ fill: color })
+        }
+    })
+}
+
+export const setActiveObjectStrokeSize = size => {
     const activeObject = canvas.getActiveObject()
     if (!activeObject) {
         return
     }
 
-    if (activeObject.type === 'activeSelection') {
+    if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
         activeObject.getObjects().forEach(o => {
-            setObjectSize(o, size)
+            setObjectStrokeSize(o, size)
         })
     } else {
-        setObjectSize(activeObject, size)
+        setObjectStrokeSize(activeObject, size)
     }
+
+    canvas.renderAll()
 }
 
-const setObjectSize = (object, size) => {
+const setObjectStrokeSize = (object, size) => {
     if (object.type === 'textbox') {
         const selectedText = object.getSelectedText()
         if (selectedText === '') {
@@ -386,8 +528,85 @@ const setObjectSize = (object, size) => {
     } else if (object.strokeWidth) {
         object.setOptions({ strokeWidth: size })
     }
+}
+
+export const setActiveObjectStrokeType = type => {
+    const activeObject = canvas.getActiveObject()
+    if (!activeObject) {
+        return
+    }
+
+    if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
+        activeObject.getObjects().forEach(o => {
+            setObjectStrokeType(o, type)
+        })
+    } else {
+        setObjectStrokeType(activeObject, type)
+    }
 
     canvas.renderAll()
+}
+
+const setObjectStrokeType = (object, type) => {
+    if (object.strokeWidth) {
+        let strokeDashArray = []
+        if (type === strokeType.SOLID) {
+            strokeDashArray = []
+        } else if (type === strokeType.DASH) {
+            strokeDashArray = [object.strokeWidth * 2]
+        } else if (type === strokeType.DASH_LONG) {
+            strokeDashArray = [object.strokeWidth * 5]
+        }
+
+        object.setOptions({ strokeDashArray })
+    }
+}
+
+export const setActiveObjectFillColor = color => {
+    const activeObject = canvas.getActiveObject()
+    if (!activeObject) {
+        return
+    }
+
+    if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
+        if (activeObject.isText) {
+            setTextGroupFillColor(activeObject, color)
+        } else {
+            activeObject.getObjects().forEach(o => {
+                setObjectFillColor(o, color)
+            })
+        }
+    } else {
+        setObjectFillColor(activeObject, color)
+    }
+
+    canvas.renderAll()
+}
+
+const setObjectFillColor = (object, color) => {
+    if (object.type === 'textbox') {
+        canvas.getObjects().forEach(o => {
+            if (o.toEdit && o !== object) {
+                o.setOptions({
+                    fill: color,
+                    shadow: { color: 'rgba(0,0,0,0.3)', blur: 5, offsetX: 5, offsetY: 5 }
+                })
+            }
+        })
+    } else {
+        object.setOptions({ fill: color })
+    }
+}
+
+const setTextGroupFillColor = (textGroup, color) => {
+    textGroup.getObjects().forEach(o => {
+        if (o.type !== 'textbox') {
+            o.setOptions({
+                fill: color,
+                shadow: { color: 'rgba(0,0,0,0.3)', blur: 5, offsetX: 5, offsetY: 5 }
+            })
+        }
+    })
 }
 
 export const setActiveObjectCopy = () => {
@@ -404,13 +623,6 @@ export const setActiveObjectCopy = () => {
     copyObject = activeObject
     const image = copyObject.toDataURL()
     store.commit('common/SET_COPY_IMAGE', image)
-
-    Notify.create({
-        timeout: 2000,
-        message: 'Object Copied',
-        position: 'top',
-        type: 'positive'
-    })
 }
 
 export const setActiveObjectLock = (isLocked) => {
@@ -430,6 +642,24 @@ export const setActiveObjectLock = (isLocked) => {
     canvas.renderAll()
 }
 
+export const setActiveSelectionGroup = (isLocked) => {
+    const activeObject = canvas.getActiveObject()
+
+    if (!activeObject) {
+        return
+    }
+
+    if (activeObject.type !== 'activeSelection') {
+        return
+    }
+
+    const group = activeObject.toGroup()
+
+    canvas.setActiveObject(group)
+
+    canvas.renderAll()
+}
+
 export const setCopiedObjectPaste = () => {
     if (!copyObject) {
         return
@@ -443,24 +673,19 @@ export const setCopiedObjectPaste = () => {
                     cloneO.top += cloneObject.height / 2 + 50
 
                     canvas.insertAt(cloneO, getCanvasFrontIndex())
-                })
+                    markObjectOwner(cloneO)
+                }, canvasPropertiesToInclude)
             })
-        })
+        }, canvasPropertiesToInclude)
     } else {
         copyObject.clone(o => {
             o.left = 100
             o.top = 50
 
             canvas.insertAt(o, getCanvasFrontIndex())
-        })
+            markObjectOwner(o)
+        }, canvasPropertiesToInclude)
     }
-
-    Notify.create({
-        timeout: 2000,
-        message: 'Object Pasted',
-        position: 'top',
-        type: 'positive'
-    })
 }
 
 export const setCopiedObjectClose = () => {
@@ -470,11 +695,56 @@ export const setCopiedObjectClose = () => {
 
     copyObject = null
     store.commit('common/SET_COPY_IMAGE', null)
+}
 
-    Notify.create({
-        timeout: 2000,
-        message: 'Copy Object Cleared',
-        position: 'top',
-        type: 'positive'
-    })
+export const setThumbnail = () => {
+    const pid = store.state.common.pid
+    const uid = store.getters['auth/getUID']
+    if (!pid || !uid) {
+        return
+    }
+    const pageId = store.state.common.page
+    if (!pageId) {
+        return
+    }
+    const thumbnail = canvas.toDataURL({
+        format: 'jpeg',
+        quality: 0.2
+    }).split(';base64,')[1]
+    setWhiteboardThumbnail(pid, uid, thumbnail, pageId)
+}
+
+export const leaveWhiteBoard = () => {
+    const pid = store.state.common.pid
+    const uid = store.getters['auth/getUID']
+    if (!pid || !uid) {
+        return
+    }
+
+    if (webSocket && webSocket.readyState === 1) {
+        webSocket.send(JSON.stringify({ command: 'PROJECT_LEAVE', pid }))
+    }
+}
+
+export const markObjectOwner = object => {
+    const user = store.getters['auth/getUserData']
+
+    if (!user) {
+        return
+    }
+
+    object.ownerName = `${user.fname} ${user.lname}`
+    object.lastModifiedUserName = `${user.fname} ${user.lname}`
+    object.lastModifiedTime = new Date().toLocaleString()
+}
+
+export const markObjectLastModifiedUser = object => {
+    const user = store.getters['auth/getUserData']
+
+    if (!user) {
+        return
+    }
+
+    object.lastModifiedUserName = `${user.fname} ${user.lname}`
+    object.lastModifiedTime = new Date().toLocaleString()
 }

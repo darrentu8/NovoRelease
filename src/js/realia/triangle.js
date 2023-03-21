@@ -1,13 +1,12 @@
-import { canvas, getCanvasFrontIndex, canvasBrush } from '../canvas'
+import { canvas, getCanvasFrontIndex, canvasBrush, markObjectOwner } from '../canvas'
 import { fabric } from 'fabric'
 
-import { isActice } from './realia'
-import { getFootPoint, getPointInLine, pointToPointDistance } from '../../helper/math'
-import { canvasIndex } from 'src/helper/enum'
+import { getFootPointInfo } from '../../helper/math'
 
 let realiaObject = null
 
 let isInit = false
+let isActive = false
 
 let isDrawing = false
 let isDrawingLeft = false
@@ -17,42 +16,94 @@ let isDrawingBottom = false
 let drawingObject = null
 const moveFrom = { x: 0, y: 0 }
 
+let isControlOpr = false
+
+// const triangleImg = require('../../assets/images/triangle_A.svg')
+const triangleImg = require('../../assets/images/triangle-board.png')
+
 export const initTriangle = () => {
+    isActive = true
+
     if (realiaObject) {
-        canvas.insertAt(realiaObject, canvasIndex.FRONT)
+        canvas.add(realiaObject)
     } else {
-        const triangleImg = require('../../assets/images/Triangle-board.svg')
-        fabric.loadSVGFromURL(triangleImg, (objects, options) => {
-            const img = fabric.util.groupSVGElements(objects, options)
+        // fabric.loadSVGFromURL(triangleImg, (objects, options) => {
+        //     const triangleObject = fabric.util.groupSVGElements(objects, options)
 
-            img.left = 300
-            img.top = 200
-            img.selectable = false
-            img.evented = false
+        //     triangleObject.left = 100
+        //     triangleObject.top = 100
 
-            img.isRealia = true
+        //     triangleObject.hasBorders = false
+        //     triangleObject.perPixelTargetFind = true
 
-            canvas.insertAt(img, canvasIndex.FRONT)
+        //     triangleObject.isRealia = true
+        //     triangleObject.excludeFromExport = true
 
-            realiaObject = img
+        //     triangleObject.forEachControl(control => {
+        //         control.mouseDownHandler = () => {
+        //             isControlOpr = true
+        //         }
+        //         control.mouseUpHandler = () => {
+        //             isControlOpr = false
+        //         }
+        //     })
+
+        //     triangleObject.setControlVisible('mt', false)
+        //     triangleObject.setControlVisible('mb', false)
+        //     triangleObject.setControlVisible('ml', false)
+        //     triangleObject.setControlVisible('mr', false)
+
+        //     canvas.add(triangleObject)
+
+        //     realiaObject = triangleObject
+        // })
+
+        fabric.Image.fromURL(triangleImg, triangleObject => {
+            triangleObject.hasBorders = false
+            triangleObject.perPixelTargetFind = true
+            triangleObject.lockScalingFlip = true
+            triangleObject.scaleX = 0.5
+            triangleObject.scaleY = 0.5
+
+            triangleObject.isRealia = true
+            triangleObject.excludeFromExport = true
+
+            triangleObject.forEachControl(control => {
+                control.mouseDownHandler = () => {
+                    isControlOpr = true
+                }
+                control.mouseUpHandler = () => {
+                    isControlOpr = false
+                }
+            })
+
+            triangleObject.setControlVisible('mt', false)
+            triangleObject.setControlVisible('mb', false)
+            triangleObject.setControlVisible('ml', false)
+            triangleObject.setControlVisible('mr', false)
+
+            canvas.add(triangleObject)
+            canvas.viewportCenterObject(triangleObject)
+
+            realiaObject = triangleObject
         })
     }
 
     if (!isInit) {
         canvas.on('mouse:down', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseDown(options.e)
         })
         canvas.on('mouse:up', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseUp(options.e)
         })
         canvas.on('mouse:move', options => {
-            if (!isActice) {
+            if (!isActive) {
                 return
             }
             mouseMove(options.e)
@@ -62,10 +113,15 @@ export const initTriangle = () => {
     }
 }
 
-export const unInitTriangle = () => {
+export const uninitTriangle = () => {
+    isInit = false
+}
+
+export const inactiveTriangle = () => {
+    isActive = false
+
     if (realiaObject) {
         canvas.remove(realiaObject)
-        realiaObject = null
     }
 }
 
@@ -76,44 +132,29 @@ const mouseDown = e => {
 
     const pointer = canvas.getPointer(e, true)
 
-    const footPointLeft = getTriangleFootPointLeft(pointer)
-    const footPointRight = getTriangleFootPointRight(pointer)
-    const footPointBottom = getTriangleFootPointBottom(pointer)
+    const footPointLeftInfo = getTriangleFootPointLeftInfo(pointer)
+    const footPointRightInfo = getTriangleFootPointRightInfo(pointer)
+    const footPointBottomInfo = getTriangleFootPointBottomInfo(pointer)
 
-    let distanceLeft, distanceRight, distanceBottom
-
-    if (!footPointLeft && !footPointRight && !footPointBottom) {
+    if (!footPointLeftInfo && !footPointRightInfo && !footPointBottomInfo) {
         return
     }
 
-    if (footPointLeft) {
-        distanceLeft = pointToPointDistance(pointer, footPointLeft)
-    }
-    if (footPointRight) {
-        distanceRight = pointToPointDistance(pointer, footPointRight)
-    }
-    if (footPointBottom) {
-        distanceBottom = pointToPointDistance(pointer, footPointBottom)
-    }
-
-    const distance = Math.min(distanceLeft || 100, distanceRight || 100, distanceBottom || 100)
-
-    if (distance < 30) {
-        if (distance === distanceLeft) {
-            moveFrom.x = footPointLeft.x
-            moveFrom.y = footPointLeft.y
-            isDrawingLeft = true
-        } else if (distance === distanceRight) {
-            moveFrom.x = footPointRight.x
-            moveFrom.y = footPointRight.y
-            isDrawingRight = true
-        } else if (distance === distanceBottom) {
-            moveFrom.x = footPointBottom.x
-            moveFrom.y = footPointBottom.y
-            isDrawingBottom = true
-        }
-
+    if (footPointLeftInfo && footPointLeftInfo.distance < 100 && footPointLeftInfo.isSameDir) {
+        moveFrom.x = footPointLeftInfo.footPoint.x
+        moveFrom.y = footPointLeftInfo.footPoint.y
         isDrawing = true
+        isDrawingLeft = true
+    } else if (footPointRightInfo && footPointRightInfo.distance < 100 && footPointRightInfo.isSameDir) {
+        moveFrom.x = footPointRightInfo.footPoint.x
+        moveFrom.y = footPointRightInfo.footPoint.y
+        isDrawing = true
+        isDrawingRight = true
+    } else if (footPointBottomInfo && footPointBottomInfo.distance < 100 && footPointBottomInfo.isSameDir) {
+        moveFrom.x = footPointBottomInfo.footPoint.x
+        moveFrom.y = footPointBottomInfo.footPoint.y
+        isDrawing = true
+        isDrawingBottom = true
     }
 }
 
@@ -133,22 +174,41 @@ const mouseUp = e => {
 }
 
 const mouseMove = e => {
-    if (!realiaObject || !isDrawing) {
+    const pointer = canvas.getPointer(e, true)
+
+    const footPointLeftInfo = getTriangleFootPointLeftInfo(pointer)
+    const footPointRightInfo = getTriangleFootPointRightInfo(pointer)
+    const footPointBottomInfo = getTriangleFootPointBottomInfo(pointer)
+
+    if (!footPointLeftInfo && !footPointRightInfo && !footPointBottomInfo) {
         return
     }
 
-    const pointer = canvas.getPointer(e, true)
-
-    let footPoint
-    if (isDrawingLeft) {
-        footPoint = getTriangleFootPointLeft(pointer)
-    } else if (isDrawingRight) {
-        footPoint = getTriangleFootPointRight(pointer)
-    } else if (isDrawingBottom) {
-        footPoint = getTriangleFootPointBottom(pointer)
+    if (footPointLeftInfo && footPointLeftInfo.distance < 100 && footPointLeftInfo.isSameDir) {
+        canvas.defaultCursor = 'crosshair'
+    } else if (footPointRightInfo && footPointRightInfo.distance < 100 && footPointRightInfo.isSameDir) {
+        canvas.defaultCursor = 'crosshair'
+    } else if (footPointBottomInfo && footPointBottomInfo.distance < 100 && footPointBottomInfo.isSameDir) {
+        canvas.defaultCursor = 'crosshair'
+    } else {
+        canvas.defaultCursor = 'auto'
     }
 
-    if (!footPoint) {
+    if (!realiaObject || !isDrawing || isControlOpr) {
+        return
+    }
+
+    let footPointInfo = null
+
+    if (isDrawingLeft) {
+        footPointInfo = getTriangleFootPointLeftInfo(pointer)
+    } else if (isDrawingRight) {
+        footPointInfo = getTriangleFootPointRightInfo(pointer)
+    } else if (isDrawingBottom) {
+        footPointInfo = getTriangleFootPointBottomInfo(pointer)
+    }
+
+    if (!footPointInfo) {
         return
     }
 
@@ -158,76 +218,56 @@ const mouseMove = e => {
     }
 
     const moveFromDraw = canvas.restorePointerVpt(moveFrom)
-    const moveToDraw = canvas.restorePointerVpt(footPoint)
+    const moveToDraw = canvas.restorePointerVpt(footPointInfo.footPoint)
 
     const line = new fabric.Path(`M ${moveFromDraw.x} ${moveFromDraw.y} L ${moveToDraw.x} ${moveToDraw.y}`, {
-        stroke: canvasBrush.color,
-        strokeWidth: canvasBrush.size,
+        stroke: canvasBrush.strokeColorCalc,
+        strokeWidth: canvasBrush.strokeSize,
+        strokeDashArray: canvasBrush.strokeDash,
         selectable: false,
-        evented: false
+        evented: false,
+        strokeUniform: true
     })
 
     drawingObject = line
 
     canvas.insertAt(line, getCanvasFrontIndex())
+
+    markObjectOwner(line)
 }
 
-const getTriangleFootPointLeft = (pointer) => {
+const getTriangleFootPointLeftInfo = (pointer) => {
     realiaObject.setCoords()
 
-    const p1 = pointer
-    const p2 = realiaObject.oCoords.mt
-    const p3 = realiaObject.oCoords.bl
+    const pointerLineL = realiaObject.oCoords.bl
+    const pointerLineR = realiaObject.oCoords.mt
 
-    const footPoint = getFootPoint(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+    const pointDirFrom = realiaObject.oCoords.tl
+    const pointDirTo = realiaObject.oCoords.mb
 
-    if (!footPoint) {
-        return false
-    }
-
-    const length = pointToPointDistance(p1, footPoint)
-
-    const fpOffset = getPointInLine(p1, footPoint, length)
-
-    return new fabric.Point(fpOffset.x, fpOffset.y)
+    return getFootPointInfo(pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, canvasBrush.strokeSize / 2)
 }
 
-const getTriangleFootPointRight = (pointer) => {
+const getTriangleFootPointRightInfo = (pointer) => {
     realiaObject.setCoords()
 
-    const p1 = pointer
-    const p2 = realiaObject.oCoords.mt
-    const p3 = realiaObject.oCoords.br
+    const pointerLineL = realiaObject.oCoords.mt
+    const pointerLineR = realiaObject.oCoords.br
 
-    const footPoint = getFootPoint(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+    const pointDirFrom = realiaObject.oCoords.tr
+    const pointDirTo = realiaObject.oCoords.mb
 
-    if (!footPoint) {
-        return false
-    }
-
-    const length = pointToPointDistance(p1, footPoint)
-
-    const fpOffset = getPointInLine(p1, footPoint, length)
-
-    return new fabric.Point(fpOffset.x, fpOffset.y)
+    return getFootPointInfo(pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, canvasBrush.strokeSize / 2)
 }
 
-const getTriangleFootPointBottom = (pointer) => {
+const getTriangleFootPointBottomInfo = (pointer) => {
     realiaObject.setCoords()
 
-    const p1 = pointer
-    const p2 = realiaObject.oCoords.bl
-    const p3 = realiaObject.oCoords.br
+    const pointerLineL = realiaObject.oCoords.bl
+    const pointerLineR = realiaObject.oCoords.br
 
-    const footPoint = getFootPoint(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+    const pointDirFrom = realiaObject.oCoords.mb
+    const pointDirTo = realiaObject.oCoords.mt
 
-    if (!footPoint) {
-        return false
-    }
-
-    const length = pointToPointDistance(p1, footPoint)
-
-    const fpOffset = getPointInLine(p1, footPoint, length)
-
-    return new fabric.Point(fpOffset.x, fpOffset.y)
+    return getFootPointInfo(pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, canvasBrush.strokeSize / 2)
 }

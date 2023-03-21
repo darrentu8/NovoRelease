@@ -98,11 +98,11 @@ export const isClockwise = (originPoint, vectorPoint1, vectorPoint2) => {
 }
 
 // 判断两个向量是否方向相同（允许弧度0.1的误差）
-export const isVectorEqual = (vector1PointFrom, vector1PointTo, vector2PointFrom, vector2PointTo) => {
+export const isVectorEqual = (vector1PointFrom, vector1PointTo, vector2PointFrom, vector2PointTo, delta = 0.1) => {
     const vector1 = new Vector3(vector1PointTo.x - vector1PointFrom.x, vector1PointTo.y - vector1PointFrom.y, 0)
     const vector2 = new Vector3(vector2PointTo.x - vector2PointFrom.x, vector2PointTo.y - vector2PointFrom.y, 0)
 
-    return vector1.angleTo(vector2) < 0.1
+    return vector1.angleTo(vector2) < delta
 }
 
 // 判断向量所属象限
@@ -116,5 +116,30 @@ export const getQuadrant = (originPoint, vectorPoint) => {
         return 3
     } else if (vector.x > 0 && vector.y < 0) {
         return 4
+    }
+}
+
+// 获取垂足位置相关信息
+export const getFootPointInfo = (pointer, pointerLineL, pointerLineR, pointDirFrom, pointDirTo, offset) => {
+    const footPoint = getFootPoint(pointer.x, pointer.y, pointerLineL.x, pointerLineL.y, pointerLineR.x, pointerLineR.y)
+
+    if (!footPoint) {
+        return false
+    }
+
+    if (pointer.x === footPoint.x && pointer.y === footPoint.y) {
+        return
+    }
+
+    const isSameDir = isVectorEqual(pointer, footPoint, pointDirFrom, pointDirTo, 0.5)
+
+    const length = pointToPointDistance(pointer, footPoint)
+
+    const fpOffset = getPointInLine(pointer, footPoint, length + (isSameDir ? -offset : offset))
+
+    return {
+        footPoint: fpOffset,
+        distance: length,
+        isSameDir
     }
 }

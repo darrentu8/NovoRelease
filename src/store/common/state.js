@@ -2,11 +2,20 @@ import { toolType } from 'src/helper/enum'
 
 export default function () {
   return {
-    selectedTool: toolType.PEN,
+    pid: '',
+    pname: '',
+    pages: [],
     page: '',
-    showOprBar: false,
-    oprBarPos: { x: 0, y: 0 },
+    projectData: [],
+    userRole: '',
+    isShowPlayerAuido: false,
+    playingAudioSource: '',
+    selectedTool: toolType.CHOOSE,
+    selectedObject: null,
     canvasZoom: 100,
-    copyImage: null
+    copyImage: null,
+    draggableRectObjects: [],
+    isShowUrlViewer: false,
+    urlVierweSrc: ''
   }
 }

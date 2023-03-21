@@ -1,7 +1,10 @@
 import { createStore } from 'vuex'
 
-// import example from './module-example'
 import common from './common'
+import auth from './auth'
+import permission from './permission'
+import project from './project'
+import user from './user'
 
 /*
  * If not building with SSR mode, you can
@@ -14,8 +17,20 @@ import common from './common'
 
 const Store = createStore({
   modules: {
-    // example
-    common
+    common,
+    auth,
+    permission,
+    project,
+    user
+  },
+  state: {
+    wsNotify: {}
+  },
+  mutations: {
+    // 當接收到最新的後端送來的websocket資訊，直接存到state中的wsNotify
+    setWsNotify(state, param) {
+      state.wsNotify = param
+    }
   },
 
   // enable strict mode (adds overhead!)

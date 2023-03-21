@@ -1,0 +1,34 @@
+
+@font-face {
+  font-family: "DeltaSans-Light";
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+  unicode-range: U+000-5FF;
+  src: local("DeltaSans-Light"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-Light.woff2") format("woff2"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-Light.woff") format("woff"),
+    url("/fonts/English_Latin_Delta Sans/DeltaSans-Light.ttf") format("truetype")
+}
+@font-face {
+  font-family: "DeltaSans-Regular";
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+  unicode-range: U+000-5FF;
+  src: local("DeltaSans-Regular"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-Regular.woff2") format("woff2"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-Regular.woff") format("woff"),
+    url("/fonts/English_Latin_Delta Sans/DeltaSans-Regular.ttf") format("truetype")
+}
+@font-face {
+  font-family: "DeltaSans-SemiBold";
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+  unicode-range: U+000-5FF;
+  src: local("DeltaSans-SemiBold"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-SemiBold.woff2") format("woff2"),
+    url("/fonts/English_Latin_Delta Sans/web font/DeltaSans-SemiBold.woff") format("woff"),
+    url("/fonts/English_Latin_Delta Sans/DeltaSans-SemiBold.ttf") format("truetype")
+}

@@ -1,5 +1,5 @@
 <template>
-    <div class="row" style="position:absolute;bottom:10px;left:10px;" v-if="copyImage">
+    <div class="row" style="position:absolute;left:20px;bottom:70px;" v-if="copyImage">
         <q-btn @click.stop="clickClose" flat icon="cancel" color="primary" style="z-index:99"
             class="absolute-top-right q-pa-xs" />
         <q-card>
@@ -33,9 +33,11 @@ export default {
         },
         clickPaste() {
             setCopiedObjectPaste()
+            setCopiedObjectClose()
         }
     }
 }
 </script>
 <style lang="scss" scoped>
+
 </style>

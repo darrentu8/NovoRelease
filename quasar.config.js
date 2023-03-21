@@ -13,6 +13,8 @@ const ESLintPlugin = require('eslint-webpack-plugin')
 const { configure } = require('quasar/wrappers')
 
 module.exports = configure(function (ctx) {
+  require('dotenv').config()
+
   return {
     // https://v2.quasar.dev/quasar-cli-webpack/supporting-ts
     supportTS: false,
@@ -26,7 +28,9 @@ module.exports = configure(function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'bus'
+      'bus',
+      'vuelidate',
+      'permission'
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
@@ -71,6 +75,9 @@ module.exports = configure(function (ctx) {
 
       // https://v2.quasar.dev/quasar-cli-webpack/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
+      env: {
+        API: process.env.API_URL
+      },
 
       chainWebpack(chain) {
         chain.plugin('eslint-webpack-plugin')
@@ -84,14 +91,19 @@ module.exports = configure(function (ctx) {
       server: {
         type: 'http'
       },
-      port: 8080,
+      port: 4000,
       open: true, // opens browser window automatically
       proxy: {
         '/webapi': {
-          target: 'https://test.novohyspace.com',
+          target: 'https://test.novoconnect.cloud',
           changeOrigin: true,
-          ws: true,
+          ws: false,
           secure: false
+        },
+        '/websocket': {
+          target: 'wss://test.novoconnect.cloud',
+          changeOrigin: true,
+          ws: true
         }
       }
     },
@@ -112,13 +124,21 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Cookies',
+        'SessionStorage',
+        'LocalStorage',
+        'Loading',
+        'LoadingBar',
+        'Dialog',
+        'Notify',
+        'LocalStorage',
+        'AppFullscreen'
       ]
     },
 
     // animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
-    animations: [],
+    animations: 'all',
 
     // https://v2.quasar.dev/quasar-cli-webpack/developing-ssr/configuring-ssr
     ssr: {

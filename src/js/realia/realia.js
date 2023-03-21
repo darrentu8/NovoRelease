@@ -1,14 +1,16 @@
 import { toolType } from 'src/helper/enum'
 import { adjustCursor } from '../canvas'
 
-export let isActice = false
+// import store from '../../store'
+
+export let isActive = false
 
 export const initRealia = () => {
-    isActice = true
+    isActive = true
 
     adjustCursor(toolType.REALIA)
 }
 
-export const unInitRealia = () => {
-    isActice = false
+export const inactiveRealia = () => {
+    isActive = false
 }

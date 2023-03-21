@@ -1,52 +1,40 @@
 <template>
-    <q-btn v-show="!isSelectedRealia" @click="clickRealia" :class="{ 'is-tool-selected': isSelectedRealia }">
-        <svg class="icon" style="font-size:26px" aria-hidden="true">
-            <use xlink:href="#icon-pencil1"></use>
-        </svg>
-    </q-btn>
-    <q-btn-dropdown v-show="isSelectedRealia" menu-self="top middle" :menu-offset="[0, 20]" split @click="clickRealia"
+    <q-btn @click="clickRealia" class="overflow-hidden" style="width:50px"
         :class="{ 'is-tool-selected': isSelectedRealia }">
-        <template v-slot:label>
-            <svg class="icon" style="font-size:26px" aria-hidden="true">
-                <use xlink:href="#icon-pencil1"></use>
-            </svg>
-        </template>
-        <div class="q-pa-md" style="max-width:500px">
-            <div class="text-subtitle1 q-pb-sm">Realia Tools </div>
-            <div class="row">
-                <div class="q-gutter-sm q-pr-md" style="margin:5px auto">
-                    <q-checkbox v-model="ruler" @update:model-value="addOrRemoveRuler">
-                        <q-img :src="rulerSrc" fit="contain" style="height: 150px; width: 200px" />
-                    </q-checkbox>
-                </div>
-                <div class="q-gutter-sm q-pr-md" style="margin:5px auto">
-                    <q-checkbox v-model="compass" @update:model-value="addOrRemoveCompass">
-                        <q-img :src="compassSrc" fit="contain" style="height: 150px; width: 80px;" />
-                    </q-checkbox>
-                </div>
-                <div class="q-gutter-sm q-pr-md" style="margin:5px auto">
-                    <q-checkbox v-model="protractor" @update:model-value="addOrRemoveProtractor">
-                        <q-img :src="protractorSrc" fit="contain" style="height: 150px; width: 140px;" />
-                    </q-checkbox>
-                </div>
-
-                <div class="q-gutter-sm q-pr-md" style="margin:5px auto">
-                    <q-checkbox v-model="triangle" @update:model-value="addOrRemoveTriangle">
-                        <q-img :src="triangleSrc" fit="contain" style="height: 150px; width: 140px;" />
-                    </q-checkbox>
-                </div>
-            </div>
-        </div>
-    </q-btn-dropdown>
+        <img :class="{ 'is-active-icon-green': isSelectedRealia }" style="height:26px;width:26px" :src="iconRealia" />
+        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none" :persistent="$q.platform.is.mobile"
+            v-if="$q.platform.is.mobile ? isSelectedRealia : true" :auto-close="$q.platform.is.mobile">
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
+                @click="changeRealia(realiaTypes.RULER)">
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.RULER }" style="height:24px;width:24px"
+                    :src="iconRuler" />
+            </q-btn>
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
+                @click="changeRealia(realiaTypes.TRIANGLE)">
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.TRIANGLE }" style="height:24px;width:24px"
+                    :src="iconTriangle" />
+            </q-btn>
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
+                @click="changeRealia(realiaTypes.COMPASS)">
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.COMPASS }" style="height:24px;width:24px"
+                    :src="iconCompass" />
+            </q-btn>
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
+                @click="changeRealia(realiaTypes.PROTRACTOR)">
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.PROTRACTOR }" style="width:24px"
+                    :src="iconProtractor" />
+            </q-btn>
+        </q-menu>
+    </q-btn>
 </template>
 
 <script>
-import { toolType } from '../../helper/enum'
-import { initRealia, unInitRealia } from '../../js/realia/realia'
-import { initRuler, unInitRuler } from '../../js/realia/ruler'
-import { initProtractor, unInitProtractor } from '../../js/realia/protractor'
-import { initCompass, unInitCompass } from '../../js/realia/compass'
-import { initTriangle, unInitTriangle } from '../../js/realia/triangle'
+import { toolType, realiaType } from '../../helper/enum'
+import { initRealia, isActive, inactiveRealia } from '../../js/realia/realia'
+import { initRuler, inactiveRuler } from '../../js/realia/ruler'
+import { initProtractor, inactiveProtractor } from '../../js/realia/protractor'
+import { initCompass, inactiveCompass } from '../../js/realia/compass'
+import { initTriangle, inactiveTriangle } from '../../js/realia/triangle'
 
 import { mapMutations } from 'vuex'
 
@@ -54,20 +42,38 @@ export default {
     name: 'ToolBar-Realia',
     mounted() {
         this.$bus.on('reInitRealia', this.reInitRealia)
+        this.$bus.on('removeRealia', this.removeRealia)
+    },
+    beforeUnmount() {
+        this.$bus.off('reInitRealia', this.reInitRealia)
+        this.$bus.off('removeRealia', this.removeRealia)
     },
     data() {
         return {
-            ruler: false,
+            realiaType: realiaType.RULER,
+            realiaTypes: realiaType,
+            iconCompass: require('../../assets/icons/icon_compass.svg'),
+            iconProtractor: require('../../assets/icons/icon_protractor.svg'),
+            iconRuler: require('../../assets/icons/icon_ruler.svg'),
+            iconTriangle: require('../../assets/icons/icon_triangle_board.svg'),
             rulerSrc: require('../../assets/images/ruler.png'),
-            protractor: false,
             protractorSrc: require('../../assets/images/protractor.png'),
-            compass: false,
             compassSrc: require('../../assets/images/compass_full.jpg'),
-            triangle: false,
             triangleSrc: require('../../assets/images/triangle-board.png')
         }
     },
     computed: {
+        iconRealia() {
+            if (this.realiaType === realiaType.COMPASS) {
+                return this.iconCompass
+            } else if (this.realiaType === realiaType.PROTRACTOR) {
+                return this.iconProtractor
+            } else if (this.realiaType === realiaType.TRIANGLE) {
+                return this.iconTriangle
+            }
+
+            return this.iconRuler
+        },
         selectedTool() {
             return this.$store.state.common.selectedTool
         },
@@ -81,63 +87,77 @@ export default {
     watch: {
         selectedTool(newVal, oldVal) {
             if (oldVal === toolType.REALIA) {
-                unInitRealia()
+                inactiveRealia()
+                this.removeRealia()
             }
         },
-        page(val) {
+        page() {
             this.reInitRealia()
         }
     },
     methods: {
         ...mapMutations('common', ['SET_SELECTED_TOOL']),
         clickRealia() {
+            if (this.selectedTool === toolType.REALIA) {
+                return
+            }
             this.SET_SELECTED_TOOL(toolType.REALIA)
             initRealia()
+            this.changeRealia(this.realiaType)
         },
         reInitRealia() {
-            if (this.ruler) {
+            if (!isActive) {
+                return
+            }
+            if (this.realiaType === realiaType.RULER) {
                 initRuler()
             }
-            if (this.protractor) {
+            if (this.realiaType === realiaType.PROTRACTOR) {
                 initProtractor()
             }
-            if (this.compass) {
+            if (this.realiaType === realiaType.COMPASS) {
                 initCompass()
             }
-            if (this.triangle) {
+            if (this.realiaType === realiaType.TRIANGLE) {
                 initTriangle()
             }
         },
-        addOrRemoveRuler(val) {
-            if (val) {
+        removeRealia() {
+            inactiveRuler()
+            inactiveTriangle()
+            inactiveProtractor()
+            inactiveCompass()
+        },
+        changeRealia(val) {
+            this.realiaType = val
+            if (val === realiaType.RULER) {
                 initRuler()
             } else {
-                unInitRuler()
+                inactiveRuler()
             }
-        },
-        addOrRemoveProtractor(val) {
-            if (val) {
+            if (val === realiaType.PROTRACTOR) {
                 initProtractor()
             } else {
-                unInitProtractor()
+                inactiveProtractor()
             }
-        },
-        addOrRemoveCompass(val) {
-            if (val) {
+            if (val === realiaType.COMPASS) {
                 initCompass()
             } else {
-                unInitCompass()
+                inactiveCompass()
             }
-        },
-        addOrRemoveTriangle(val) {
-            if (val) {
+            if (val === realiaType.TRIANGLE) {
                 initTriangle()
             } else {
-                unInitTriangle()
+                inactiveTriangle()
             }
         }
     }
 }
 </script>
 <style lang="scss" scoped>
+.tool-bar-realia {
+    left: 230px;
+    bottom: 60px;
+    background: white;
+}
 </style>

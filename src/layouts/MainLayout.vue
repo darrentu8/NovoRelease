@@ -1,7 +1,7 @@
 <template>
   <q-layout view="HHH LpR LFF">
     <q-header>
-      <PanelBar />
+      <Header />
     </q-header>
 
     <q-page-container>
@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import PanelBar from './panelBar/PanelBar'
+import Header from './header/Header'
 
 export default {
   name: 'MainLayout',
   components: {
-    PanelBar
+    Header
   },
   data() {
     return {
@@ -26,4 +26,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
 </style>

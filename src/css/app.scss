@@ -1,1 +1,253 @@
 // app global css in SCSS form
+
+// DeltaSans字體
+@import url(./font.css);
+// 思源中文字體
+@import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+// Roboto字體
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+$baseFontSize: 16px;
+$brand-grey: rgb(66, 67, 68);
+$brand-grey-2: rgb(206, 206, 206);
+$basic-font-family: "DeltaSans-Regular", Roboto, "Noto Sans SC", "Noto Sans TC", 微軟正黑體, sans-serif;
+$main-font-family: "DeltaSans-Regular", "Noto Sans SC", "Noto Sans TC", sans-serif;
+
+// Functions ////
+
+@function toRem($px) {
+  @return 1rem * $px / $baseFontSize;
+}
+
+@function toEm($px, $base) {
+  @return 1em * $px / $base;
+}
+
+body {
+    font-family: $basic-font-family;
+}
+h1, h2, h3, h4, h5, h6, button {
+  font-family: DeltaSans-SemiBold;
+}
+a {
+    text-decoration: none;
+}
+.text-light {
+  font-family: "DeltaSans-light";
+}
+.text-normal {
+  font-family: "DeltaSans-Regular";
+}
+.border-grey {
+  border: 1px solid #e5e5e5;
+}
+.q-btn {
+  font-weight: normal;
+}
+.brand-gradient {
+  background: #f1f1f1
+  // background: linear-gradient(to right, rgb(105, 183, 195) 0%, rgb(214, 240, 243) 100%)
+}
+.bg-brand-black {
+  background: #5F5F5F
+}
+.container-full {
+  height: calc(100vh - 124px)
+}
+.q-menu.tool {
+  .q-list {
+    .q-item {
+      display: flex;
+      flex-direction: initial;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    .q-item__section {
+      align-items: start;
+    }
+    .q-icon {
+      margin-bottom: 0;
+    }
+  }
+}
+.q-list.tool {
+  .q-item {
+    display: flex;
+    flex-direction: initial;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .q-item__section {
+    align-items: start;
+    .q-icon {
+      margin-bottom: 0;
+    }
+  }
+}
+.text-brand-gery {
+  color: rgb(144, 165, 187);
+}
+.underline {
+    text-decoration: underline;
+}
+.brand-title {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  font-weight: 600;
+  // text-transform: uppercase;
+  border-bottom: 3px solid #14A028;
+  padding: 0px 0px 6px;
+}
+.q-btn {
+  text-transform: inherit;
+  &.q-px-lg {
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+  }
+  &.q-btn--outline.brand {
+    background-color: #ededed !important;
+  }
+  &.q-btn--outline.brand.q-btn--outline:before {
+    border: 1px solid #E5E5E5 !important;
+    background-color: #ededed !important;
+  }
+}
+
+button[aria-pressed="true"] span {
+  text-decoration: underline !important;
+}
+.q-btn-group {
+  &.q-btn-toggle .q-btn {
+    border-radius: 0;
+  }
+}
+// page //
+// .q-toolbar {
+//   height: 66px;
+// }
+.card-bg {
+  border-radius: 20px;
+  .title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .bigBtn {
+    width: 106px;
+    height: 106px;
+  }
+}
+.logoBox {
+  display: flex;
+  align-items: center;
+  width: auto;
+  a, img {
+    height: 22px;
+    width: auto;
+  }
+  a:first-of-type  {
+    margin-left: 10px;
+    display: flex;
+    margin-right: 20px;
+    img {
+      margin-top: -1px;
+      margin-right: 18px;
+    }
+  }
+  a:last-of-type  {
+    img {
+      height: 28px;
+      margin-top: -5px;
+    }
+  }
+}
+.logoBox.white {
+  a:first-of-type  {
+    border-right: 1px solid #fff;
+  }
+}
+.brandTabBtn {
+  color: #A1A1A1;
+  &.active {
+    color: $primary;
+  }
+  &.active::before {
+    border-bottom: 2px solid $primary;
+    border-radius: 0;
+  }
+}
+.cardTitle {
+    color: rgb(0, 0, 0);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 3px solid #14A028;
+    text-align: left;
+    padding: 0px 0px 6px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.cardContent {
+    line-height: 1.5;
+    letter-spacing: 0px;
+    color: rgb(144, 165, 187);
+    margin-bottom: 10px;
+    text-align: left;
+}
+.q-card__actions {
+    font-size: 11px;
+    line-height: 22px;
+}
+.q-btn .q-btn__content span {
+    font-size: 15px;
+}
+.q-field__bottom {
+    padding: 4px 12px 0;
+}
+.q-list {
+    .q-item {
+        display: block;
+        flex-direction: column;
+        text-align: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid $brand-grey-2;
+        .q-icon {
+            font-size: toRem(36px);
+            color: $brand-grey;
+            margin-bottom: 10px;
+        }
+        .q-item__label P {
+            font-size: toRem(14px);
+            color: $brand-grey;
+        }
+    }
+}
+
+.text-brand-green{
+  color: #14A028 !important;
+}
+
+.bg-brand-green{
+  background: #14A028 !important;
+}
+
+.text-brand-grey {
+  color: #5F5F5F !important;
+}
+.bg-brand-grey  {
+  background: #5F5F5F !important;
+}
+
+.is-active-icon-white {
+  filter: drop-shadow(#fff 100px 0);
+  transform: translateX(-100px);
+}
+
+
+.is-active-icon-green {
+  filter: drop-shadow(#14A028 100px 0);
+  transform: translateX(-100px);
+}
+

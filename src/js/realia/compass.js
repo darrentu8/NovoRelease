@@ -1,4 +1,4 @@
-import { canvas, getCanvasFrontIndex, canvasBrush } from '../canvas'
+import { canvas, getCanvasFrontIndex, canvasBrush, markObjectOwner } from '../canvas'
 import { fabric } from 'fabric'
 
 import {
@@ -6,9 +6,8 @@ import {
     isClockwise, pointRotateByPoint, pointToPointDistance
 } from 'src/helper/math'
 
-import { isActice } from './realia'
-
 let isInit = false
+let isActive = false
 
 let capObject = null
 let leftArmObject = null
@@ -33,19 +32,32 @@ let drawRadius = 0
 let drawingObject = null
 let drawingFinishedObject = null
 
+let circleCenterObject = null
+
 let isStretching = false
+let lastStretchAngle = 10
 const stretchFrom = { x: 0, y: 0 }
 
+export let isFlip = false
+
+const leftArmImg = require('../../assets/images/leftarm_A.png')
+const rightArmImg = require('../../assets/images/rightarm_A.png')
+const capImg = require('../../assets/images/cap_A.png')
+
 export const initCompass = () => {
+    isActive = true
+
     if (capObject) {
         canvas.add(leftArmObject)
         canvas.add(rightArmObject)
         canvas.add(capObject)
     } else {
         const p1 = new Promise((resolve, reject) => {
-            const leftArmImg = require('../../assets/images/leftarm.png')
             fabric.Image.fromURL(leftArmImg, img => {
                 leftArmObject = img
+                leftArmObject.hasControls = false
+
+                leftArmObject.perPixelTargetFind = true
 
                 leftArmObject.on('mousedown', option => {
                     dragBegin(option.e)
@@ -57,70 +69,65 @@ export const initCompass = () => {
                     dragEnd(option.e)
                 })
 
+                leftArmObject.flipX = isFlip
+
                 resolve(img)
             })
         })
 
         const p2 = new Promise((resolve, reject) => {
-            const rightArmImg = require('../../assets/images/rightarm.png')
             fabric.Image.fromURL(rightArmImg, img => {
                 rightArmObject = img
 
+                rightArmObject.perPixelTargetFind = true
+
                 rightArmObject.lockMovementX = true
                 rightArmObject.lockMovementY = true
+                rightArmObject.hasControls = false
+                rightArmObject.hoverCursor = 'e-resize'
 
                 rightArmObject.on('mousedown', option => {
-                    if (!isActice) {
+                    if (!isActive) {
                         return
                     }
                     stretchBegin(option.e)
                 })
+
+                rightArmObject.flipX = isFlip
 
                 resolve(img)
             })
         })
 
         const p3 = new Promise((resolve, reject) => {
-            const capImg = require('../../assets/images/cap.png')
             fabric.Image.fromURL(capImg, img => {
                 capObject = img
 
+                capObject.perPixelTargetFind = true
+
                 capObject.lockMovementX = true
                 capObject.lockMovementY = true
+                capObject.hasControls = false
+                capObject.hoverCursor = 'pointer'
 
                 capObject.on('mousedown', option => {
-                    if (!isActice) {
+                    if (!isActive) {
                         return
                     }
                     rotateBegin(option.e)
                 })
 
+                capObject.flipX = isFlip
+
                 resolve(img)
             })
-
-            // const capImg = require('../../assets/quasar-logo-vertical.svg')
-            // fabric.loadSVGFromURL(capImg, (objects, options) => {
-            //     const img = fabric.util.groupSVGElements(objects, options)
-            //     capObject = img
-
-            //     capObject.lockMovementX = true
-            //     capObject.lockMovementY = true
-
-            //     capObject.on('mousedown', option => {
-            //         rotateBegin(option.e)
-            //     })
-
-            //     resolve(img)
-            // })
         })
 
         Promise.all([p1, p2, p3]).then(objects => {
             objects.forEach(object => {
                 object.hasBorders = false
-                object.hasControls = false
-
-                object.isCompass = true
                 object.isRealia = true
+                object.excludeFromExport = true
 
                 canvas.add(object)
             })
@@ -129,14 +136,14 @@ export const initCompass = () => {
 
         if (!isInit) {
             canvas.on('mouse:move', option => {
-                if (!isActice) {
+                if (!isActive) {
                     return
                 }
                 rotateMoving(option.e)
                 stretchMoving(option.e)
             })
             canvas.on('mouse:up', option => {
-                if (!isActice) {
+                if (!isActive) {
                     return
                 }
                 rotateEnd(option.e)
@@ -148,24 +155,26 @@ export const initCompass = () => {
     }
 }
 
-export const unInitCompass = () => {
+export const uninitCompass = () => {
+    isInit = false
+}
+
+export const inactiveCompass = () => {
+    isActive = false
+
     if (capObject) {
         canvas.remove(capObject)
-        capObject = null
     }
     if (leftArmObject) {
         canvas.remove(leftArmObject)
-        leftArmObject = null
     }
     if (rightArmObject) {
         canvas.remove(rightArmObject)
-        rightArmObject = null
     }
 }
 
 const makeCompass = () => {
-    leftArmObject.left = 400
-    leftArmObject.top = 300
+    canvas.viewportCenterObject(leftArmObject)
 
     autoJoin()
 }
@@ -230,18 +239,22 @@ const rotateBegin = e => {
 }
 
 const drawBegin = e => {
-    const radius = canvasBrush.size
+    const radius = canvasBrush.strokeSize
     const centerPoint = canvas.restorePointerVpt(stabPos)
-    const circleCenter = new fabric.Circle({
-        left: centerPoint.x - radius / Math.sqrt(2),
-        top: centerPoint.y - radius / Math.sqrt(2),
-        fill: canvasBrush.color,
+    circleCenterObject = new fabric.Circle({
+        left: centerPoint.x,
+        top: centerPoint.y,
+        originX: 'center',
+        originY: 'center',
+        fill: canvasBrush.strokeColorCalc,
         evented: false,
         selectable: false,
         radius
     })
 
-    canvas.insertAt(circleCenter, getCanvasFrontIndex())
+    canvas.insertAt(circleCenterObject, getCanvasFrontIndex())
+
+    markObjectOwner(circleCenterObject)
 
     drawRadius = pointToPointDistance(centerPoint, canvas.restorePointerVpt(nilPos))
 }
@@ -294,15 +307,19 @@ const drawMoving = (intersectionAngle, isRotatingClockwise, isRotatingBig) => {
     const stabPosDraw = canvas.restorePointerVpt(stabPos)
 
     const circle = new fabric.Circle({
-        left: stabPosDraw.x - drawRadius,
-        top: stabPosDraw.y - drawRadius,
-        stroke: canvasBrush.color,
-        strokeWidth: canvasBrush.size,
+        left: stabPosDraw.x,
+        top: stabPosDraw.y,
+        originX: 'center',
+        originY: 'center',
+        stroke: canvasBrush.strokeColorCalc,
+        strokeWidth: canvasBrush.strokeSize,
+        strokeDashArray: canvasBrush.strokeDash,
         fill: 'transparent',
         evented: false,
         selectable: false,
         radius: drawRadius,
-        endAngle: intersectionAngle.deg
+        endAngle: intersectionAngle.deg,
+        strokeUniform: true
     })
 
     if ((isRotatingClockwise && !isRotatingBig) || (!isRotatingClockwise && isRotatingBig)) {
@@ -315,6 +332,8 @@ const drawMoving = (intersectionAngle, isRotatingClockwise, isRotatingBig) => {
     drawingObject = circle
 
     canvas.insertAt(circle, getCanvasFrontIndex())
+
+    markObjectOwner(circle)
 }
 
 const drwaFininshedCircle = () => {
@@ -330,17 +349,23 @@ const drwaFininshedCircle = () => {
     const stabPosDraw = canvas.restorePointerVpt(stabPos)
 
     const circle = new fabric.Circle({
-        left: stabPosDraw.x - drawRadius,
-        top: stabPosDraw.y - drawRadius,
-        stroke: canvasBrush.color,
-        strokeWidth: canvasBrush.size,
+        left: stabPosDraw.x,
+        top: stabPosDraw.y,
+        originX: 'center',
+        originY: 'center',
+        stroke: canvasBrush.strokeColorCalc,
+        strokeWidth: canvasBrush.strokeSize,
+        strokeDashArray: canvasBrush.strokeDash,
         fill: 'transparent',
         evented: false,
         selectable: false,
-        radius: drawRadius
+        radius: drawRadius,
+        strokeUniform: true
     })
 
     canvas.insertAt(circle, getCanvasFrontIndex())
+
+    markObjectOwner(circle)
 
     drawingFinishedObject = circle
 }
@@ -350,6 +375,7 @@ const rotateEnd = e => {
         return
     }
 
+    circleCenterObject = null // to do togroup
     drawingObject = null
     drawingFinishedObject = null
 
@@ -378,19 +404,32 @@ const stretchMoving = e => {
     }
     const pointer = canvas.getPointer(e, true)
 
-    // 修改以joint点转动引起的变化
+    // 以joint点转动引起的变化
     const intersectionJointAngle = getIntersectionAngle(jointPos, stretchFrom, pointer)
-
     const isStretchClockwise = isClockwise(jointPos, stretchFrom, pointer)
 
-    const pointStretchdLeft = pointRotateByPoint(canvas.restorePointerVpt(stabPos), leftArmOriginPos, -intersectionJointAngle.rad / 2 * (isStretchClockwise ? 1 : -1))
+    const currentStretchAngle = leftArmObject.angle - rightArmObject.angle
+    if (Math.sign(currentStretchAngle) !== Math.sign(lastStretchAngle) && Math.sign(currentStretchAngle) !== 0 && Math.sign(lastStretchAngle) !== 0) {
+        setCompassFlip(!isFlip)
+    }
+    lastStretchAngle = currentStretchAngle
+    if (lastStretchAngle === 0) { // 防止边界的时候判断不准
+        lastStretchAngle = 10
+    }
+
+    // 以stab点转动引起的变化
+    const intersectionStabAngle = getIntersectionAngle(stabPos, stretchFrom, pointer)
+    const isStabAngleClockwise = isClockwise(stabPos, stretchFrom, pointer)
+
+    const pointStretchdLeft = pointRotateByPoint(canvas.restorePointerVpt(stabPos), leftArmOriginPos,
+        (-intersectionJointAngle.rad / 2 * (isStretchClockwise ? 1 : -1)) + (intersectionStabAngle.rad * (isStabAngleClockwise ? 1 : -1)))
     leftArmObject.left = pointStretchdLeft.x
     leftArmObject.top = pointStretchdLeft.y
-    leftArmObject.angle = leftArmOriginPos.angle - intersectionJointAngle.deg / 2 * (isStretchClockwise ? 1 : -1)
+    leftArmObject.angle = leftArmOriginPos.angle - (intersectionJointAngle.deg / 2 * (isStretchClockwise ? 1 : -1)) + (intersectionStabAngle.deg * (isStabAngleClockwise ? 1 : -1))
 
-    rightArmObject.angle = rightArmOriginPos.angle + intersectionJointAngle.deg / 2 * (isStretchClockwise ? 1 : -1)
+    rightArmObject.angle = rightArmOriginPos.angle + (intersectionJointAngle.deg / 2 * (isStretchClockwise ? 1 : -1)) + (intersectionStabAngle.deg * (isStabAngleClockwise ? 1 : -1))
 
-    capObject.angle = capOriginPos.angle
+    capObject.angle = capOriginPos.angle + (intersectionStabAngle.deg * (isStabAngleClockwise ? 1 : -1))
 
     autoJoin()
 
@@ -449,25 +488,41 @@ const setAllCoords = () => {
 const getStabPos = () => {
     leftArmObject.setCoords()
 
-    return getPointInLine(leftArmObject.oCoords.br, leftArmObject.oCoords.bl, 9 * canvas.getZoom())
+    if (isFlip) {
+        return getPointInLine(leftArmObject.oCoords.bl, leftArmObject.oCoords.br, 9 * canvas.getZoom())
+    } else {
+        return getPointInLine(leftArmObject.oCoords.br, leftArmObject.oCoords.bl, 9 * canvas.getZoom())
+    }
 }
 
 const getJointPos = () => {
     leftArmObject.setCoords()
 
-    return getPointInLine(leftArmObject.oCoords.tr, leftArmObject.oCoords.tl, 5 * canvas.getZoom())
+    if (isFlip) {
+        return getPointInLine(leftArmObject.oCoords.tl, leftArmObject.oCoords.tr, 5 * canvas.getZoom())
+    } else {
+        return getPointInLine(leftArmObject.oCoords.tr, leftArmObject.oCoords.tl, 5 * canvas.getZoom())
+    }
 }
 
 const getLeftArmJointPos = () => {
     leftArmObject.setCoords()
 
-    return getPointInLine(leftArmObject.oCoords.tr, leftArmObject.oCoords.tl, 5 * canvas.getZoom())
+    if (isFlip) {
+        return getPointInLine(leftArmObject.oCoords.tl, leftArmObject.oCoords.tr, 5 * canvas.getZoom())
+    } else {
+        return getPointInLine(leftArmObject.oCoords.tr, leftArmObject.oCoords.tl, 5 * canvas.getZoom())
+    }
 }
 
 const getRightArmJointPos = () => {
     rightArmObject.setCoords()
 
-    return getPointInLine(rightArmObject.oCoords.tl, rightArmObject.oCoords.tr, 1 * canvas.getZoom())
+    if (isFlip) {
+        return getPointInLine(rightArmObject.oCoords.tr, rightArmObject.oCoords.tl, 1 * canvas.getZoom())
+    } else {
+        return getPointInLine(rightArmObject.oCoords.tl, rightArmObject.oCoords.tr, 1 * canvas.getZoom())
+    }
 }
 
 const getCapJointPos = () => {
@@ -479,5 +534,31 @@ const getCapJointPos = () => {
 const getNibPos = () => {
     rightArmObject.setCoords()
 
-    return getPointInLine(rightArmObject.oCoords.bl, rightArmObject.oCoords.br, 5 * canvas.getZoom())
+    if (isFlip) {
+        return getPointInLine(rightArmObject.oCoords.br, rightArmObject.oCoords.bl, 10 * canvas.getZoom())
+    } else {
+        return getPointInLine(rightArmObject.oCoords.bl, rightArmObject.oCoords.br, 10 * canvas.getZoom())
+    }
+}
+
+export const setCompassFlip = (flip) => {
+    if (isFlip === flip) {
+        return
+    }
+    isFlip = flip
+
+    leftArmObject.flipX = flip
+    rightArmObject.flipX = flip
+    capObject.flipX = flip
+
+    let tempAngle = 0
+    tempAngle = leftArmObject.angle
+    leftArmObject.angle = rightArmObject.angle
+    rightArmObject.angle = tempAngle
+
+    setAllCoords()
+
+    autoJoin()
+
+    canvas.renderAll()
 }

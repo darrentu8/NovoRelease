@@ -1,8 +1,12 @@
 <template>
   <q-dialog ref="dialog">
-    <q-card style="width: 100%; max-width: 400px;">
-      <q-card-section class="bg-brand-black">
-        <div class="text-h6 text-white text-center">Resend Activation Email</div>
+    <q-card style="width: 100%; max-width: 370px;">
+      <q-card-section class="q-mx-lg">
+        <div class="border-b-primary q-mt-md q-pb-xs flex justify-between items-end">
+          <span class="text-h5">
+            Resend Activation Email
+          </span>
+        </div>
       </q-card-section>
 
       <q-card-section class="q-mx-lg">
@@ -10,8 +14,8 @@
           Enter your email address below to have your activation email resent to you.
         </p>
         <q-form ref="resendForm" @submit.stop="resendSubmit" class="q-gutter-md">
-          <q-input autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email" label="Email"
-            lazy-rules :rules="[checkEmail]">
+          <q-input autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email" label="Email" lazy-rules
+            :rules="[checkEmail]">
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>

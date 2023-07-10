@@ -193,6 +193,31 @@ export const PublicRoutes = [
     ]
   },
   {
+    path: '/',
+    component: () => import('layouts/dashboard/DashboardLayout.vue'),
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        meta: {
+          auth: true,
+          title: 'dashboard',
+          breadcrumb: [
+            {
+              text: 'dashboard',
+              disabled: true,
+              href: '/dashboard',
+              link: true,
+              exact: true,
+              to: { name: 'dashboard', path: '/dashboard' }
+            }
+          ]
+        },
+        component: () => import('src/pages/DashboardPage.vue')
+      }
+    ]
+  },
+  {
     path: '/list',
     redirect: '/list/all',
     component: () => import('layouts/dashboard/DashboardLayout.vue'),

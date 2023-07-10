@@ -64,9 +64,11 @@ export default boot(({ router, store }) => {
         next()
         stopLoading()
       } else {
-        store.dispatch('auth/RequestFailed')
-        next(`/login?redirect=${to.fullPath}`)
+        next()
         stopLoading()
+        // store.dispatch('auth/RequestFailed')
+        // next(`/login?redirect=${to.fullPath}`)
+        // stopLoading()
       }
     }
   })

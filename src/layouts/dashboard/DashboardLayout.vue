@@ -1,12 +1,12 @@
 <template>
   <q-layout class="dashboard" view="hHr lpR lFf">
-    <q-header elevated="">
-      <q-toolbar class="bg-brand-green text-white q-pr-none">
-        <!-- <q-btn class="text-white" flat="" dense="" round="" icon="menu" aria-label="Menu" @click="toggleLeftDrawer">
-        </q-btn> -->
-        <div class="logoBox white">
-          <router-link :to="toDashboard" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
-          <router-link :to="toDashboard"><img :src="logo" :alt="title" /></router-link>
+    <q-header class="bg-transparent">
+      <q-toolbar class="bg-transparent" style="height:56px;">
+        <div class="logoBox">
+          <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
+          <div class="spaceLine border-r-b"></div>
+          <router-link class="logoBox-r" to="/"><img :src="logo" :alt="title" /><img class="q-ml-md" :src="logoFont"
+              :alt="title" /></router-link>
         </div>
         <q-toolbar-title></q-toolbar-title>
         <div v-if="!loading">
@@ -35,9 +35,10 @@ export default defineComponent({
     return {
       loading: true,
       vvktitle: 'vivitek',
-      vvklogo: require('../../assets/img/logo/vvkLogo_w.svg'),
+      vvklogo: require('../../assets/img/logo/vvkLogo.svg'),
       title: 'NovoConnect Cloud',
-      logo: require('../../assets/img/logo/cloud-with-icon.svg'),
+      logo: require('../../assets/img/logo/cloud-sign.svg'),
+      logoFont: require('../../assets/img/logo/cloud-font.svg'),
       timer: null,
       lockReconnect: false
     }

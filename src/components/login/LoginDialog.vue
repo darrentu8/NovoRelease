@@ -2,12 +2,14 @@
   <div class="login">
     <!-- LOGIN TAB視窗 -->
     <q-card v-if="!joinPop" class="">
-      <q-card-section class="logo-bar flex flex-center q-pa-none text-white non-selectable bg-brand-black">
-        <q-img :src="logo" spinner-size="17px" :alt="title" style="width:180px;height:auto;" />
-      </q-card-section>
-
       <q-card-section class="q-mx-lg q-my-md">
         <q-form ref="loginForm" v-if="!forgot" @submit.stop="onSubmit" class="q-gutter-md">
+          <div class="border-b-primary q-my-lg q-pb-xs flex justify-between items-end">
+            <span class="text-h5">
+              Sign in
+            </span>
+            <span class="text-primary cursor-pointer" @click="toRegister">Create account</span>
+          </div>
           <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
             label="Email" lazy-rules :rules="[checkEmail]">
             <template v-slot:prepend>
@@ -29,7 +31,7 @@
           </q-input>
 
           <q-card-actions class="q-mt-xs q-pa-none" vertical>
-            <q-btn outlined unelevated size="lg" class="full-width q-mb-xs" label="Sign in" type="submit"
+            <q-btn outlined unelevated size="lg" class="full-width q-my-lg" label="Sign in" type="submit"
               color="primary" />
             <a flat dense class="link-btn text-center text-bold text-primary" @click="forgot = !forgot">Forgot Your
               Password</a>
@@ -40,7 +42,7 @@
 
         <q-form ref="forgotForm" v-else @submit.stop="forgotSubmit" class="q-gutter-md">
           <div>
-            <h6 class="cardTitle">FORGOT YOUR PASSWORD?</h6>
+            <h6 class="cardTitle">Forgot Your Password?</h6>
             <p class="cardContent">
               Enter your email address below and we will send you a secure link
               to reset your password.
@@ -98,6 +100,10 @@ export default defineComponent({
     }
   },
   methods: {
+    toRegister() {
+      const _self = this
+      _self.$router.push({ path: '/register' })
+    },
     openResendDialog() {
       this.$q
         .dialog({
@@ -128,22 +134,23 @@ export default defineComponent({
       })
     },
     onSubmit() {
-      this.$refs.loginForm.validate().then(success => {
-        if (success) {
-          const loginData = {
-            email: this.email,
-            password: this.password
-          }
-          this.$store.dispatch('auth/loginAndSetUid', loginData)
-        } else {
-          this.$q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            message: 'You need to filled'
-          })
-        }
-      })
+      this.$router.push({ path: '/dashboard' })
+      // this.$refs.loginForm.validate().then(success => {
+      //   if (success) {
+      //     const loginData = {
+      //       email: this.email,
+      //       password: this.password
+      //     }
+      //     this.$store.dispatch('auth/loginAndSetUid', loginData)
+      //   } else {
+      //     this.$q.notify({
+      //       color: 'red-5',
+      //       textColor: 'white',
+      //       icon: 'warning',
+      //       message: 'You need to filled'
+      //     })
+      //   }
+      // })
     },
     joinAsGuest() {
       this.$refs.joinForm.validate().then(success => {

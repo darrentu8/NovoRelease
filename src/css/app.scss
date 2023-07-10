@@ -40,11 +40,20 @@ a {
 .border-grey {
   border: 1px solid #e5e5e5;
 }
+.border-b-grey {
+  border-bottom: 1px solid #e5e5e5;
+}
+.border-b-primary {
+  border-bottom: 1px solid $primary;
+}
+.border-r-b {
+  border-right: 1px solid #000;
+}
 .q-btn {
   font-weight: normal;
 }
 .brand-gradient {
-  background: #f1f1f1
+  background: rgb(241 241 241);
   // background: linear-gradient(to right, rgb(105, 183, 195) 0%, rgb(214, 240, 243) 100%)
 }
 .bg-brand-black {
@@ -141,23 +150,28 @@ button[aria-pressed="true"] span {
   display: flex;
   align-items: center;
   width: auto;
+  .spaceLine {
+    height: 25px;
+    width: 40px;
+    margin-right: 40px;
+  }
   a, img {
-    height: 22px;
     width: auto;
   }
   a:first-of-type  {
-    margin-left: 10px;
+    height: 22px;
+    margin-left: 15px;
     display: flex;
-    margin-right: 20px;
     img {
       margin-top: -1px;
-      margin-right: 18px;
     }
   }
-  a:last-of-type  {
-    img {
-      height: 28px;
-      margin-top: -5px;
+  .logoBox-r  {
+    img:first-of-type {
+      height: 26px;
+    }
+    img:last-of-type {
+      height: 33.8px;
     }
   }
 }
@@ -178,11 +192,9 @@ button[aria-pressed="true"] span {
 }
 .cardTitle {
     color: rgb(0, 0, 0);
-    font-size: 14px;
-    line-height: 20px;
+    line-height: auto;
     font-weight: 600;
-    text-transform: uppercase;
-    border-bottom: 3px solid #14A028;
+    border-bottom: 1px solid #14A028;
     text-align: left;
     padding: 0px 0px 6px;
     margin-top: 0px;
@@ -231,6 +243,9 @@ button[aria-pressed="true"] span {
 
 .bg-brand-green{
   background: #14A028 !important;
+}
+.bg-transparent{
+  background: transparent !important;
 }
 
 .text-brand-grey {

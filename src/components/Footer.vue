@@ -46,7 +46,7 @@ export default defineComponent({
     height: 100px
     line-height: 26px
     padding: 16px 0px
-    background-color: #5F5F5F
+    background-color: rgb(52,56,65)
     color: rgb(158, 156, 156)
     text-align: center
     font-size: 14px

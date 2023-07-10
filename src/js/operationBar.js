@@ -41,13 +41,6 @@ export const setOprBarOptions = () => {
     } else {
         mitt.emit('setOprBarIsLocked', false)
     }
-
-    const draggableRectObjects = store.state.common.draggableRectObjects
-    if (draggableRectObjects.find(o => o.id === selectedObject.uuidSrc)) {
-        mitt.emit('setOprBarIsShowDraggableRect', true)
-    } else {
-        mitt.emit('setOprBarIsShowDraggableRect', false)
-    }
 }
 
 export const setOprBarColorSize = () => {
@@ -57,117 +50,91 @@ export const setOprBarColorSize = () => {
         return
     }
 
-    if (selectedObject.isText) {
-        setTextGroup(selectedObject)
-    } else if (selectedObject.type === 'textbox') {
-        setTextBox(selectedObject)
-    } else if (selectedObject.type === 'activeSelection' || selectedObject.type === 'group') {
-        setGroup(selectedObject)
-    } else {
-        setObject(selectedObject)
-    }
-}
-
-const setTextGroup = (selectedObject) => {
-    selectedObject.getObjects().forEach(o => {
-        if (o.type === 'textbox') {
-            setTextBox(o)
-        } else {
-            setTextRect(o)
+    if (selectedObject.type === 'textbox') {
+        // const selectedText = selectedObject.getSelectedText()
+        if (!selectedObject.fill) {
+            selectedObject.fill = '#00000000'
         }
-    })
-}
+        const strokeRGB = hexToRgb(selectedObject.fill)
+        if (strokeRGB.a >= 0) {
+            mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
+        } else {
+            mitt.emit('setOprBarStrokeOpacity', 100)
+        }
+        delete strokeRGB.a
+        const strokeColorHex = rgbToHex(strokeRGB)
+        mitt.emit('setOprBarStrokeColor', strokeColorHex)
+        mitt.emit('setOprBarStrokeSize', selectedObject.fontSize / 6)
 
-const setTextBox = (selectedObject) => {
-    // const selectedText = selectedObject.getSelectedText()
-    if (!selectedObject.fill) {
-        selectedObject.fill = '#00000000'
-    }
-    const strokeRGB = hexToRgb(selectedObject.fill)
-    if (strokeRGB.a >= 0) {
-        mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
+        if (!selectedObject.textBackgroundColor) {
+            selectedObject.textBackgroundColor = '#00000000'
+        }
+        const fillRGB = hexToRgb(selectedObject.textBackgroundColor)
+        if (fillRGB.a >= 0) {
+            mitt.emit('setOprBarFillOpacity', fillRGB.a)
+        } else {
+            mitt.emit('setOprBarFillOpacity', 100)
+        }
+        delete fillRGB.a
+        const fillColorHex = rgbToHex(fillRGB)
+        mitt.emit('setOprBarFillColor', fillColorHex)
+
+        mitt.emit('setOprBarTextAlign', selectedObject.textAlign)
+    } else if (selectedObject.type === 'activeSelection' || selectedObject.type === 'group') {
+        const firstSelectedObject = selectedObject._objects[0]
+
+        if (!firstSelectedObject.stroke) {
+            firstSelectedObject.stroke = '#00000000'
+        }
+        const strokeRGB = hexToRgb(firstSelectedObject.stroke)
+        if (strokeRGB.a >= 0) {
+            mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
+        } else {
+            mitt.emit('setOprBarStrokeOpacity', 100)
+        }
+        delete strokeRGB.a
+        const strokeColorHex = rgbToHex(strokeRGB)
+        mitt.emit('setOprBarStrokeColor', strokeColorHex)
+        mitt.emit('setOprBarStrokeSize', firstSelectedObject.strokeWidth)
+
+        if (!firstSelectedObject.fill) {
+            firstSelectedObject.fill = '#00000000'
+        }
+        const fillRGB = hexToRgb(firstSelectedObject.fill)
+        if (fillRGB.a >= 0) {
+            mitt.emit('setOprBarFillOpacity', fillRGB.a)
+        } else {
+            mitt.emit('setOprBarFillOpacity', 100)
+        }
+        delete fillRGB.a
+        const fillColorHex = rgbToHex(fillRGB)
+        mitt.emit('setOprBarFillColor', fillColorHex)
     } else {
-        mitt.emit('setOprBarStrokeOpacity', 100)
-    }
-    delete strokeRGB.a
-    const strokeColorHex = rgbToHex(strokeRGB)
-    mitt.emit('setOprBarStrokeColor', strokeColorHex)
-    mitt.emit('setOprBarStrokeSize', Math.floor(selectedObject.fontSize / 6 * 10) / 10)
+        if (!selectedObject.stroke) {
+            selectedObject.stroke = '#00000000'
+        }
+        const strokeRGB = hexToRgb(selectedObject.stroke)
+        if (strokeRGB.a >= 0) {
+            mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
+        } else {
+            mitt.emit('setOprBarStrokeOpacity', 100)
+        }
+        delete strokeRGB.a
+        const strokeColorHex = rgbToHex(strokeRGB)
+        mitt.emit('setOprBarStrokeColor', strokeColorHex)
+        mitt.emit('setOprBarStrokeSize', selectedObject.strokeWidth)
 
-    mitt.emit('setOprBarTextAlign', selectedObject.textAlign)
-}
-
-const setTextRect = (selectedObject) => {
-    if (!selectedObject.fill) {
-        selectedObject.fill = '#00000000'
+        if (!selectedObject.fill) {
+            selectedObject.fill = '#00000000'
+        }
+        const fillRGB = hexToRgb(selectedObject.fill)
+        if (fillRGB.a >= 0) {
+            mitt.emit('setOprBarFillOpacity', fillRGB.a)
+        } else {
+            mitt.emit('setOprBarFillOpacity', 100)
+        }
+        delete fillRGB.a
+        const fillColorHex = rgbToHex(fillRGB)
+        mitt.emit('setOprBarFillColor', fillColorHex)
     }
-    const fillRGB = hexToRgb(selectedObject.fill)
-    if (fillRGB.a >= 0) {
-        mitt.emit('setOprBarFillOpacity', fillRGB.a)
-    } else {
-        mitt.emit('setOprBarFillOpacity', 100)
-    }
-    delete fillRGB.a
-    const fillColorHex = rgbToHex(fillRGB)
-    mitt.emit('setOprBarFillColor', fillColorHex)
-}
-
-const setGroup = (selectedObject) => {
-    const firstSelectedObject = selectedObject._objects[0]
-
-    if (!firstSelectedObject.stroke) {
-        firstSelectedObject.stroke = '#00000000'
-    }
-    const strokeRGB = hexToRgb(firstSelectedObject.stroke)
-    if (strokeRGB.a >= 0) {
-        mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
-    } else {
-        mitt.emit('setOprBarStrokeOpacity', 100)
-    }
-    delete strokeRGB.a
-    const strokeColorHex = rgbToHex(strokeRGB)
-    mitt.emit('setOprBarStrokeColor', strokeColorHex)
-    mitt.emit('setOprBarStrokeSize', firstSelectedObject.strokeWidth)
-
-    if (!firstSelectedObject.fill) {
-        firstSelectedObject.fill = '#00000000'
-    }
-    const fillRGB = hexToRgb(firstSelectedObject.fill)
-    if (fillRGB.a >= 0) {
-        mitt.emit('setOprBarFillOpacity', fillRGB.a)
-    } else {
-        mitt.emit('setOprBarFillOpacity', 100)
-    }
-    delete fillRGB.a
-    const fillColorHex = rgbToHex(fillRGB)
-    mitt.emit('setOprBarFillColor', fillColorHex)
-}
-
-const setObject = (selectedObject) => {
-    if (!selectedObject.stroke) {
-        selectedObject.stroke = '#00000000'
-    }
-    const strokeRGB = hexToRgb(selectedObject.stroke)
-    if (strokeRGB.a >= 0) {
-        mitt.emit('setOprBarStrokeOpacity', strokeRGB.a)
-    } else {
-        mitt.emit('setOprBarStrokeOpacity', 100)
-    }
-    delete strokeRGB.a
-    const strokeColorHex = rgbToHex(strokeRGB)
-    mitt.emit('setOprBarStrokeColor', strokeColorHex)
-    mitt.emit('setOprBarStrokeSize', selectedObject.strokeWidth)
-
-    if (!selectedObject.fill) {
-        selectedObject.fill = '#00000000'
-    }
-    const fillRGB = hexToRgb(selectedObject.fill)
-    if (fillRGB.a >= 0) {
-        mitt.emit('setOprBarFillOpacity', fillRGB.a)
-    } else {
-        mitt.emit('setOprBarFillOpacity', 100)
-    }
-    delete fillRGB.a
-    const fillColorHex = rgbToHex(fillRGB)
-    mitt.emit('setOprBarFillColor', fillColorHex)
 }

@@ -45,6 +45,27 @@ export function SET_USER_ROLE(state, userRole) {
     state.userRole = userRole
 }
 
+export function UPDATE_USER_MOUSE(state, userMouse) {
+    const index = state.userMouseList.findIndex(o => o.userData.uid === userMouse.userData.uid)
+    if (index >= 0) {
+        state.userMouseList[index] = userMouse
+    } else {
+        state.userMouseList.push(userMouse)
+    }
+}
+
+export function CLEAR_USER_MOUSE_LIST(state) {
+    state.userMouseList = []
+}
+
+export function SET_IS_SHOW_PLAYER_VIDEO(state, isShowPlayerVideo) {
+    state.isShowPlayerVideo = isShowPlayerVideo
+}
+
+export function SET_PLAYING_VIDEO_SOURCE(state, playingVdieoSource) {
+    state.playingVdieoSource = playingVdieoSource
+}
+
 export function SET_IS_SHOW_PLAYER_AUDIO(state, isShowPlayerAudio) {
     state.isShowPlayerAudio = isShowPlayerAudio
 }
@@ -71,32 +92,4 @@ export function SET_CANVAS_ZOOM(state, zoom) {
 
 export function SET_COPY_IMAGE(state, image) {
     state.copyImage = image
-}
-
-export function ADD_DRAGGABLE_RECT_OBJECT(state, draggableRectObject) {
-    state.draggableRectObjects.push(draggableRectObject)
-}
-
-export function SET_DRAGGABLE_RECT_OBJECT(state, draggableRectObject) {
-    const index = state.draggableRectObjects.findIndex(o => o.id === draggableRectObject.id)
-    state.draggableRectObjects[index] = draggableRectObject
-}
-
-export function CLEAR_DRAGGABLE_OBJECT(state) {
-    state.draggableRectObjects = []
-}
-
-export function REMOVE_DRAGGABLE_OBJECT(state, id) {
-    const index = state.draggableRectObjects.findIndex(o => o.id === id)
-    if (index >= 0) {
-        state.draggableRectObjects.splice(index, 1)
-    }
-}
-
-export function SET_IS_SHOW_URL_VIEWER(state, isShowUrlViewer) {
-    state.isShowUrlViewer = isShowUrlViewer
-}
-
-export function SET_URL_VIEWER_SRC(state, urlVierweSrc) {
-    state.urlVierweSrc = urlVierweSrc
 }

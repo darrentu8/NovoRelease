@@ -3,7 +3,6 @@ import { adjustCursor, canvas } from '../canvas'
 import { setOprBarOptions, setOprBarPos, showOprBar } from '../operationBar'
 
 import store from '../../store'
-import { mitt } from 'src/boot/bus'
 
 let isInit = false
 let isActive = false
@@ -38,18 +37,6 @@ export const initChoose = () => {
         }
 
         setOprBarPos()
-
-        mitt.emit('dealDraggableRects')
-    })
-
-    canvas.on('object:scaling', options => {
-        if (!isActive) {
-            return
-        }
-
-        setOprBarPos()
-
-        mitt.emit('dealDraggableRects')
     })
 
     canvas.on('object:modified', options => {
@@ -58,18 +45,10 @@ export const initChoose = () => {
         }
 
         setOprBarPos()
-
-        mitt.emit('dealDraggableRects')
     })
 
     canvas.on('selection:cleared', options => {
         if (!isActive) {
-            return
-        }
-
-        const activeObject = canvas.getActiveObject()
-
-        if (activeObject) {
             return
         }
 

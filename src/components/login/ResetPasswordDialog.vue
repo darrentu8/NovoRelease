@@ -6,12 +6,12 @@
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <p class="brand-title">EMAIL WAS SENT TO {{ $store.state.auth.email }}</p>
+        <p class="brand-title">EMAIL WAS SENT TO {{ $route.params.email }}</p>
         <p class="text-brand-gery" style="word-break:break-all;">
           Click the link we sent to reset your password. If you did not receive an email, please check your Spam folder.
         </p>
         <q-card-actions class="q-mt-xs q-pa-none" vertical>
-          <q-btn unelevated size="lg" class="full-width q-mb-xs" label="BACK TO LOGIN" @click="backToLogin"
+          <q-btn square unelevated size="lg" class="full-width q-mb-xs" label="BACK TO LOGIN" @click="backToLogin"
             color="primary" />
         </q-card-actions>
       </q-card-section>
@@ -22,11 +22,13 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
+import ResendDialog from 'src/components/login/ResendDialog'
 
 export default defineComponent({
   name: 'ResetPasswordDialog',
   mixins: [inputRules],
-  props: ['tempEmail'],
+  props: {
+  },
   data() {
     return {
       loading: false,
@@ -34,12 +36,22 @@ export default defineComponent({
     }
   },
   computed: {
+    email() {
+      return this.$route.params.email
+    }
   },
   mounted() {
+    console.log('this.$route.params.email', this.$route.params.email)
   },
   methods: {
     backToLogin() {
       this.$router.push({ path: '/' })
+    },
+    openResendDialog() {
+      this.$q
+        .dialog({
+          component: ResendDialog
+        })
     }
   }
 })

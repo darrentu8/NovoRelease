@@ -1,6 +1,6 @@
 <template>
   <div class="row shadow-2 rounded-borders items-center text-center bg-white absolute"
-    style="bottom:15px;left:15px;height:40px;z-index:10">
+    style="bottom:15px;left:15px;height:40px">
     <q-btn-group class="fit">
       <ExtensionMenu />
       <q-separator vertical inset />
@@ -37,4 +37,6 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

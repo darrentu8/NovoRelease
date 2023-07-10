@@ -1,6 +1,6 @@
 <template>
     <div class="row shadow-2 rounded-borders items-center text-center bg-white"
-        style="position:absolute;bottom:15px;right:15px;height:40px;z-index:10">
+        style="position:absolute;bottom:15px;right:15px;height:40px">
         <q-btn-group class="fit">
             <q-btn class="full-height" style="width:50px" dense flat size="17px"
                 :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" color="brand-grey"
@@ -11,8 +11,8 @@
             <q-btn class="full-height" style="width:50px" dense flat icon="remove_circle_outline" color="brand-grey"
                 @click="zoomDown" />
             <q-select class="q-pl-sm" borderless v-model="zoom" style="width:60px" :menu-offset="[0, 10]"
-                :options="zoomOptions" dense map-options option-value="value" option-label="label" emit-value options-dense
-                @update:modelValue="changeZoom" color="white" options-selected-class="wb-resize-select">
+                :options="zoomOptions" dense map-options option-value="value" option-label="label" emit-value
+                options-dense @update:modelValue="changeZoom" color="white" options-selected-class="wb-resize-select">
                 <template v-slot:selected>
                     <span class="text-brand-grey">{{ zoom }}%</span>
                 </template>

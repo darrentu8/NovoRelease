@@ -4,9 +4,9 @@
             v-if="isPen" />
         <img :class="{ 'is-active-icon-green': isSelectedPen }" style="height:26px;width:26px" :src="iconMarker"
             v-if="isMarker" />
-        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none" :persistent="$q.platform.is.mobile"
-            v-if="$q.platform.is.mobile ? isSelectedPen : true" :auto-close="$q.platform.is.mobile">
-            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false" @click="changePenType('pen')">
+        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none">
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
+                @click="changePenType('pen')">
                 <img :class="{ 'is-active-icon-green': penType === 'pen' }" style="height:24px;width:24px"
                     :src="iconPencil" />
             </q-btn>

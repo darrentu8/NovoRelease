@@ -37,13 +37,14 @@ export default {
     methods: {
         ...mapMutations('common', []),
         show() {
-            // const iframe = document.querySelector('#url-iframe iframe')
-            // if (iframe) {
-            //     this.isLoading = true
-            //     iframe.onload = () => {
-            //         this.isLoading = false
-            //     }
-            // }
+            this.isLoading = true
+
+            const iframe = document.querySelector('#url-iframe iframe')
+            if (iframe) {
+                iframe.onload = () => {
+                    this.isLoading = false
+                }
+            }
         },
         hide() {
             this.$emit('update:isShow', false)
@@ -51,4 +52,6 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

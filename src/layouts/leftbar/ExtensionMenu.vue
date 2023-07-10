@@ -101,7 +101,6 @@ export default {
     },
     exportSvg() {
       const svg = canvas.toSVG()
-      console.log(svg)
       saveSvg(svg, this.pname)
     },
     exportPdf() {

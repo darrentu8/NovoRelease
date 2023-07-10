@@ -10,8 +10,8 @@ import {
 } from 'src/api/whiteboard'
 import { webSocket } from './websocket'
 import { isEditor } from 'src/helper/project'
+import { removeEmptyTextbox } from './toolbar/text'
 
-import { enterEditing } from 'src/js/toolbar/text'
 // import { capitalizeFirstLetter } from 'src/helper/string'
 
 export let canvas = null
@@ -51,32 +51,14 @@ export const initCanvas = domId => {
         leaveWhiteBoard()
     }
 
-    canvas.on('before:render', () => {
-        const activeObject = canvas.getActiveObject()
-
-        if (activeObject && activeObject.type === 'group') { // only way to real update group
-            activeObject.setOptions({ scaleX: activeObject.scaleX + (Math.random() > 0.5 ? 0.00001 : -0.00001) })
-        }
-    })
-
     canvas.on('after:render', debounce(options => {
         setContent()
         saveHistory()
     }, 200))
 
     canvas.on('object:modified', o => {
+        removeEmptyTextbox(o.target)
         markObjectLastModifiedUser(o.target)
-    })
-
-    canvas.on('mouse:dblclick', options => {
-        const activeObject = canvas.getActiveObject()
-        if (activeObject && activeObject.isText) {
-            enterEditing(activeObject)
-        }
-    })
-
-    canvas.on('object:scaling', options => {
-
     })
 
     canvas.on('mouse:move', throttle(options => {
@@ -97,18 +79,12 @@ export const initCanvas = domId => {
             const pageId = store.state.common.page
             webSocket.send(JSON.stringify({ command: 'USER_MOUSE_POSITION', pid, page_id: pageId, data: JSON.stringify(options.absolutePointer) }))
         }
-    }, 33))
+    }, 75))
 
     window.addEventListener('keyup', e => {
-        let isEditing = false
+        const activeObject = canvas.getActiveObject()
 
-        canvas.getObjects().forEach(o => {
-            if (o.isEditing) {
-                isEditing = true
-            }
-        })
-
-        if (isEditing) {
+        if (activeObject && activeObject.isEditing) {
             return
         }
 
@@ -237,10 +213,7 @@ export const getCanvasFrontIndex = () => {
 
 export const setCanvasZoom = zoom => {
     canvas.zoomToPoint(canvas.getVpCenter(), zoom / 100)
-
     canvas.renderAll()
-
-    mitt.emit('dealDraggableRects')
 }
 
 export const setCanvasRestoreViewport = zoom => {
@@ -306,20 +279,15 @@ export const setPageDataAndRender = (data, pageId) => {
 }
 
 const renderCanvasData = data => {
-    canvas.loadFromJSON(data, () => {
-        canvas.renderAll.bind(canvas)
-        mitt.emit('dealDraggableRects')
-    }, (o, object) => {
-        if (o.type === 'textbox' && !o.isLocked) { // 正在编辑的textbox
-            o.lockMovementX = false
-            o.lockMovementY = false
+    canvas.loadFromJSON(data, canvas.renderAll.bind(canvas), function (o, object) {
+        if (object.type === 'textbox' && !object.isLocked) { // 正在编辑的textbox
+            object.lockMovementX = false
+            object.lockMovementY = false
         }
     })
 }
 
 export const clearCanvas = () => {
-    store.commit('common/CLEAR_DRAGGABLE_OBJECT')
-
     canvas.getObjects().map(o => o).forEach(object => {
         if (!object.isRealia) {
             canvas.remove(object)
@@ -468,34 +436,29 @@ export const setActiveObjectStrokeColor = color => {
     }
 
     if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
-        if (activeObject.isText) {
-            setTextGroupStrokeColor(activeObject, color)
-        } else {
-            activeObject.getObjects().forEach(o => {
-                setObjectStrokeColor(o, color)
-            })
-        }
+        activeObject.getObjects().forEach(o => {
+            setObjectStrokeColor(o, color)
+        })
     } else {
         setObjectStrokeColor(activeObject, color)
     }
-
-    canvas.renderAll()
 }
 
 const setObjectStrokeColor = (object, color) => {
     if (object.type === 'textbox') {
-        object.setOptions({ fill: color })
+        const selectedText = object.getSelectedText()
+        if (selectedText === '') {
+            object.setOptions({ fill: color })
+        } else {
+            object.setSelectionStyles({
+                fill: color
+            })
+        }
     } else {
         object.setOptions({ stroke: color })
     }
-}
 
-const setTextGroupStrokeColor = (textGroup, color) => {
-    textGroup.getObjects().forEach(o => {
-        if (o.type === 'textbox') {
-            o.setOptions({ fill: color })
-        }
-    })
+    canvas.renderAll()
 }
 
 export const setActiveObjectStrokeSize = size => {
@@ -511,8 +474,6 @@ export const setActiveObjectStrokeSize = size => {
     } else {
         setObjectStrokeSize(activeObject, size)
     }
-
-    canvas.renderAll()
 }
 
 const setObjectStrokeSize = (object, size) => {
@@ -528,6 +489,8 @@ const setObjectStrokeSize = (object, size) => {
     } else if (object.strokeWidth) {
         object.setOptions({ strokeWidth: size })
     }
+
+    canvas.renderAll()
 }
 
 export const setActiveObjectStrokeType = type => {
@@ -543,12 +506,12 @@ export const setActiveObjectStrokeType = type => {
     } else {
         setObjectStrokeType(activeObject, type)
     }
-
-    canvas.renderAll()
 }
 
 const setObjectStrokeType = (object, type) => {
-    if (object.strokeWidth) {
+    if (object.type === 'textbox') {
+        return
+    } else if (object.strokeWidth) {
         let strokeDashArray = []
         if (type === strokeType.SOLID) {
             strokeDashArray = []
@@ -560,6 +523,8 @@ const setObjectStrokeType = (object, type) => {
 
         object.setOptions({ strokeDashArray })
     }
+
+    canvas.renderAll()
 }
 
 export const setActiveObjectFillColor = color => {
@@ -569,44 +534,29 @@ export const setActiveObjectFillColor = color => {
     }
 
     if (activeObject.type === 'activeSelection' || activeObject.type === 'group') {
-        if (activeObject.isText) {
-            setTextGroupFillColor(activeObject, color)
-        } else {
-            activeObject.getObjects().forEach(o => {
-                setObjectFillColor(o, color)
-            })
-        }
+        activeObject.getObjects().forEach(o => {
+            setObjectFillColor(o, color)
+        })
     } else {
         setObjectFillColor(activeObject, color)
     }
-
-    canvas.renderAll()
 }
 
 const setObjectFillColor = (object, color) => {
     if (object.type === 'textbox') {
-        canvas.getObjects().forEach(o => {
-            if (o.toEdit && o !== object) {
-                o.setOptions({
-                    fill: color,
-                    shadow: { color: 'rgba(0,0,0,0.3)', blur: 5, offsetX: 5, offsetY: 5 }
-                })
-            }
-        })
+        const selectedText = object.getSelectedText()
+        if (selectedText === '') {
+            object.setOptions({ textBackgroundColor: color })
+        } else {
+            object.setSelectionStyles({
+                textBackgroundColor: color
+            })
+        }
     } else {
         object.setOptions({ fill: color })
     }
-}
 
-const setTextGroupFillColor = (textGroup, color) => {
-    textGroup.getObjects().forEach(o => {
-        if (o.type !== 'textbox') {
-            o.setOptions({
-                fill: color,
-                shadow: { color: 'rgba(0,0,0,0.3)', blur: 5, offsetX: 5, offsetY: 5 }
-            })
-        }
-    })
+    canvas.renderAll()
 }
 
 export const setActiveObjectCopy = () => {

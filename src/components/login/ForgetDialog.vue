@@ -58,7 +58,7 @@
           </q-input>
 
           <q-card-actions class="q-mt-xs q-pa-none justify-center">
-            <q-btn unelevated size="lg" class="full-width q-mt-lg q-mb-xs" label="CHANGE PASSWORD" type="submit"
+            <q-btn square unelevated size="lg" class="full-width q-mt-lg q-mb-xs" label="CHANGE PASSWORD" type="submit"
               color="primary" />
           </q-card-actions>
         </q-form>

@@ -1,19 +1,9 @@
 <template>
-    <vue-draggable-resizable v-for="object in draggableRectObjects" :key="object.id" :resizable="false" :x="object.rect.x"
-        :y="object.rect.y" :w="object.rect.w" :h="object.rect.h" @activated="onActivated(object.id)"
-        @dragging="(...args) => onDrag(...args, object.id)" @dragstop="dragEnd">
-        <q-media-player v-if="object.type === 'video'" dense autoplay class="fit" type="video" :source="object.source" />
+    <vue-draggable-resizable v-if="isShow" :draggable="false" :resizable="false" :active="true" :x="videoRect.x"
+        :y="videoRect.y" :w="videoRect.w" :h="videoRect.h" :parent="true" @activated="onActivated" @dragging="onDrag"
+        @resizing="onResize">
+        <q-media-player dense autoplay class="fit" type="video" :source="source" />
         <!-- http://www.peach.themazzone.com/durian/movies/sintel-2048-surround.mp4 -->
-        <div v-if="object.type === 'doc'" class="fit column">
-            <q-bar class="bg-brand-green" style="cursor: move;border-radius: 10px 10px 0px 0px;">
-                <div />
-                <q-space />
-                <q-btn dense flat icon="open_in_new" @click="openDocInNew(object.source)" />
-                <q-btn dense flat icon="crop_square" @click="maxDoc(object.source)" />
-                <q-btn dense flat icon="close" @click="closeDoc(object.id)" />
-            </q-bar>
-            <q-video class="col bg-grey-3" :src="object.source" />
-        </div>
     </vue-draggable-resizable>
 </template>
 
@@ -21,90 +11,97 @@
 import VueDraggableResizable from 'vue-draggable-resizable/src/components/vue-draggable-resizable.vue'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import { canvas } from 'src/js/canvas'
-import { setOprBarOptions, setOprBarPos } from 'src/js/operationBar'
-import { mapMutations } from 'vuex'
-import { extend, openURL } from 'quasar'
+import { setOprBarPos } from 'src/js/operationBar'
 
 export default {
-    name: 'Draggable-Rects',
+    name: 'Player-Video',
     components: {
         VueDraggableResizable
     },
     mounted() {
-        this.$bus.on('dealDraggableRects', this.dealDraggableRects)
+        this.$bus.on('initVideoRect', this.initVideoRect)
+        this.$bus.on('setVideoRectByCanvasRect', this.setVideoRectByCanvasRect)
+        this.$bus.on('setCanvasRectByVideoRect', this.setCanvasRectByVideoRect)
     },
     beforeUnmount() {
-        this.$bus.off('dealDraggableRects', this.dealDraggableRects)
+        this.$bus.off('initVideoRect', this.initVideoRect)
+        this.$bus.off('setVideoRectByCanvasRect', this.setVideoRectByCanvasRect)
+        this.$bus.off('setCanvasRectByVideoRect', this.setCanvasRectByVideoRect)
     },
     data() {
         return {
-
+            videoObject: null,
+            videoRect: { x: 0, y: 0, w: 0, h: 0 }
         }
     },
     computed: {
-        draggableRectObjects() {
-            return this.$store.state.common.draggableRectObjects
+        isShow() {
+            return this.$store.state.common.isShowPlayerVideo
+        },
+        source() {
+            return this.$store.state.common.playingVdieoSource
         }
     },
     methods: {
-        ...mapMutations('common', ['REMOVE_DRAGGABLE_OBJECT', 'SET_DRAGGABLE_RECT_OBJECT', 'SET_IS_SHOW_URL_VIEWER', 'SET_URL_VIEWER_SRC']),
-        dealDraggableRects(object) {
-            this.draggableRectObjects.map(o => o).forEach(object => {
-                this.dealDraggableRect(object)
-            })
-        },
-        dealDraggableRect(object) {
-            const canvasObject = canvas.getObjects().find(o => o.uuidSrc === object.id)
+        initVideoRect() {
+            const selectedObject = canvas.getActiveObject()
 
-            if (!canvasObject) {
-                this.REMOVE_DRAGGABLE_OBJECT(object.id)
+            if (!selectedObject.isVideo) {
                 return
             }
 
-            const objectCopy = extend(true, {}, object)
-
-            const selectedObjectRect = canvasObject.getBoundingRect(true.true)
-
-            objectCopy.rect.x = selectedObjectRect.left + 5
-            objectCopy.rect.y = selectedObjectRect.top + 5
-            objectCopy.rect.w = selectedObjectRect.width - 10
-            objectCopy.rect.h = selectedObjectRect.height - 10
-
-            this.SET_DRAGGABLE_RECT_OBJECT(objectCopy)
+            this.videoObject = selectedObject
+            this.setVideoRectByCanvasRect()
         },
-        onActivated(id) {
-            const canvasObject = canvas.getObjects().find(o => o.uuidSrc === id)
-            if (!canvasObject) {
+        uninitVideoRect() {
+
+        },
+        setVideoRectByCanvasRect() {
+            const selectedObjectRect = this.videoObject.getBoundingRect(true.true)
+
+            this.videoRect.x = selectedObjectRect.left
+            this.videoRect.y = selectedObjectRect.top
+            this.videoRect.w = selectedObjectRect.width
+            this.videoRect.h = selectedObjectRect.height
+        },
+        setCanvasRectByVideoRect() {
+
+        },
+        onActivated() {
+            if (!this.videoObject) {
                 return
             }
-            canvas.setActiveObject(canvasObject)
+            canvas.setActiveObject(this.videoObject)
         },
-        onDrag(x, y, id) {
-            const canvasObject = canvas.getObjects().find(o => o.uuidSrc === id)
-            if (!canvasObject) {
+        onDrag(x, y) {
+            if (!this.videoObject) {
                 return
             }
             const pointVpt = canvas.restorePointerVpt({ x, y })
-            canvasObject.setOptions({ left: pointVpt.x, top: pointVpt.y })
+            this.videoObject.setOptions({ left: pointVpt.x, top: pointVpt.y })
             setOprBarPos()
 
             canvas.renderAll()
         },
-        dragEnd() {
-            this.dealDraggableRects()
-        },
-        openDocInNew(url) {
-            openURL(url)
-        },
-        maxDoc(url) {
-            this.SET_IS_SHOW_URL_VIEWER(true)
-            this.SET_URL_VIEWER_SRC(url)
-        },
-        closeDoc(id) {
-            this.REMOVE_DRAGGABLE_OBJECT(id)
-            setOprBarOptions()
+        onResize(x, y, width, height) {
+            if (!this.videoObject) {
+                return
+            }
+            const pointVptTL = canvas.restorePointerVpt({ x, y })
+            // const pointVptRB = canvas.restorePointerVpt({ x: x + width, y: y + height })
+            this.videoObject.setOptions({
+                left: pointVptTL.x,
+                top: pointVptTL.y,
+                width,
+                height
+            })
+            setOprBarPos()
+
+            canvas.renderAll()
         }
     }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

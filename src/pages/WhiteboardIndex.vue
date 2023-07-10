@@ -12,6 +12,7 @@
       <UserMouse />
       <PlayerVideo />
       <PlayerAudio />
+      <UrlViewer />
     </div>
   </q-page>
 </template>
@@ -25,6 +26,7 @@ import Clipboard from '../layouts/Clipboard'
 import UserMouse from '../layouts/UserMouse'
 import PlayerVideo from '../layouts/media/Video'
 import PlayerAudio from '../layouts/media/Audio'
+import UrlViewer from '../layouts/media/UrlViewer'
 import { initCanvas, canvas, setCanvasDataAndRender, setContent, leaveWhiteBoard } from '../js/canvas'
 
 import { dom } from 'quasar'
@@ -55,7 +57,8 @@ export default {
     Clipboard,
     UserMouse,
     PlayerVideo,
-    PlayerAudio
+    PlayerAudio,
+    UrlViewer
   },
   created() {
     this.initWebsocket()
@@ -99,7 +102,7 @@ export default {
     leaveWhiteBoard()
 
     this.SET_PID(null)
-    this.$bus.emit('clearUserMouses')
+    this.CLEAR_USER_MOUSE_LIST()
 
     uninitChoose()
     uninitPen()
@@ -127,7 +130,7 @@ export default {
   methods: {
     ...mapMutations('user', ['setUserList']),
     ...mapMutations('common', ['SET_PID', 'SET_PNAME', 'SET_PAGES', 'SET_PAGE_ID', 'SET_USERS', 'SET_PROJECT_DATA',
-      'SET_USER_ROLE']),
+      'SET_USER_ROLE', 'CLEAR_USER_MOUSE_LIST']),
     stylePage(offset, height) {
       return { height: `${height - offset}px` }
     },
@@ -144,4 +147,6 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

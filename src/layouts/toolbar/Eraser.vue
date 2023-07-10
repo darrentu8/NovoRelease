@@ -2,8 +2,7 @@
     <q-btn class="overflow-hidden" @click="clickEraser" style="width:50px"
         :class="{ 'is-tool-selected': isSelectedEraser }">
         <img :class="{ 'is-active-icon-green': isSelectedEraser }" style="height:26px;width:26px" :src="iconEraser" />
-        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none" :persistent="$q.platform.is.mobile"
-            v-if="$q.platform.is.mobile ? isSelectedEraser : true" :auto-close="$q.platform.is.mobile">
+        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none">
             <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false" @click="clickClearText">
                 <img style="height:24px;width:24px" :src="iconClearText" />
             </q-btn>

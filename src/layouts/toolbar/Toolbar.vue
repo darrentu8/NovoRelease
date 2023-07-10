@@ -1,6 +1,6 @@
 <template>
     <div class="row shadow-2 rounded-borders items-center text-center bg-white absolute" id="wb-toolbar"
-        style="height:40px;z-index:10" :style="{ left: leftPx, top: topPx, bottom: bottomPx, transform: transform }">
+        style="height:40px" :style="{ left: leftPx, top: topPx, bottom: bottomPx, transform: transform }">
         <q-btn-group class="fit">
             <Choose />
             <Move />
@@ -15,9 +15,8 @@
             <Background />
             <UndoRedo />
             <q-separator vertical inset />
-            <q-btn class="overflow-hidden q-pa-none q-pl-sm q-pr-sm" style="cursor:grab" @touchstart="dragBegin"
-                @mousedown="dragBegin" @dragstart.prevent="() => { return false }"
-                @touchstart.prevent="() => { return false }">
+            <q-btn class="overflow-hidden q-pa-none q-pl-sm q-pr-sm" style="cursor:grab" @mousedown="dragBegin"
+                @dragstart.prevent="() => { return false }">
                 <img style="height:26px;width:5px" :src="iconDrag" />
             </q-btn>
         </q-btn-group>
@@ -66,16 +65,6 @@ export default {
 
         document.addEventListener('mousemove', this.dragMove)
         document.addEventListener('mouseup', this.dragEnd)
-
-        document.addEventListener('touchmove', this.dragMove)
-        document.addEventListener('touchend', this.dragEnd)
-    },
-    beforeUnmount() {
-        document.removeEventListener('mousemove', this.dragMove)
-        document.removeEventListener('mouseup', this.dragEnd)
-
-        document.removeEventListener('touchmove', this.dragMove)
-        document.removeEventListener('touchend', this.dragEnd)
     },
     data() {
         return {
@@ -101,8 +90,8 @@ export default {
         dragBegin(e) {
             this.isDragging = true
 
-            this.dragBeginPos.x = e.touches ? e.touches[0].clientX : e.clientX
-            this.dragBeginPos.y = e.touches ? e.touches[0].clientY : e.clientY
+            this.dragBeginPos.x = e.clientX
+            this.dragBeginPos.y = e.clientY
 
             this.originPos.x = this.left
             this.originPos.y = this.top
@@ -112,8 +101,8 @@ export default {
                 return
             }
 
-            const deltaX = (e.touches ? e.touches[0].clientX : e.clientX) - this.dragBeginPos.x
-            const deltaY = (e.touches ? e.touches[0].clientY : e.clientY) - this.dragBeginPos.y
+            const deltaX = e.clientX - this.dragBeginPos.x
+            const deltaY = e.clientY - this.dragBeginPos.y
 
             this.left = this.originPos.x + deltaX
             this.top = this.originPos.y + deltaY

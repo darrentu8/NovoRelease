@@ -171,9 +171,7 @@ export default {
                 return
             }
             const offsetTop = domSelected.offsetTop - 190
-            if (this.$refs.scroll.setScrollPosition) {
-              this.$refs.scroll.setScrollPosition('vertical', offsetTop)
-            }
+            this.$refs.scroll?.setScrollPosition('vertical', offsetTop)
         },
         clickPre() {
             this.page = this.pages[this.currentPageIndex - 1].id

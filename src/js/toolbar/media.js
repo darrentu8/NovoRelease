@@ -8,15 +8,12 @@ export const addImage = (uuid, src) => {
     img.onload = () => {
         const imgObject = new fabric.Image(img, {
             uuidSrc: uuid,
-            crossOrigin: 'anonymous',
-            mediaSrc: src
+            crossOrigin: 'anonymous'
         })
 
         canvas.insertAt(imgObject, getCanvasFrontIndex())
         canvas.viewportCenterObject(imgObject)
         canvas.setActiveObject(imgObject)
-
-        imgObject.setControlVisible('mt', false)
 
         markObjectOwner(imgObject)
     }
@@ -45,15 +42,12 @@ export const addVideo = (videoData, thumbnailData) => {
             isVideo: true,
             uuidSrc: videoData.uuid,
             mediaSrc: videoData.url,
-            crossOrigin: 'anonymous',
-            padding: 5
+            crossOrigin: 'anonymous'
         })
 
         canvas.insertAt(imgObject, getCanvasFrontIndex())
         canvas.viewportCenterObject(imgObject)
         canvas.setActiveObject(imgObject)
-
-        imgObject.setControlVisible('mtr', false)
 
         markObjectOwner(imgObject)
     }
@@ -77,8 +71,6 @@ export const addAudio = (audioData) => {
         canvas.viewportCenterObject(imgObject)
         canvas.setActiveObject(imgObject)
 
-        imgObject.setControlVisible('mtr', false)
-
         markObjectOwner(imgObject)
     }
 }
@@ -92,7 +84,6 @@ export const addUrl = (url) => {
             isUrl: true,
             mediaSrc: url,
             crossOrigin: 'anonymous',
-            padding: 5,
             scaleX: 5,
             scaleY: 5
         })
@@ -100,39 +91,6 @@ export const addUrl = (url) => {
         canvas.insertAt(imgObject, getCanvasFrontIndex())
         canvas.viewportCenterObject(imgObject)
         canvas.setActiveObject(imgObject)
-
-        imgObject.setControlVisible('mtr', false)
-
-        markObjectOwner(imgObject)
-    }
-}
-
-export const addDoc = (url, uuid, type) => {
-    const img = new Image()
-    if (type === 'ppt') {
-        img.src = require('../../assets/icons/ppt.svg')
-    } else if (type === 'doc') {
-        img.src = require('../../assets/icons/doc.svg')
-    } else if (type === 'xls') {
-        img.src = require('../../assets/icons/xls.svg')
-    } else if (type === 'pdf') {
-        img.src = require('../../assets/icons/pdf.svg')
-    }
-    img.crossOrigin = 'anonymous'
-    img.onload = () => {
-        const imgObject = new fabric.Image(img, {
-            isDoc: true,
-            mediaSrc: url,
-            uuidSrc: uuid,
-            crossOrigin: 'anonymous',
-            padding: 5
-        })
-
-        canvas.insertAt(imgObject, getCanvasFrontIndex())
-        canvas.viewportCenterObject(imgObject)
-        canvas.setActiveObject(imgObject)
-
-        imgObject.setControlVisible('mtr', false)
 
         markObjectOwner(imgObject)
     }

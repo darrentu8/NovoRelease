@@ -107,7 +107,7 @@ const mouseMove = e => {
     canvas.renderAll()
 
     canvas.getObjects().map(o => o).forEach(object => {
-        if (object !== drawingObject && !object.mediaSrc) {
+        if (object !== drawingObject) {
             if (drawingObject.intersectsWithObject(object, true, true)) {
                 canvas.remove(object)
             }

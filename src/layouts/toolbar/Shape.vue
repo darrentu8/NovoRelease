@@ -1,11 +1,11 @@
 <template>
-    <q-btn class="overflow-hidden" @click="clickShape" style="width:50px" :class="{ 'is-tool-selected': isSelectedShape }">
+    <q-btn class="overflow-hidden" @click="clickShape" style="width:50px"
+        :class="{ 'is-tool-selected': isSelectedShape }">
         <img :class="{ 'is-active-icon-green': isSelectedShape }" style="height:26px;width:26px"
             :src="selectedShape.icon" />
-        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none" :persistent="$q.platform.is.mobile"
-            v-if="$q.platform.is.mobile ? isSelectedShape : true" :auto-close="$q.platform.is.mobile">
-            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" v-for="item in shapeOptions" :key="item.value" dense flat
-                :ripple="false" @click="changeShapeType(item.value)">
+        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none">
+            <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" v-for="item in shapeOptions" :key="item.value" dense
+                flat :ripple="false" @click="changeShapeType(item.value)">
                 <img :class="{ 'is-active-icon-green': shapeType === item.value }" style="height:24px;width:24px"
                     :src="item.icon" />
             </q-btn>

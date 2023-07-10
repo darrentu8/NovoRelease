@@ -33,7 +33,7 @@ export const initWebSocket = (ws) => {
                 pageId: messageData.page_id,
                 pid: messageData.pid
             }
-            mitt.emit('updateUserMouses', data)
+            store.commit('common/UPDATE_USER_MOUSE', data)
         }
     }
 

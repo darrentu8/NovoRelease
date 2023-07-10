@@ -26,27 +26,19 @@ const { luminosity } = colors
 
 export default {
     name: 'User-Mouse',
-    mounted() {
-        this.$bus.on('updateUserMouses', this.updateUserMouses)
-        this.$bus.on('clearUserMouses', this.clearUserMouses)
-    },
-    beforeUnmount() {
-        this.$bus.off('updateUserMouses', this.updateUserMouses)
-        this.$bus.off('clearUserMouses', this.clearUserMouses)
+    components: {
+
     },
     data() {
         return {
             iconChoose: require('../assets/icons/icon_cursor.svg'),
-            colorArr: ['#5F5F5F', '#59C0E6', '#E89227', '#efd640', '#a840ef'],
-            userMouses: []
+            colorArr: ['#5F5F5F', '#59C0E6', '#E89227', '#efd640', '#a840ef']
         }
     },
     computed: {
         userMouseList() {
-            return this.userMouses.filter(userMouse =>
+            return this.$store.state.common.userMouseList.filter(userMouse =>
                 this.$store.state.user.userList.findIndex(o => o.uid === userMouse.userData.uid) >= 0)
-            // return this.$store.state.common.userMouseList.filter(userMouse =>
-            //     this.$store.state.user.userList.findIndex(o => o.uid === userMouse.userData.uid) >= 0)
         },
         page() {
             return this.$store.state.common.page
@@ -54,17 +46,6 @@ export default {
     },
     methods: {
         ...mapMutations('common', ['']),
-        updateUserMouses(userMouse) {
-            const index = this.userMouses.findIndex(o => o.userData.uid === userMouse.userData.uid)
-            if (index >= 0) {
-                this.userMouses[index] = userMouse
-            } else {
-                this.userMouses.push(userMouse)
-            }
-        },
-        clearUserMouses() {
-            this.userMouses = []
-        },
         avatarName(fname, lname) {
             const f = fname.charAt(0).toUpperCase()
             const l = lname.charAt(0).toUpperCase()

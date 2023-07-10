@@ -3,11 +3,9 @@ import { toolType } from 'src/helper/enum'
 import { adjustCursor, canvas } from '../canvas'
 
 import store from '../../store'
-import { mitt } from 'src/boot/bus'
 
 let isDrag = false
 let isActive = false
-const beginPos = { x: 0, y: 0 }
 
 export const initCanvasMove = () => {
     canvas.on('mouse:down', options => {
@@ -43,11 +41,6 @@ const dragBeginCanvas = e => {
         isDrag = true
     } else if (e.which === 1 && isActive) {
         isDrag = true
-    } else if (e.which === 0 && isActive) {
-        isDrag = true
-
-        beginPos.x = e.touches[0].clientX
-        beginPos.y = e.touches[0].clientY
     }
 }
 
@@ -56,18 +49,8 @@ const draggingCanvas = e => {
         return
     }
 
-    const delta = new fabric.Point(
-        e.touches ? (e.touches[0].clientX - beginPos.x) : e.movementX,
-        e.touches ? (e.touches[0].clientY - beginPos.y) : e.movementY
-    )
+    const delta = new fabric.Point(e.movementX, e.movementY)
     canvas.relativePan(delta)
-
-    if (e.touches) {
-        beginPos.x = e.touches[0].clientX
-        beginPos.y = e.touches[0].clientY
-    }
-
-    mitt.emit('dealDraggableRects')
 }
 
 const dragEndCanvas = e => {
@@ -92,6 +75,4 @@ const zoomCanvas = e => {
     store.commit('common/SET_CANVAS_ZOOM', zoom)
 
     canvas.renderAll()
-
-    mitt.emit('dealDraggableRects')
 }

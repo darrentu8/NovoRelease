@@ -8,8 +8,8 @@ import { activeChoose } from './choose'
 let isInit = false
 let isActive = false
 
-let editingTextbox = null
-let editingTextRect = null
+let isEditing = false
+let editingObject = null
 
 export const initText = () => {
     isActive = true
@@ -23,6 +23,12 @@ export const initText = () => {
             }
             mouseDown(options.e)
         })
+        canvas.on('mouse:down:before', options => {
+            if (!isActive) {
+                return
+            }
+            mouseDownBefore(options.e)
+        })
 
         isInit = true
     }
@@ -35,28 +41,37 @@ export const uninitText = () => {
 export const inactiveText = () => {
     isActive = false
 
+    canvas.getObjects().forEach(o => {
+        if (o.isEditing) {
+            o.exitEditing()
+        }
+    })
+
+    if (!editingObject) {
+        showOprBar(false)
+        canvas.discardActiveObject()
+    } else {
+        canvas.setActiveObject(editingObject)
+    }
+    editingObject = null
+
     canvas.renderAll()
 }
 
 const mouseDown = e => {
     const pointer = canvas.getPointer(e, true)
 
+    if (isEditing) {
+        activeChoose()
+        return
+    }
+
     const pointerDraw = canvas.restorePointerVpt(pointer)
 
-    const textRect = new fabric.Rect({
-        width: 200,
-        height: 200,
-        rx: 5,
-        ry: 5,
-        stroke: '#000000',
-        fill: 'transparent',
-        strokeUniform: true
-    })
-
-    const textBox = new fabric.Textbox('Text', {
-        width: 200,
-        height: 200,
-        hasBorders: false,
+    const text = new fabric.Textbox('', {
+        left: pointerDraw.x,
+        top: pointerDraw.y,
+        width: 50,
         fontSize: canvasBrush.strokeSize * 6,
         fill: canvasBrush.strokeColorCalc,
         textBackgroundColor: canvasBrush.fillColorCalc,
@@ -64,95 +79,39 @@ const mouseDown = e => {
         strokeUniform: true
     })
 
-    const textGroup = new fabric.Group([textRect, textBox], {
-        left: pointerDraw.x,
-        top: pointerDraw.y,
-        strokeUniform: true,
-        isText: true
-    })
+    // text.on('scaling', e => {
+    //     text.width = text.scaleX * text.width
+    //     text.height = text.scaleY * text.height
+    //     text.scaleX = 1
+    //     text.scaleY = 1
+    // })
 
-    canvas.insertAt(textGroup, getCanvasFrontIndex())
+    canvas.insertAt(text, getCanvasFrontIndex())
 
-    canvas.setActiveObject(textGroup)
+    text.enterEditing()
 
-    markObjectOwner(textGroup)
+    canvas.setActiveObject(text)
+
+    markObjectOwner(text)
 
     setOprBarPos()
     setOprBarOptions()
     showOprBar(true)
-
-    activeChoose()
-
-    enterEditing(textGroup)
 }
 
-export const enterEditing = textGroup => {
-    if (!textGroup.isText) {
-        return
-    }
+const mouseDownBefore = e => {
+    isEditing = false
+    editingObject = null
 
-    textGroup.toActiveSelection()
-    canvas.getActiveObject().getObjects().forEach(o => {
-        if (o.type === 'textbox') {
-            o.toEdit = true
-        } else {
-            o.toEdit = true
+    canvas.getObjects().map(o => o).forEach(object => {
+        if (object.isEditing) {
+            isEditing = true
+            editingObject = object
+            object.evented = false
+            object.selectable = false
+            removeEmptyTextbox(object)
         }
     })
-    canvas.discardActiveObject()
-
-    canvas.getObjects().forEach(o => {
-        if (o.toEdit) {
-            if (o.type === 'textbox') {
-                editingTextbox = o
-            } else {
-                editingTextRect = o
-                editingTextRect.evented = false
-                editingTextRect.strokeDashArray = [5, 5]
-                editingTextRect.stroke = '#5f5f5f'
-            }
-        }
-    })
-
-    editingTextbox.fontSize = Math.floor(editingTextbox.fontSize * editingTextbox.scaleX * 10) / 10
-    editingTextbox.scaleX = 1
-    editingTextbox.scaleY = 1
-
-    editingTextbox.on('deselected', () => {
-        leaveEditing()
-    })
-
-    canvas.setActiveObject(editingTextbox)
-    editingTextbox.enterEditing()
-}
-
-const leaveEditing = obj => {
-    if (!editingTextRect) {
-        return
-    }
-
-    editingTextRect.stroke = ''
-
-    editingTextbox.width = editingTextRect.width
-    editingTextbox.height = editingTextRect.height
-
-    const textSel = new fabric.ActiveSelection([editingTextRect, editingTextbox], {
-        canvas
-    })
-
-    const textGroup = textSel.toGroup()
-    canvas.setActiveObject(textGroup)
-    textGroup.setOptions({ isText: true, strokeUniform: true })
-
-    markObjectOwner(textGroup)
-
-    editingTextbox = null
-    editingTextRect = null
-
-    setOprBarPos()
-    setOprBarOptions()
-
-    canvas.renderAll()
 }
 
 export const setActiveTextAlign = align => {
@@ -221,4 +180,15 @@ export const clearActiveTextStyle = () => {
     }
 
     canvas.renderAll()
+}
+
+export const removeEmptyTextbox = (object) => {
+    if (object.type === 'textbox') {
+        if (object.text === '') {
+            if (editingObject === object) {
+                editingObject = null
+            }
+            canvas.remove(object)
+        }
+    }
 }

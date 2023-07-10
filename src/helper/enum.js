@@ -36,4 +36,4 @@ export const strokeType = {
 
 export const canvasPropertiesToInclude = ['evented', 'selectable', '_controlsVisibility', 'isRealia', 'excludeFromExport', 'isVideo', 'isAudio', 'isUrl',
     'mediaSrc', 'isLocked', 'hasBorders', 'hasControls', 'lockMovementX', 'lockMovementY', 'lockRotation', 'uuid', 'uuidSrc', 'isBackground',
-    'lastModifiedUserName', 'lastModifiedTime', 'ownerName', 'padding', 'isText', 'isDoc']
+    'lastModifiedUserName', 'lastModifiedTime', 'ownerName']

@@ -8,14 +8,14 @@ export default function () {
     page: '',
     projectData: [],
     userRole: '',
+    userMouseList: [],
+    isShowPlayerVideo: false,
+    playingVdieoSource: '',
     isShowPlayerAuido: false,
     playingAudioSource: '',
     selectedTool: toolType.CHOOSE,
     selectedObject: null,
     canvasZoom: 100,
-    copyImage: null,
-    draggableRectObjects: [],
-    isShowUrlViewer: false,
-    urlVierweSrc: ''
+    copyImage: null
   }
 }

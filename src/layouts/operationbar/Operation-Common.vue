@@ -1,12 +1,12 @@
 <template>
-    <q-btn v-show="isShow" style="width:50px" color="brand-grey" flat icon="filter_none" @click="clickCopy" />
-    <q-btn v-show="isShow" style="width:50px" color="brand-grey" flat icon="vertical_align_top" @click="clickUp" />
-    <q-btn v-show="isShow" style="width:50px" color="brand-grey" flat icon="vertical_align_bottom" @click="clickDown" />
-    <q-btn v-show="!isSelection && isShow" flat :color="isLocked ? 'red' : 'brand-grey'"
-        :icon="isLocked ? 'lock' : 'lock_open'" @click="clickLock" />
-    <q-btn v-show="isSelection && isShow" style="width:50px" color="brand-grey" flat @click="clickGroup"
+    <q-btn style="width:50px" color="brand-grey" flat icon="filter_none" @click="clickCopy" />
+    <q-btn style="width:50px" color="brand-grey" flat icon="vertical_align_top" @click="clickUp" />
+    <q-btn style="width:50px" color="brand-grey" flat icon="vertical_align_bottom" @click="clickDown" />
+    <q-btn v-show="!isSelection" flat :color="isLocked ? 'red' : 'brand-grey'" :icon="isLocked ? 'lock' : 'lock_open'"
+        @click="clickLock" />
+    <q-btn style="width:50px" color="brand-grey" flat v-show="isSelection" @click="clickGroup"
         icon="dashboard_customize" />
-    <q-btn v-show="isShow" style="width:50px" flat color="red" icon="delete_outline" @click="clickClose" />
+    <q-btn style="width:50px" flat color="red" icon="delete_outline" @click="clickClose" />
 </template>
 
 <script>
@@ -33,12 +33,7 @@ export default {
         }
     },
     computed: {
-        isShow() {
-            if (!this.$store.state.common.selectedObject) {
-                return false
-            }
-            return this.$store.state.common.selectedObject.type !== 'textbox'
-        }
+
     },
     methods: {
         setOprBarIsSelection(isSelection) {

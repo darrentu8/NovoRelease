@@ -2,22 +2,21 @@
     <q-btn @click="clickRealia" class="overflow-hidden" style="width:50px"
         :class="{ 'is-tool-selected': isSelectedRealia }">
         <img :class="{ 'is-active-icon-green': isSelectedRealia }" style="height:26px;width:26px" :src="iconRealia" />
-        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none" :persistent="$q.platform.is.mobile"
-            v-if="$q.platform.is.mobile ? isSelectedRealia : true" :auto-close="$q.platform.is.mobile">
+        <q-menu :offset="[0, 10]" class="q-ma-none q-pa-none">
             <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
                 @click="changeRealia(realiaTypes.RULER)">
-                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.RULER }" style="height:24px;width:24px"
-                    :src="iconRuler" />
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.RULER }"
+                    style="height:24px;width:24px" :src="iconRuler" />
             </q-btn>
             <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
                 @click="changeRealia(realiaTypes.TRIANGLE)">
-                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.TRIANGLE }" style="height:24px;width:24px"
-                    :src="iconTriangle" />
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.TRIANGLE }"
+                    style="height:24px;width:24px" :src="iconTriangle" />
             </q-btn>
             <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
                 @click="changeRealia(realiaTypes.COMPASS)">
-                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.COMPASS }" style="height:24px;width:24px"
-                    :src="iconCompass" />
+                <img :class="{ 'is-active-icon-green': realiaType === realiaTypes.COMPASS }"
+                    style="height:24px;width:24px" :src="iconCompass" />
             </q-btn>
             <q-btn class="overflow-hidden q-ma-xs q-ml-sm q-mr-sm" dense flat :ripple="false"
                 @click="changeRealia(realiaTypes.PROTRACTOR)">

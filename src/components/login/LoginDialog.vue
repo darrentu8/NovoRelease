@@ -114,8 +114,7 @@ export default defineComponent({
             .then((res) => {
               if (res.code === 'REQUEST_SET_PASSWORD') {
                 this.forgot = false
-                this.$store.commit('auth/setEmail', this.email)
-                this.$router.push({ name: 'resetpassword' })
+                this.$router.push({ name: 'resetpassword', params: { email: this.email } })
               }
             })
         } else {

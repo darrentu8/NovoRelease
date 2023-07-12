@@ -8,7 +8,7 @@
             <span class="text-h5">
               Sign in
             </span>
-            <span class="text-primary cursor-pointer" @click="toRegister">Create account</span>
+            <!-- <span class="text-primary cursor-pointer" @click="toRegister">Create account</span> -->
           </div>
           <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
             label="Email" lazy-rules :rules="[checkEmail]">
@@ -33,10 +33,10 @@
           <q-card-actions class="q-mt-xs q-pa-none" vertical>
             <q-btn outlined unelevated size="lg" class="full-width q-my-lg" label="Sign in" type="submit"
               color="primary" />
-            <a flat dense class="link-btn text-center text-bold text-primary" @click="forgot = !forgot">Forgot Your
+            <!-- <a flat dense class="link-btn text-center text-bold text-primary" @click="forgot = !forgot">Forgot Your
               Password</a>
             <a flat dense class="link-btn text-center text-bold text-primary" @click="openResendDialog">Resend
-              Activation Email?</a>
+              Activation Email?</a> -->
           </q-card-actions>
         </q-form>
 

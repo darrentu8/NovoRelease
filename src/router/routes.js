@@ -268,32 +268,32 @@ export const PublicRoutes = [
 ]
 
 export const PrivateRoutes = [
-  {
-    path: '/project',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      {
-        path: ':pid',
-        name: 'project',
-        meta: {
-          auth: true,
-          title: 'project',
-          keepAlive: false,
-          breadcrumb: [
-            {
-              text: 'project',
-              disabled: true,
-              href: '/project/pid',
-              link: true,
-              exact: true,
-              to: { name: 'project_id', path: '/project/pid' }
-            }
-          ]
-        },
-        component: () => import('pages/WhiteboardIndex.vue')
-      }
-    ]
-  }
+  // {
+  //   path: '/project',
+  //   component: () => import('layouts/MainLayout.vue'),
+  //   children: [
+  //     {
+  //       path: ':pid',
+  //       name: 'project',
+  //       meta: {
+  //         auth: true,
+  //         title: 'project',
+  //         keepAlive: false,
+  //         breadcrumb: [
+  //           {
+  //             text: 'project',
+  //             disabled: true,
+  //             href: '/project/pid',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'project_id', path: '/project/pid' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('pages/WhiteboardIndex.vue')
+  //     }
+  //   ]
+  // }
 ]
 
 export default [...PublicRoutes, ...PrivateRoutes]

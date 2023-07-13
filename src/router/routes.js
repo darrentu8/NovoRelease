@@ -2,30 +2,7 @@
 export const PublicRoutes = [
   {
     path: '/',
-    component: () => import('layouts/initial/InitialLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'index',
-        meta: {
-          title: 'index',
-          breadcrumb: [
-            {
-              text: 'Index',
-              disabled: true,
-              href: '/index',
-              link: true,
-              exact: true,
-              to: { name: 'index', path: '/index' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Index.vue')
-      }
-    ]
-  },
-  {
-    path: '/login',
+    redirect: '/login',
     component: () => import('layouts/login/LoginLayout.vue'),
     children: [
       {
@@ -48,30 +25,30 @@ export const PublicRoutes = [
       }
     ]
   },
-  {
-    path: '/register',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'register',
-        meta: {
-          title: 'register',
-          breadcrumb: [
-            {
-              text: 'Register',
-              disabled: true,
-              href: '/register',
-              link: true,
-              exact: true,
-              to: { name: 'register', path: '/register' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Register.vue')
-      }
-    ]
-  },
+  // {
+  //   path: '/register',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'register',
+  //       meta: {
+  //         title: 'register',
+  //         breadcrumb: [
+  //           {
+  //             text: 'Register',
+  //             disabled: true,
+  //             href: '/register',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'register', path: '/register' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Register.vue')
+  //     }
+  //   ]
+  // },
   {
     path: '/activation',
     component: () => import('layouts/login/LoginLayout.vue'),
@@ -197,57 +174,73 @@ export const PublicRoutes = [
     component: () => import('layouts/dashboard/DashboardLayout.vue'),
     children: [
       {
-        path: 'dashboard',
-        name: 'dashboard',
+        path: 'service',
+        name: 'service',
         meta: {
           auth: true,
-          title: 'dashboard',
+          title: 'Service',
           breadcrumb: [
             {
-              text: 'dashboard',
+              text: 'Service',
               disabled: true,
-              href: '/dashboard',
+              href: '/service',
               link: true,
               exact: true,
-              to: { name: 'dashboard', path: '/dashboard' }
+              to: { name: 'service', path: '/service' }
             }
           ]
         },
-        component: () => import('src/pages/DashboardPage.vue')
+        component: () => import('src/pages/ServicePage.vue')
       }
     ]
   },
   {
-    path: '/list',
-    redirect: '/list/all',
+    path: '/',
     component: () => import('layouts/dashboard/DashboardLayout.vue'),
     children: [
       {
-        path: 'all',
-        name: 'list',
+        path: 'announcement',
+        name: 'announcement',
         meta: {
           auth: true,
-          title: 'list',
+          title: 'System Announcement',
           breadcrumb: [
             {
-              text: 'list',
+              text: 'System Announcement',
               disabled: true,
-              href: '/list',
+              href: '/announcement',
               link: true,
               exact: true,
-              to: { name: 'list', path: '/list' }
-            },
-            {
-              text: 'All',
-              disabled: true,
-              href: '/list',
-              link: true,
-              exact: true,
-              to: { name: 'list', path: '/list' }
+              to: { name: 'announcement', path: '/announcement' }
             }
           ]
         },
-        component: () => import('src/pages/Projects.vue')
+        component: () => import('src/pages/AnnPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import('layouts/dashboard/DashboardLayout.vue'),
+    children: [
+      {
+        path: 'devices',
+        name: 'devices',
+        meta: {
+          auth: true,
+          title: 'Devices',
+          breadcrumb: [
+            {
+              text: 'Devices',
+              disabled: true,
+              href: '/devices',
+              link: true,
+              exact: true,
+              to: { name: 'devices', path: '/devices' }
+            }
+          ]
+        },
+        component: () => import('src/pages/DevicesPage.vue')
       }
     ]
   },

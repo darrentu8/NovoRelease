@@ -134,7 +134,7 @@ export default defineComponent({
       })
     },
     onSubmit() {
-      this.$router.push({ path: '/dashboard' })
+      this.$router.push({ path: '/service' })
       // this.$refs.loginForm.validate().then(success => {
       //   if (success) {
       //     const loginData = {

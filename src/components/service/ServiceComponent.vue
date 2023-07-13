@@ -64,9 +64,9 @@ export default defineComponent({
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'image', align: 'center', label: 'Image', field: 'image', sortable: false },
-        { name: 'status', align: 'center', label: 'Status', field: 'status', sortable: true },
-        { name: 'url', align: 'center', label: 'URL', field: 'url', sortable: true },
+        { name: 'image', align: 'left', label: 'Image', field: 'image', sortable: false },
+        { name: 'status', align: 'left', label: 'Status', field: 'status', sortable: true },
+        { name: 'url', align: 'left', label: 'URL', field: 'url', sortable: true },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       rows: [

@@ -91,19 +91,14 @@ module.exports = configure(function (ctx) {
       server: {
         type: 'http'
       },
-      port: 4000,
+      port: 3335,
       open: true, // opens browser window automatically
       proxy: {
         '/webapi': {
-          target: 'https://test.novoconnect.cloud',
+          target: 'https://backend.novohyspace.com/',
           changeOrigin: true,
           ws: false,
           secure: false
-        },
-        '/websocket': {
-          target: 'wss://test.novoconnect.cloud',
-          changeOrigin: true,
-          ws: true
         }
       }
     },

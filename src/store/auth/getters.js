@@ -1,24 +1,15 @@
 import { Cookies } from 'quasar'
 
 export function getLoginStatus(state, commit) {
-  const UID = Cookies.get('uid')
-  if (UID) {
+  const BID = Cookies.get('bid')
+  if (BID) {
     return true
   } else {
     return state.loginStatus
   }
 }
-export function getWSStatus(state) {
-  return state.wsStatus
-}
-export function getUID(state) {
-  return state.uid || Cookies.get('uid')
-}
-export function getGID(state) {
-  return state.gid || Cookies.get('gid')
-}
-export function getUserEmail(state) {
-  return state.email
+export function getBID(state) {
+  return state.bid || Cookies.get('bid')
 }
 export function getUserData(state) {
   return state.userData

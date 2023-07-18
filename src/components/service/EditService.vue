@@ -2,11 +2,11 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%; max-width: 400px;">
       <q-card-section class="">
-        <div class="text-h6 text-bold">Create New Service</div>
+        <div class="text-h6 text-bold">Edit Service</div>
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="createProject">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="editService">
           <q-input filled class="q-mt-xs" type="text" v-model="data.name" label="Name" lazy-rules :rules="[
             (val) =>
               (val !== null && val !== '') || 'Please enter a service name']">
@@ -37,14 +37,16 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
+import { mapState } from 'vuex'
 
 export default defineComponent({
-  name: 'CreatProjectDialog',
+  name: 'EditServiceDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
+        id: '',
         name: '',
         url: '',
         img: ''
@@ -54,26 +56,15 @@ export default defineComponent({
     }
   },
   created() {
-    this.reset()
   },
   computed: {
-    userData() {
-      return this.$store.state.auth.userData
-    }
+    ...mapState('service', ['currentService'])
+  },
+  mounted() {
+    this.data = Object.assign({}, this.currentService)
+    this.imageUrl = this.currentService.img
   },
   methods: {
-    reset() {
-      if (this.imageUrl) {
-        URL.revokeObjectURL(this.imageUrl)
-        this.image = null
-        this.imageUrl = ''
-      }
-      this.data = {
-        name: '',
-        url: '',
-        img: ''
-      }
-    },
     handleUpload() {
       if (this.image) {
         this.imageUrl = URL.createObjectURL(this.image)
@@ -103,7 +94,7 @@ export default defineComponent({
       // }
       this.imageUrl = URL.createObjectURL(file)
     },
-    createProject() {
+    editService() {
       if (!this.image) {
         this.$q.notify({
           color: 'red-5',
@@ -121,16 +112,10 @@ export default defineComponent({
           formData.append('img', this.image)
           formData.append('state', '1')
           formData.append('url', this.data.url)
-          this.$store.dispatch('service/createService', formData)
+          this.$store.dispatch('service/editService', formData)
             .then(() => {
               this.$refs.dialog.hide()
               this.reset()
-            })
-            .then(() => {
-              this.$store.commit('service/setLoading', true)
-              setTimeout(() => {
-                this.$store.dispatch('service/getService')
-              }, 2000)
             })
         } else {
           this.$q.notify({

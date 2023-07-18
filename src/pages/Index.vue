@@ -49,7 +49,7 @@ export default defineComponent({
       //       email: this.email,
       //       password: this.password
       //     }
-      //     this.$store.dispatch('auth/loginAndSetUid', loginData)
+      //     this.$store.dispatch('auth/loginAndSetBid', loginData)
       //   } else {
       //     this.$q.notify({
       //       color: 'red-5',

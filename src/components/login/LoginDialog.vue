@@ -11,7 +11,9 @@
             <!-- <span class="text-primary cursor-pointer" @click="toRegister">Create account</span> -->
           </div>
           <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
-            label="Email" lazy-rules :rules="[checkEmail]">
+            label="Email" lazy-rules>
+            <!-- <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
+            label="Email" lazy-rules :rules="[checkEmail]"> -->
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
@@ -134,23 +136,22 @@ export default defineComponent({
       })
     },
     onSubmit() {
-      this.$router.push({ path: '/service' })
-      // this.$refs.loginForm.validate().then(success => {
-      //   if (success) {
-      //     const loginData = {
-      //       email: this.email,
-      //       password: this.password
-      //     }
-      //     this.$store.dispatch('auth/loginAndSetUid', loginData)
-      //   } else {
-      //     this.$q.notify({
-      //       color: 'red-5',
-      //       textColor: 'white',
-      //       icon: 'warning',
-      //       message: 'You need to filled'
-      //     })
-      //   }
-      // })
+      this.$refs.loginForm.validate().then(success => {
+        if (success) {
+          const loginData = {
+            name: this.email,
+            password: this.password
+          }
+          this.$store.dispatch('auth/loginAndSetBid', loginData)
+        } else {
+          this.$q.notify({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            message: 'You need to filled'
+          })
+        }
+      })
     },
     joinAsGuest() {
       this.$refs.joinForm.validate().then(success => {
@@ -212,7 +213,7 @@ export default defineComponent({
             password: this.roomData.password
           }
           // console.log('loginData', loginData)
-          const res = this.$store.dispatch('auth/loginAndSetUid', joinData)
+          const res = this.$store.dispatch('auth/loginAndSetBid', joinData)
           // const res = this.$store.dispatch('auth/HandleLogin', loginData)
           console.log('res', res)
           if (res) {

@@ -1,72 +1,31 @@
 import { Notify, Cookies, LocalStorage } from 'quasar'
 import { postAction, getAction } from 'src/api/manage'
 
-export function GetUID({ state, commit }) {
-  if (LocalStorage.getItem('uid')) {
-    return LocalStorage.getItem('uid')
-  } else if (Cookies.get('uid')) {
-    return Cookies.get('uid')
+export function GetBID({ state, commit }) {
+  if (LocalStorage.getItem('bid')) {
+    return LocalStorage.getItem('bid')
+  } else if (Cookies.get('bid')) {
+    return Cookies.get('bid')
   } else {
-    return state.uid
+    return state.bid
   }
 }
-export function GetGID({ state, commit }) {
-  if (LocalStorage.getItem('gid')) {
-    return LocalStorage.getItem('gid')
-  } else if (Cookies.get('gid')) {
-    return Cookies.get('gid')
-  } else {
-    return state.gid
-  }
-}
-export function loginAndSetUid({ state, commit }, loginData) {
-  postAction('webapi/server/login', loginData)
+export function loginAndSetBid({ state, commit }, loginData) {
+  postAction('webapi/auth', loginData)
     .then((response) => {
-      Cookies.remove('uid')
-      // // console.log(response)
+      Cookies.remove('bid')
+      console.log(response.data)
       commit('setLoginStatus', true)
-      commit('setID', response.id)
-      commit('setUID', response.uid)
-      commit('setEmail', response.email)
-      commit('setUserData', response.userData)
-      Cookies.set('uid', response.uid, { expires: 1 })
-      // 移除訪客資料
-      Cookies.remove('gid')
+      commit('setBID', response.data.bid)
+      commit('setUserData', response.data)
+      Cookies.set('bid', response.data.bid, { expires: 1 })
       // Notify.create({
       //   color: 'primary',
       //   textColor: 'white',
       //   icon: 'check',
       //   message: 'Login Success'
       // })
-      this.$router.push({ path: '/list/all' })
-    })
-    .catch((error) => {
-      const { description } = error.response.data
-      // console.log(error.response.data)
-      Notify.create({
-        color: 'red-5',
-        textColor: 'white',
-        icon: 'warning',
-        // caption: code,
-        message: description
-      })
-    })
-}
-export function loginAndGuestRoom({ state, commit }, joinData) {
-  postAction('webapi/guest/room', joinData)
-    .then((response) => {
-      Cookies.remove('uid')
-      // console.log(response)
-      Cookies.set('gid', response.gid, { expires: 1 })
-      if (response.wid) {
-        this.$router.push({ path: '/whiteboard/' + response.wid })
-        // Notify.create({
-        //   color: 'primary',
-        //   textColor: 'white',
-        //   icon: 'check',
-        //   message: 'Login Success'
-        // })
-      }
+      this.$router.push({ path: '/service' })
     })
     .catch((error) => {
       const { description } = error.response.data
@@ -82,13 +41,9 @@ export function loginAndGuestRoom({ state, commit }, joinData) {
 }
 export function Logout({ state, commit }) {
   // state.$store.permission.ClearMenu()
-  Cookies.remove('uid')
-  Cookies.remove('gid')
+  Cookies.remove('bid')
   commit('setLoginStatus', false)
-  commit('setWSStatus', false)
-  commit('setID', undefined)
-  commit('setUID', undefined)
-  commit('setEmail', undefined)
+  commit('setBID', undefined)
   commit('setUserData', {
     id: null,
     fname: '',
@@ -107,14 +62,8 @@ export function Logout({ state, commit }) {
 }
 export function RequestFailed({ state, commit }) {
   // state.$store.permission.ClearMenu()
-  Cookies.remove('uid')
-  Cookies.remove('gid')
+  Cookies.remove('bid')
   commit('setLoginStatus', false)
-  commit('setWSStatus', false)
-  commit('setID', undefined)
-  commit('setUID', undefined)
-  commit('setEmail', undefined)
-  commit('setUserData', undefined)
   this.$router.push({ path: '/login' })
   Notify.create({
     color: 'red-5',

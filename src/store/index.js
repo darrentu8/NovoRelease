@@ -1,9 +1,8 @@
 import { createStore } from 'vuex'
 
-import common from './common'
 import auth from './auth'
 import permission from './permission'
-import project from './project'
+import service from './service'
 import user from './user'
 
 /*
@@ -17,10 +16,9 @@ import user from './user'
 
 const Store = createStore({
   modules: {
-    common,
     auth,
     permission,
-    project,
+    service,
     user
   },
   state: {

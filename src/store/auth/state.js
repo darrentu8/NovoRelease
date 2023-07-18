@@ -1,20 +1,11 @@
 
 export default function () {
   return {
+    bid: undefined,
     loginStatus: false,
-    wsStatus: false,
-    ID: undefined,
-    userData: {
-      id: null,
-      fname: '',
-      lname: '',
-      thumbnail: '',
-      language: '',
-      user_id: null
-    },
+    userData: {},
     regEmail: undefined,
     uid: undefined,
-    gid: undefined,
     email: undefined,
     username: undefined,
     fname: undefined,

@@ -22,12 +22,10 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mixinWebsocket } from '../../mixins/ws.js'
 import FooterComponent from 'src/components/Footer.vue'
 // import AdminAvatarComponent from 'src/components/user/AdminAvatar.vue'
 export default defineComponent({
   name: 'DashboardLayout',
-  mixins: [mixinWebsocket],
   components: {
     FooterComponent
     // AdminAvatarComponent
@@ -45,8 +43,7 @@ export default defineComponent({
     }
   },
   created() {
-    this.initWebsocket()
-    this.getAdminData()
+    // this.getAdminData()
   },
   destroy() {
     // this.websocketclose() // 關閉websocket通道

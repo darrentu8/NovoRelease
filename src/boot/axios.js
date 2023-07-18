@@ -47,7 +47,7 @@ export default boot(({ app, router, store }) => {
 
   //   // 如果JWT的ExpiresAt已經過期，但是RefreshAt沒有過期，那麼後台會在headers裡插入Refresh-Token，這裡保存下來，形成更換token邏輯
   //   if (response.headers['refresh-uid'] && response.data.data.refresh) {
-  //     store.auth.setUID(response.headers['refresh-uid'])
+  //     store.auth.setBID(response.headers['refresh-uid'])
   //     // store.dispatch('auth/GetUID', response.headers['refresh-uid'])
   //     Notify.create({
   //       type: 'positive',

@@ -5,7 +5,7 @@ import useCommon from 'src/composables/useCommon'
 import { i18n } from './i18n'
 
 LoadingBar.setDefaults({
-  color: 'blue',
+  color: 'primary',
   size: '4px',
   position: 'top'
 })

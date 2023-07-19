@@ -3,6 +3,8 @@ import { createStore } from 'vuex'
 import auth from './auth'
 import permission from './permission'
 import service from './service'
+import ann from './ann'
+import device from './device'
 import user from './user'
 
 /*
@@ -19,6 +21,8 @@ const Store = createStore({
     auth,
     permission,
     service,
+    ann,
+    device,
     user
   },
   state: {

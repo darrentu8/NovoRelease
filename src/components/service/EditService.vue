@@ -25,8 +25,11 @@
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a service URL']">
               </q-input>
-              <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
-                v-model="data.state" checked-icon="check" unchecked-icon="clear" />
+              <div class="q-gutter-sm flex items-center">
+                <span>Status:</span>
+                <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
+                  v-model="data.state" checked-icon="check" unchecked-icon="clear" />
+              </div>
 
             </div>
             <div class="col-6">

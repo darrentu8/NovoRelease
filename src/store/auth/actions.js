@@ -44,15 +44,8 @@ export function Logout({ state, commit }) {
   Cookies.remove('bid')
   commit('setLoginStatus', false)
   commit('setBID', undefined)
-  commit('setUserData', {
-    id: null,
-    fname: '',
-    lname: '',
-    thumbnail: '',
-    language: '',
-    user_id: null
-  })
-  this.$router.push({ path: '/login' })
+  commit('setUserData', {})
+  this.$router.push({ path: '/' })
   // Notify.create({
   //   color: 'primary',
   //   textColor: 'white',
@@ -64,7 +57,7 @@ export function RequestFailed({ state, commit }) {
   // state.$store.permission.ClearMenu()
   Cookies.remove('bid')
   commit('setLoginStatus', false)
-  this.$router.push({ path: '/login' })
+  this.$router.push({ path: '/' })
   Notify.create({
     color: 'red-5',
     textColor: 'white',

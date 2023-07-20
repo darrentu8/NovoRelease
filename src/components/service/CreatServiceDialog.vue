@@ -66,6 +66,7 @@ export default defineComponent({
       data: {
         name: '',
         url: '',
+        state: '0',
         img: ''
       },
       image: null,
@@ -90,6 +91,7 @@ export default defineComponent({
       this.data = {
         name: '',
         url: '',
+        state: '0',
         img: ''
       }
     },
@@ -139,7 +141,7 @@ export default defineComponent({
           const formData = new FormData()
           formData.append('name', this.data.name)
           formData.append('img', this.image)
-          formData.append('state', '0')
+          formData.append('state', this.data.state)
           formData.append('url', this.data.url)
           this.$store.dispatch('service/createService', formData)
             .then(() => {

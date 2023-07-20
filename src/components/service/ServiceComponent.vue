@@ -198,7 +198,7 @@ export default defineComponent({
         componentProps: {
           title: 'Are you sure you want to delete this service?',
           okBtn: 'Delete',
-          cancelBtn: 'cancel'
+          cancelBtn: 'Cancel'
         }
       }).onOk(() => {
         this.$store.dispatch('service/delService', props.id)

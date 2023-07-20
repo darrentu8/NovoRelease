@@ -8,7 +8,7 @@
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="createDevice">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="createAnn">
           <div class="row q-col-gutter-md">
             <div class="col-12">
               <q-input filled class="q-mt-xs" type="text" v-model="data.title" label="Title" lazy-rules :rules="[
@@ -35,7 +35,25 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0')
+}
 
+function formatDate(date) {
+  return (
+    [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate())
+    ].join('-') +
+    ' ' +
+    [
+      padTo2Digits(date.getHours()),
+      padTo2Digits(date.getMinutes()),
+      padTo2Digits(date.getSeconds())
+    ].join(':')
+  )
+}
 export default defineComponent({
   name: 'CreatAnnDialog',
   mixins: [inputRules],
@@ -44,7 +62,7 @@ export default defineComponent({
       dense: true,
       data: {
         title: '',
-        state: '',
+        state: '0',
         tag: 'new',
         udate: '',
         content: ''
@@ -63,18 +81,24 @@ export default defineComponent({
     reset() {
       this.data = {
         title: '',
-        state: '',
+        state: '0',
         tag: 'new',
         udate: '',
         content: ''
       }
     },
     createAnn() {
+      const formData = new FormData()
+      formData.append('title', this.data.title)
+      formData.append('state', Number(this.data.state))
+      formData.append('content', this.data.content)
+      formData.append('tag', this.data.tag)
+      formData.append('udate', formatDate(new Date()))
       this.$refs.Form.validate().then(success => {
         this.$store.commit('ann/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
-          this.$store.dispatch('ann/createAnn', this.data)
+          this.$store.dispatch('ann/createAnn', formData)
             .then(() => {
               this.$refs.dialog.hide()
               this.reset()

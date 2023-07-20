@@ -42,7 +42,7 @@
               <q-tooltip>{{ props.row.tag }}</q-tooltip>
               <!-- <span>{{ props.row.tag }}</span> -->
             </div>
-            <div v-else-if="props.row.tag === 'fix'" class="flex flex-center">
+            <div v-else-if="props.row.tag === 'fixed'" class="flex flex-center">
               <img src="~assets/img/icon/check.svg" :alt="props.row.tag" />
               <q-tooltip>{{ props.row.tag }}</q-tooltip>
               <!-- <span>{{ props.row.tag }}</span> -->
@@ -143,6 +143,20 @@ import EditAnn from './EditAnn.vue'
 import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0')
+}
+
+function formatDate(val) {
+  const date = new Date(parseInt(val))
+  return (
+    [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate())
+    ].join('-')
+  )
+}
 export default defineComponent({
   name: 'AnnComponent',
   components: {
@@ -171,7 +185,7 @@ export default defineComponent({
         },
         { name: 'tag', align: 'center', label: 'Tag', field: 'tag', sortable: true },
         { name: 'state', align: 'left', label: 'Status', field: 'state', sortable: true },
-        { name: 'udate', format: val => this.toDays(val), align: 'left', label: 'Last Updated', field: 'udate', sortable: true },
+        { name: 'udate', format: val => formatDate(val), align: 'left', label: 'Last Updated', field: 'udate', sortable: true },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       rows: [
@@ -195,11 +209,6 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations('ann', ['setLoading', 'AnnList']),
-    toDays(val) {
-      const date = new Date(parseInt(val))
-      const localeSpecificTime = date.toLocaleTimeString()
-      return localeSpecificTime
-    },
     refreshAnn() {
       this.$store.dispatch('ann/getAnn')
     },
@@ -213,7 +222,15 @@ export default defineComponent({
         })
     },
     editAnnDialog(props) {
-      this.$store.commit('ann/editAnn', props)
+      const Data = {
+        id: props.id,
+        title: props.title,
+        content: props.content,
+        tag: props.tag,
+        state: props.state.toString(),
+        udate: props.udate
+      }
+      this.$store.commit('ann/editAnn', Data)
       this.$q
         .dialog({
           component: EditAnn
@@ -223,9 +240,9 @@ export default defineComponent({
       this.$q.dialog({
         component: DelDialog,
         componentProps: {
-          title: 'Are you sure you want to delete this Announcement?',
+          title: 'Are you sure you want to delete this System Announcement?',
           okBtn: 'Delete',
-          cancelBtn: 'cancel'
+          cancelBtn: 'Cancel'
         }
       }).onOk(() => {
         this.$store.dispatch('ann/delAnn', props.id)

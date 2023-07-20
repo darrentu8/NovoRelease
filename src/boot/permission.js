@@ -26,7 +26,7 @@ function stopLoading() {
 export default boot(({ router, store }) => {
   router.beforeEach((to, from, next) => {
     startLoading()
-    const token = store.getters['auth/getUID']
+    const token = store.getters['auth/getBID']
     const { AllowList } = useCommon()
     // console.log('token', token)
     if (token) {
@@ -64,11 +64,9 @@ export default boot(({ router, store }) => {
         next()
         stopLoading()
       } else {
-        next()
+        store.dispatch('auth/RequestFailed')
+        next(`/?redirect=${to.fullPath}`)
         stopLoading()
-        // store.dispatch('auth/RequestFailed')
-        // next(`/login?redirect=${to.fullPath}`)
-        // stopLoading()
       }
     }
   })

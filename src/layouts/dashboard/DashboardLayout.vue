@@ -8,7 +8,8 @@
           <router-link class="logoBox-r" to="/"><img class="q-ml-md" :src="logoFont" :alt="title" /></router-link>
         </div>
         <q-toolbar-title></q-toolbar-title>
-        <div v-if="!loading">
+        <div>
+          <AdminAvatarComponent />
         </div>
       </q-toolbar>
     </q-header>
@@ -23,12 +24,12 @@
 <script>
 import { defineComponent } from 'vue'
 import FooterComponent from 'src/components/Footer.vue'
-// import AdminAvatarComponent from 'src/components/user/AdminAvatar.vue'
+import AdminAvatarComponent from 'src/components/user/AdminAvatar.vue'
 export default defineComponent({
   name: 'DashboardLayout',
   components: {
-    FooterComponent
-    // AdminAvatarComponent
+    FooterComponent,
+    AdminAvatarComponent
   },
   data() {
     return {

@@ -26,7 +26,7 @@ body {
     font-family: $basic-font-family;
 }
 h1, h2, h3, h4, h5, h6, button {
-  font-family: DeltaSans-SemiBold;
+  font-family: DeltaSans-Regular;
 }
 a {
     text-decoration: none;
@@ -61,6 +61,10 @@ a {
 }
 .container-full {
   height: calc(100vh - 124px)
+}
+.q-avatar .q-avatar__content {
+  font-size: 0.45em !important;
+  font-weight: normal;
 }
 .q-menu.tool {
   .q-list {

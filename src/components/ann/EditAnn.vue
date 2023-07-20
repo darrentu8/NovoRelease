@@ -1,6 +1,6 @@
 <template>
   <q-dialog ref="dialog">
-    <q-card style="width: 100%;">
+    <q-card style="width: 100%">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6 text-bold">Edit System Announcement</div>
         <q-space />
@@ -21,6 +21,11 @@
                 <q-radio v-model="data.tag" val="fixed" label="Fixed" />
                 <q-radio v-model="data.tag" val="support" label="Support" />
               </div>
+              <div class="q-gutter-sm flex items-center">
+                <span>Status:</span>
+                <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
+                  v-model="data.state" checked-icon="check" unchecked-icon="clear" />
+              </div>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
@@ -36,7 +41,25 @@
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
 import { mapState } from 'vuex'
+// function padTo2Digits(num) {
+//   return num.toString().padStart(2, '0')
+// }
 
+// function formatDate(date) {
+//   return (
+//     [
+//       date.getFullYear(),
+//       padTo2Digits(date.getMonth() + 1),
+//       padTo2Digits(date.getDate())
+//     ].join('-') +
+//     ' ' +
+//     [
+//       padTo2Digits(date.getHours()),
+//       padTo2Digits(date.getMinutes()),
+//       padTo2Digits(date.getSeconds())
+//     ].join(':')
+//   )
+// }
 export default defineComponent({
   name: 'EditAnnDialog',
   mixins: [inputRules],
@@ -64,11 +87,17 @@ export default defineComponent({
   },
   methods: {
     editAnn() {
+      const formData = new FormData()
+      formData.append('title', this.data.title)
+      formData.append('state', Number(this.data.state))
+      formData.append('content', this.data.content)
+      formData.append('tag', this.data.tag)
+      formData.append('udate', Date.now())
       this.$refs.Form.validate().then(success => {
         this.$store.commit('ann/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
-          this.$store.dispatch('ann/editAnn', this.data)
+          this.$store.dispatch('ann/editAnn', formData)
             .then(() => {
               this.$refs.dialog.hide()
             })

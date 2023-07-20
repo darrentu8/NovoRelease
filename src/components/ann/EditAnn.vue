@@ -2,23 +2,25 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Edit Device Version</div>
+        <div class="text-h6 text-bold">Edit System Announcement</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="editService">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="editAnn">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.model" label="Model" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.title" label="Title" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a model']">
+                  (val !== null && val !== '') || 'Please enter a title']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a version']">
-              </q-input>
+              <div class="q-gutter-sm flex items-center">
+                <span>Tag:</span>
+                <q-radio v-model="data.tag" val="new" label="New" />
+                <q-radio v-model="data.tag" val="fixed" label="Fixed" />
+                <q-radio v-model="data.tag" val="support" label="Support" />
+              </div>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
@@ -43,8 +45,11 @@ export default defineComponent({
       dense: true,
       data: {
         id: '',
-        model: '',
-        version: ''
+        title: '',
+        state: '',
+        tag: '',
+        udate: '',
+        content: ''
       },
       imageUrl: ''
     }
@@ -52,18 +57,18 @@ export default defineComponent({
   created() {
   },
   computed: {
-    ...mapState('device', ['currentDevice'])
+    ...mapState('ann', ['currentAnn'])
   },
   mounted() {
-    this.data = Object.assign({}, this.currentDevice)
+    this.data = Object.assign({}, this.currentAnn)
   },
   methods: {
-    editService() {
+    editAnn() {
       this.$refs.Form.validate().then(success => {
-        this.$store.commit('device/setLoading', true)
+        this.$store.commit('ann/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
-          this.$store.dispatch('device/editDevice', this.data)
+          this.$store.dispatch('ann/editAnn', this.data)
             .then(() => {
               this.$refs.dialog.hide()
             })

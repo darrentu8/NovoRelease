@@ -37,12 +37,21 @@
         <!-- Tag -->
         <template v-slot:body-cell-tag="props">
           <q-td :props="props">
-            <q-chip v-if="props.row.tag === 'new'" text-color="white" color="negative" size="sm">{{ props.row.tag
-            }}</q-chip>
-            <q-chip v-else-if="props.row.tag === 'fix'" text-color="white" color="green" size="sm">{{ props.row.tag
-            }}</q-chip>
-            <q-chip v-else-if="props.row.tag === 'support'" text-color="white" color="blue" size="sm">{{ props.row.tag
-            }}</q-chip>
+            <div v-if="props.row.tag === 'new'" class="flex flex-center">
+              <img src="~assets/img/icon/new.svg" :alt="props.row.tag" />
+              <q-tooltip>{{ props.row.tag }}</q-tooltip>
+              <!-- <span>{{ props.row.tag }}</span> -->
+            </div>
+            <div v-else-if="props.row.tag === 'fix'" class="flex flex-center">
+              <img src="~assets/img/icon/check.svg" :alt="props.row.tag" />
+              <q-tooltip>{{ props.row.tag }}</q-tooltip>
+              <!-- <span>{{ props.row.tag }}</span> -->
+            </div>
+            <div v-else-if="props.row.tag === 'support'" class="flex flex-center">
+              <img src="~assets/img/icon/clipboard.svg" :alt="props.row.tag" />
+              <q-tooltip>{{ props.row.tag }}</q-tooltip>
+              <!-- <span>{{ props.row.tag }}</span> -->
+            </div>
           </q-td>
         </template>
         <!-- State -->
@@ -160,7 +169,7 @@ export default defineComponent({
           sortable: true,
           style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
-        { name: 'tag', align: 'left', label: 'Tag', field: 'tag', sortable: true },
+        { name: 'tag', align: 'center', label: 'Tag', field: 'tag', sortable: true },
         { name: 'state', align: 'left', label: 'Status', field: 'state', sortable: true },
         { name: 'udate', format: val => this.toDays(val), align: 'left', label: 'Last Updated', field: 'udate', sortable: true },
         { name: 'actions', label: '', field: 'actions', sortable: false }

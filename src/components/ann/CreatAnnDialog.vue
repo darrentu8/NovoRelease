@@ -2,7 +2,7 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Create New Device Version</div>
+        <div class="text-h6 text-bold">Create New System Announcement</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -11,14 +11,16 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="createDevice">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.model" label="Model" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.title" label="Title" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a model']">
+                  (val !== null && val !== '') || 'Please enter a title']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a version']">
-              </q-input>
+              <div class="q-gutter-sm flex items-center">
+                <span>Tag:</span>
+                <q-radio v-model="data.tag" val="new" label="New" />
+                <q-radio v-model="data.tag" val="fixed" label="Fixed" />
+                <q-radio v-model="data.tag" val="support" label="Support" />
+              </div>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
@@ -41,8 +43,11 @@ export default defineComponent({
     return {
       dense: true,
       data: {
-        model: '',
-        version: ''
+        title: '',
+        state: '',
+        tag: 'new',
+        udate: '',
+        content: ''
       }
     }
   },
@@ -57,16 +62,19 @@ export default defineComponent({
   methods: {
     reset() {
       this.data = {
-        model: '',
-        version: ''
+        title: '',
+        state: '',
+        tag: 'new',
+        udate: '',
+        content: ''
       }
     },
-    createDevice() {
+    createAnn() {
       this.$refs.Form.validate().then(success => {
-        this.$store.commit('device/setLoading', true)
+        this.$store.commit('ann/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
-          this.$store.dispatch('device/createDevice', this.data)
+          this.$store.dispatch('ann/createAnn', this.data)
             .then(() => {
               this.$refs.dialog.hide()
               this.reset()

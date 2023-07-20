@@ -27,7 +27,7 @@ export function getAnn({ state, commit, rootGetters }) {
 }
 export function editAnn({ state, commit, dispatch, rootGetters }, data) {
   commit('setLoading', true)
-  postAction('webapi/announcement/' + state.currentDevice.id + '?bid=' + rootGetters['auth/getBID'], data)
+  postAction('webapi/announcement/' + state.currentAnn.id + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
       console.log(response)
       dispatch('getAnn')

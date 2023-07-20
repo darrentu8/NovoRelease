@@ -1,10 +1,10 @@
 <template>
   <q-page>
     <div class="flex items-start justify-center q-mx-md q-mt-lg">
-      <div class="col-4 q-mr-lg" style="margin-top: 29px;">
+      <div class="col-md-4 col-12 q-mr-lg q-mb-lg" style="margin-top: 29px;">
         <MenuTabComponent />
       </div>
-      <div class="col-8">
+      <div class="col-md-8 col-12 q-mb-lg">
         <BreadCrumbComponent style="height: 31px;" />
         <ServiceComponent />
       </div>

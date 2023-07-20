@@ -27,7 +27,7 @@
               </q-input>
             </div>
             <div v-if="imageUrl || data.img" class="col-6">
-              <div class="bg-grey-3 q-pa-md">
+              <div class="theme-bg q-pa-md">
                 <div v-if="imageUrl" class="">
                   <q-img :src="imageUrl" spinner-color="white" style="max-width: 300px; height: 200px;"
                     :fit="contain"></q-img>

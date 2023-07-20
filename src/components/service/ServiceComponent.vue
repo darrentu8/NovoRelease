@@ -1,7 +1,7 @@
 <template>
   <q-card class="" style="min-width: 800px;">
     <!-- Header & ToolBar -->
-    <div class="bg-grey-3 q-py-lg head flex justify-between items-center">
+    <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
         <img class="q-mr-sm" src="~assets/img/icon/globe-alt-g.svg" alt="">
         <span class="text-h6">Service</span>

@@ -11,7 +11,7 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editAnn">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.title" label="Title" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="textarea" v-model="data.title" label="Title" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a title']">
               </q-input>

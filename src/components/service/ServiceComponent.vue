@@ -146,13 +146,14 @@ export default defineComponent({
           align: 'left',
           field: row => row.name,
           format: val => `${val}`,
-          sortable: true
+          sortable: true,
+          style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
         {
           name: 'img', align: 'left', label: 'Img', field: 'img', sortable: false, style: 'width: 100px'
         },
         { name: 'state', align: 'center', label: 'Status', field: 'state', sortable: true },
-        { name: 'url', align: 'left', label: 'URL', field: 'url', sortable: true },
+        { name: 'url', align: 'left', label: 'URL', field: 'url', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       loading: false,

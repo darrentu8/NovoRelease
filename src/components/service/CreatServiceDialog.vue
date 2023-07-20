@@ -21,7 +21,7 @@
                   <q-icon name="cloud_upload" />
                 </template>
               </q-file>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.url" label="URL" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.url" label="URL" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a service URL']">
               </q-input>

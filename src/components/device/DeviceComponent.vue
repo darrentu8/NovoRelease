@@ -146,9 +146,10 @@ export default defineComponent({
           align: 'left',
           field: row => row.model,
           format: val => `${val}`,
-          sortable: true
+          sortable: true,
+          style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
-        { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true },
+        { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       rows: [

@@ -2,7 +2,7 @@
   "name": "NCCM",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "NCCM",
+  "productName": "NovoConnect.Cloud Server",
   "author": "darren",
   "private": true,
   "scripts": {

@@ -25,12 +25,14 @@
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a service URL']">
               </q-input>
+              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.description" label="Description">
+              </q-input>
             </div>
             <div v-if="imageUrl || data.img" class="col-6">
               <div class="theme-bg q-pa-md">
                 <div v-if="imageUrl" class="">
                   <q-img :src="imageUrl" spinner-color="white" style="max-width: 300px; height: 200px;"
-                    :fit="contain"></q-img>
+                    fit="contain"></q-img>
                 </div>
                 <div v-else-if="data.img" class="">
                   <q-img :src="data.img" spinner-color="white" style="max-width: 300px; height: 200px;" :fit="contain">
@@ -66,6 +68,7 @@ export default defineComponent({
       data: {
         name: '',
         url: '',
+        description: '',
         state: '0',
         img: ''
       },
@@ -91,6 +94,7 @@ export default defineComponent({
       this.data = {
         name: '',
         url: '',
+        description: '',
         state: '0',
         img: ''
       }
@@ -100,7 +104,7 @@ export default defineComponent({
         this.imageUrl = URL.createObjectURL(this.image)
       }
       const file = this.image
-      const typeCheck = file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg'
+      const typeCheck = file.type === 'image/svg' || file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg'
       if (!typeCheck) {
         this.$q.notify({
           color: 'red-5',
@@ -143,6 +147,7 @@ export default defineComponent({
           formData.append('img', this.image)
           formData.append('state', this.data.state)
           formData.append('url', this.data.url)
+          formData.append('description', this.data.description)
           this.$store.dispatch('service/createService', formData)
             .then(() => {
               this.$refs.dialog.hide()

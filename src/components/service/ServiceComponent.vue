@@ -19,12 +19,11 @@
         <!-- img -->
         <template v-slot:body-cell-img="props">
           <q-td :props="props">
-            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img"
-              style="height:50px;">
+            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img" style="height:50px;"
+              fit="contain">
               <q-tooltip class="bg-grey-5 no-border-radius flex flex-center" anchor="center right" self="center left"
                 :offset="[10, 10]" style="width: 300px; height: 250px;">
-                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;"
-                  :fit="contain" />
+                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;" fit="contain" />
               </q-tooltip>
               <template v-slot:error>
                 <div class="absolute-full flex flex-center bg-grey-4 text-white">
@@ -154,6 +153,7 @@ export default defineComponent({
         },
         { name: 'state', align: 'center', label: 'Status', field: 'state', sortable: true },
         { name: 'url', align: 'left', label: 'URL', field: 'url', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+        { name: 'description', align: 'left', label: 'Description', field: 'description', sortable: true, style: 'max-width: 200px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       loading: false,
@@ -185,6 +185,7 @@ export default defineComponent({
         name: props.name,
         state: props.state.toString(),
         url: props.url,
+        description: props.description,
         img: props.img
       }
       this.$store.commit('service/editService', Data)

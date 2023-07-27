@@ -25,6 +25,8 @@
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a service URL']">
               </q-input>
+              <q-input filled class="q-mt-xs" type="textarea" rows="4" v-model="data.description" label="Description">
+              </q-input>
               <div class="q-gutter-sm flex items-center">
                 <span>Status:</span>
                 <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
@@ -36,10 +38,10 @@
               <div class="theme-bg q-pa-md q-mt-lg">
                 <div v-if="imageUrl" class="">
                   <q-img :src="imageUrl" spinner-color="white" style="max-width: 300px; height: 200px;"
-                    :fit="contain"></q-img>
+                    fit="contain"></q-img>
                 </div>
                 <div v-else-if="data.img" class="">
-                  <q-img :src="data.img" spinner-color="white" style="max-width: 300px; height: 200px;" :fit="contain">
+                  <q-img :src="data.img" spinner-color="white" style="max-width: 300px; height: 200px;" fit="contain">
                     <template v-slot:error>
                       <div class="absolute-full flex flex-center bg-gery text-white">
                         Cannot load image
@@ -75,6 +77,7 @@ export default defineComponent({
         name: '',
         state: '0',
         url: '',
+        description: '',
         img: ''
       },
       imageUrl: ''
@@ -137,6 +140,7 @@ export default defineComponent({
           formData.append('img', this.data.img ? this.data.img : this.currentService.img)
           formData.append('state', Number(this.data.state))
           formData.append('url', this.data.url)
+          formData.append('description', this.data.description)
           this.$store.dispatch('service/editService', formData)
             .then(() => {
               this.$refs.dialog.hide()

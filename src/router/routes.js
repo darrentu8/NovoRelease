@@ -6,7 +6,7 @@ export const PublicRoutes = [
     component: () => import('layouts/login/LoginLayout.vue'),
     children: [
       {
-        path: '',
+        path: 'login',
         name: 'login',
         meta: {
           title: 'login',
@@ -22,150 +22,6 @@ export const PublicRoutes = [
           ]
         },
         component: () => import('src/pages/Login.vue')
-      }
-    ]
-  },
-  // {
-  //   path: '/register',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'register',
-  //       meta: {
-  //         title: 'register',
-  //         breadcrumb: [
-  //           {
-  //             text: 'Register',
-  //             disabled: true,
-  //             href: '/register',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'register', path: '/register' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Register.vue')
-  //     }
-  //   ]
-  // },
-  {
-    path: '/activation',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'activation',
-        meta: {
-          title: 'activation',
-          breadcrumb: [
-            {
-              text: 'activation',
-              disabled: true,
-              href: '/activation',
-              link: true,
-              exact: true,
-              to: { name: 'activation', path: '/activation' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Activation.vue')
-      }
-    ]
-  },
-  {
-    path: '/resetpassword',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'resetpassword',
-        meta: {
-          title: 'resetpassword',
-          breadcrumb: [
-            {
-              text: 'resetpassword',
-              disabled: true,
-              href: '/resetpassword',
-              link: true,
-              exact: true,
-              to: { name: 'resetpassword', path: '/resetpassword' }
-            }
-          ]
-        },
-        component: () => import('src/pages/ResetPassword.vue')
-      }
-    ]
-  },
-  {
-    path: '/forget',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'forget',
-        meta: {
-          title: 'forget',
-          breadcrumb: [
-            {
-              text: 'forget',
-              disabled: true,
-              href: '/forget',
-              link: true,
-              exact: true,
-              to: { name: 'forget', path: '/forget' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Forget.vue')
-      }
-    ]
-  },
-  {
-    path: '/active',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'active',
-        meta: {
-          title: 'active',
-          breadcrumb: [
-            {
-              text: 'active',
-              disabled: true,
-              href: '/active',
-              link: true,
-              exact: true,
-              to: { name: 'active', path: '/active' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Active.vue')
-      }
-    ]
-  },
-  {
-    path: '/terms',
-    component: () => import('layouts/login/LoginLayout.vue'),
-    children: [
-      {
-        path: '',
-        name: 'terms',
-        meta: {
-          title: 'terms',
-          breadcrumb: [
-            {
-              text: 'terms',
-              disabled: true,
-              href: '/terms',
-              link: true,
-              exact: true,
-              to: { name: 'terms', path: '/terms' }
-            }
-          ]
-        },
-        component: () => import('src/pages/Terms.vue')
       }
     ]
   },
@@ -244,6 +100,150 @@ export const PublicRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/register',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'register',
+  //       meta: {
+  //         title: 'register',
+  //         breadcrumb: [
+  //           {
+  //             text: 'Register',
+  //             disabled: true,
+  //             href: '/register',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'register', path: '/register' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Register.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/activation',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'activation',
+  //       meta: {
+  //         title: 'activation',
+  //         breadcrumb: [
+  //           {
+  //             text: 'activation',
+  //             disabled: true,
+  //             href: '/activation',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'activation', path: '/activation' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Activation.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/resetpassword',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'resetpassword',
+  //       meta: {
+  //         title: 'resetpassword',
+  //         breadcrumb: [
+  //           {
+  //             text: 'resetpassword',
+  //             disabled: true,
+  //             href: '/resetpassword',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'resetpassword', path: '/resetpassword' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/ResetPassword.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/forget',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'forget',
+  //       meta: {
+  //         title: 'forget',
+  //         breadcrumb: [
+  //           {
+  //             text: 'forget',
+  //             disabled: true,
+  //             href: '/forget',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'forget', path: '/forget' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Forget.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/active',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'active',
+  //       meta: {
+  //         title: 'active',
+  //         breadcrumb: [
+  //           {
+  //             text: 'active',
+  //             disabled: true,
+  //             href: '/active',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'active', path: '/active' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Active.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/terms',
+  //   component: () => import('layouts/login/LoginLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'terms',
+  //       meta: {
+  //         title: 'terms',
+  //         breadcrumb: [
+  //           {
+  //             text: 'terms',
+  //             disabled: true,
+  //             href: '/terms',
+  //             link: true,
+  //             exact: true,
+  //             to: { name: 'terms', path: '/terms' }
+  //           }
+  //         ]
+  //       },
+  //       component: () => import('src/pages/Terms.vue')
+  //     }
+  //   ]
+  // },
   // 以下內容在動態路由中添加，解決刷新404的問題:store-permission-actions
   // Always leave this as last one,
   // but you can also remove it

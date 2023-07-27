@@ -6,6 +6,7 @@
           <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
           <div class="spaceLine border-r-b"></div>
           <router-link class="logoBox-r" to="/"><img class="q-ml-md" :src="logoFont" :alt="title" /></router-link>
+          <router-link class="" to="/"><img class="q-ml-md" :src="logoFontServer" :alt="title" /></router-link>
         </div>
         <q-toolbar-title></q-toolbar-title>
         <div>
@@ -39,6 +40,7 @@ export default defineComponent({
       title: 'NovoConnect Cloud',
       logo: require('../../assets/img/logo/cloud-sign.svg'),
       logoFont: require('../../assets/img/logo/cloud-g.svg'),
+      logoFontServer: require('../../assets/img/logo/brand_logo_server.svg'),
       timer: null,
       lockReconnect: false
     }

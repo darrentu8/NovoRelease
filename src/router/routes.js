@@ -100,6 +100,31 @@ export const PublicRoutes = [
       }
     ]
   },
+  {
+    path: '/',
+    component: () => import('layouts/dashboard/DashboardLayout.vue'),
+    children: [
+      {
+        path: 'licenses',
+        name: 'licenses',
+        meta: {
+          auth: true,
+          title: 'Licenses',
+          breadcrumb: [
+            {
+              text: 'Licenses',
+              disabled: true,
+              href: '/licenses',
+              link: true,
+              exact: true,
+              to: { name: 'licenses', path: '/licenses' }
+            }
+          ]
+        },
+        component: () => import('src/pages/LicensesPage.vue')
+      }
+    ]
+  },
   // {
   //   path: '/register',
   //   component: () => import('layouts/login/LoginLayout.vue'),

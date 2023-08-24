@@ -7,8 +7,16 @@
         <span class="text-h6">System Announcement</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshAnn" icon="refresh" label="" />
-      <q-btn flat round color="primary" @click="createAnn" icon="add" label="" />
+      <q-btn flat round color="primary" @click="refreshAnn" icon="refresh" label="">
+        <q-tooltip>
+          Refresh
+        </q-tooltip>
+      </q-btn>
+      <q-btn flat round color="primary" @click="createAnn" icon="add" label="">
+        <q-tooltip>
+          Create New System Announcement
+        </q-tooltip>
+      </q-btn>
     </div>
     <!-- Table -->
     <div v-if="!getLoading">

@@ -18,6 +18,10 @@
       <img v-else src="~assets/img/icon/org.svg" alt="">
       <span>Announcement</span>
     </q-btn>
+    <q-btn stack @click="toPage('licenses')" :class="['brandTabBtn', pathTab == 'licenses' ? 'active' : '']" flat
+      type="button" icon="vpn_key">
+      <span>Licenses</span>
+    </q-btn>
   </div>
 </template>
 

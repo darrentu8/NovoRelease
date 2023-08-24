@@ -7,8 +7,16 @@
         <span class="text-h6">Service</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshService" icon="refresh" label="" />
-      <q-btn flat round color="primary" @click="createService" icon="add" label="" />
+      <q-btn flat round color="primary" @click="refreshService" icon="refresh" label="">
+        <q-tooltip>
+          Refresh
+        </q-tooltip>
+      </q-btn>
+      <q-btn flat round color="primary" @click="createService" icon="add" label="">
+        <q-tooltip>
+          Create New Service
+        </q-tooltip>
+      </q-btn>
     </div>
     <!-- Table -->
     <div v-if="!getLoading">

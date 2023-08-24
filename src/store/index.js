@@ -6,6 +6,7 @@ import service from './service'
 import ann from './ann'
 import device from './device'
 import user from './user'
+import lic from './lic'
 
 /*
  * If not building with SSR mode, you can
@@ -23,7 +24,8 @@ const Store = createStore({
     service,
     ann,
     device,
-    user
+    user,
+    lic
   },
   state: {
     wsNotify: {}

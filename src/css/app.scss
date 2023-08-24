@@ -31,6 +31,9 @@ h1, h2, h3, h4, h5, h6, button {
 a {
     text-decoration: none;
 }
+.bg-theme-grey {
+  background-color: #F2F2F2;
+}
 .theme-bg {
   background-color: rgb(229, 229, 229);
 }
@@ -112,6 +115,9 @@ a {
   // text-transform: uppercase;
   border-bottom: 3px solid #14A028;
   padding: 0px 0px 6px;
+}
+.q-table__top {
+  display: none;
 }
 .q-btn {
   text-transform: inherit;

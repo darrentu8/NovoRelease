@@ -7,8 +7,16 @@
         <span class="text-h6">Device</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshDevice" icon="refresh" label="" />
-      <q-btn flat round color="primary" @click="createDevice" icon="add" label="" />
+      <q-btn flat round color="primary" @click="refreshDevice" icon="refresh" label="">
+        <q-tooltip>
+          Refresh
+        </q-tooltip>
+      </q-btn>
+      <q-btn flat round color="primary" @click="createDevice" icon="add" label="">
+        <q-tooltip>
+          Create New Device Version
+        </q-tooltip>
+      </q-btn>
     </div>
     <!-- Table -->
     <div v-if="!getLoading">

@@ -1,7 +1,7 @@
 <template>
   <q-layout class="dashboard" view="hHr lpR lFf">
-    <q-header class="bg-transparent">
-      <q-toolbar class="bg-transparent" style="height:56px;">
+    <q-header class="bg-theme-grey">
+      <q-toolbar class="bg-theme-grey" style="height:56px;">
         <div class="logoBox">
           <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
           <div class="spaceLine border-r-b"></div>

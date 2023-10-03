@@ -17,11 +17,12 @@
               href="/serviceterms"><span class="service_link">Terms of Use</span></a></span></div>
       </div>
       <div class="block right">
-        <div class="sub"><span class="st">Browser Compatibility</span><span class="subTitle">Chrome | Edge | Firefox |
-            360SE</span></div>
+        <div class="sub"><span class="st">Browser Compatibility</span><span class="subTitle">Chrome</span></div>
       </div>
     </div>
-    <div class="main">© 2022 Delta Electronics,Inc. All Rights Reserved.</div>
+    <div class="main">Copyright © {{ new Date().getFullYear() }} Delta Electronics,Inc. All rights reserved. Version {{
+      version }}
+    </div>
   </q-footer>
 </template>
 
@@ -35,7 +36,8 @@ export default defineComponent({
   data() {
     return {
       title: 'vivitek',
-      logo: require('../assets/img/logo/vvkLogoFooter.svg')
+      logo: require('../assets/img/logo/vvkLogoFooter.svg'),
+      version: 'v1.0.1.68880'
     }
   }
 })

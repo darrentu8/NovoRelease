@@ -93,9 +93,8 @@ export default defineComponent({
   display: flex
   justify-content: center
   align-self: center
-  align-items: flex-start
+  align-items: center
   align-content: center
-  padding-top: 150px
   .q-card
     width: 100%
     height: auto

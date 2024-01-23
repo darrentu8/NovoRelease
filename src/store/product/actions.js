@@ -1,15 +1,15 @@
 import { Notify } from 'quasar'
 import { postAction, getAction, deleteAction } from 'src/api/manage'
 
-export function getService({ state, commit, rootGetters }) {
+export function getProduct({ state, commit, rootGetters }) {
   const BID = {
     bid: rootGetters['auth/getBID']
   }
   commit('setLoading', true)
-  getAction('webapi/activeService', BID)
+  getAction('webapi/product', BID)
     .then((response) => {
       console.log(response)
-      commit('setService', response.data.data)
+      commit('setProduct', response.data.data)
       commit('setLoading', false)
     })
     .catch((error) => {
@@ -25,12 +25,12 @@ export function getService({ state, commit, rootGetters }) {
       })
     })
 }
-export function editService({ state, commit, dispatch, rootGetters }, data) {
+export function editProduct({ state, commit, dispatch, rootGetters }, data) {
   commit('setLoading', true)
-  postAction('webapi/activeService/' + state.currentService.id + '?bid=' + rootGetters['auth/getBID'], data)
+  postAction('webapi/activeProduct/' + state.currentProduct.id + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
       console.log(response)
-      dispatch('getService')
+      dispatch('getProduct')
       commit('setLoading', false)
     })
     .catch((error) => {
@@ -46,10 +46,10 @@ export function editService({ state, commit, dispatch, rootGetters }, data) {
       })
     })
 }
-export function createService({ state, commit, dispatch, rootGetters }, data) {
-  postAction('webapi/activeService' + '?bid=' + rootGetters['auth/getBID'], data)
+export function createProduct({ state, commit, dispatch, rootGetters }, data) {
+  postAction('webapi/activeProduct' + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
-      dispatch('getService')
+      dispatch('getProduct')
       // console.log(response)
       // Notify.create({
       //   color: 'primary',
@@ -70,8 +70,8 @@ export function createService({ state, commit, dispatch, rootGetters }, data) {
       })
     })
 }
-export function delService({ state, commit, dispatch, rootGetters }, id) {
-  deleteAction('webapi/activeService/' + id + '?bid=' + rootGetters['auth/getBID'])
+export function delProduct({ state, commit, dispatch, rootGetters }, id) {
+  deleteAction('webapi/activeProduct/' + id + '?bid=' + rootGetters['auth/getBID'])
     .then((response) => {
       // console.log(response)
       // Notify.create({
@@ -80,7 +80,7 @@ export function delService({ state, commit, dispatch, rootGetters }, id) {
       //   icon: 'check',
       //   message: response.description
       // })
-      dispatch('getService')
+      dispatch('getProduct')
     })
     .catch((error) => {
       const { description } = error.response.data

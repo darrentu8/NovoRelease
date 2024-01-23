@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 import auth from './auth'
 import permission from './permission'
-import service from './service'
+import product from './product'
 import ann from './ann'
 import device from './device'
 import user from './user'
@@ -21,7 +21,7 @@ const Store = createStore({
   modules: {
     auth,
     permission,
-    service,
+    product,
     ann,
     device,
     user,

@@ -6,7 +6,7 @@
       </div>
       <div class="col-md-8 col-12 q-mb-lg">
         <BreadCrumbComponent style="height: 31px;" />
-        <ServiceComponent />
+        <ProductComponent />
       </div>
     </div>
   </q-page>
@@ -14,13 +14,13 @@
 
 <script>
 import MenuTabComponent from 'src/components/MenuTab.vue'
-import ServiceComponent from 'src/components/service/ServiceComponent.vue'
+import ProductComponent from 'src/components/product/ProductComponent.vue'
 import BreadCrumbComponent from 'src/components/BreadCrumb.vue'
 export default {
   components: {
     MenuTabComponent,
     BreadCrumbComponent,
-    ServiceComponent
+    ProductComponent
   },
   setup() {
     return {

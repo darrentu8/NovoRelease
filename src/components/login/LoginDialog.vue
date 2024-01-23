@@ -4,14 +4,14 @@
     <q-card class="">
       <q-card-section class="q-mx-lg q-my-md">
         <q-form ref="loginForm" @submit.stop="onSubmit" class="q-gutter-md">
-          <div class="border-b-primary q-my-lg q-pb-xs flex justify-between items-end">
+          <div class="border-b-primary q-my-lg q-pb-xs flex justify-center items-end">
             <span class="text-h5">
-              Sign in
+              Novo Management
             </span>
             <!-- <span class="text-primary cursor-pointer" @click="toRegister">Create account</span> -->
           </div>
           <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
-            label="Email" lazy-rules>
+            label="Username" lazy-rules>
             <!-- <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
             label="Email" lazy-rules :rules="[checkEmail]"> -->
             <template v-slot:prepend>
@@ -19,8 +19,8 @@
             </template>
           </q-input>
 
-          <q-input outlined class="q-mt-xs" :dense="dense" v-model="password" :type="isPwd ? 'password' : 'text'"
-            hint="Password with toggle" lazy-rules :rules="[
+          <q-input label="Password" outlined class="q-mt-xs" :dense="dense" v-model="password"
+            :type="isPwd ? 'password' : 'text'" hint="Password with toggle" lazy-rules :rules="[
               (val) =>
                 (val !== null && val !== '') || 'Please enter your password',
             ]">

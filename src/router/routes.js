@@ -30,23 +30,23 @@ export const PublicRoutes = [
     component: () => import('layouts/dashboard/DashboardLayout.vue'),
     children: [
       {
-        path: 'service',
-        name: 'service',
+        path: 'product',
+        name: 'product',
         meta: {
           auth: true,
-          title: 'Service',
+          title: 'Product',
           breadcrumb: [
             {
-              text: 'Service',
+              text: 'Product',
               disabled: true,
-              href: '/service',
+              href: '/product',
               link: true,
               exact: true,
-              to: { name: 'service', path: '/service' }
+              to: { name: 'product', path: '/product' }
             }
           ]
         },
-        component: () => import('src/pages/ServicePage.vue')
+        component: () => import('src/pages/ProductPage.vue')
       }
     ]
   },

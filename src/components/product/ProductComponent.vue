@@ -3,18 +3,18 @@
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
-        <img class="q-mr-sm" src="~assets/img/icon/globe-alt-g.svg" alt="">
-        <span class="text-h6">Service</span>
+        <q-icon class="q-mr-sm" color="primary" name="dns" size="sm" alt="" />
+        <span class="text-h6">Product</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshService" icon="refresh" label="">
+      <q-btn flat round color="primary" @click="refreshProduct" icon="refresh" label="">
         <q-tooltip>
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createService" icon="add" label="">
+      <q-btn flat round color="primary" @click="createProduct" icon="add" label="">
         <q-tooltip>
-          Create New Service
+          Create New Product
         </q-tooltip>
       </q-btn>
     </div>
@@ -22,7 +22,7 @@
     <div v-if="!getLoading">
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getServiceList"
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getProductList"
         :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
         <!-- img -->
         <template v-slot:body-cell-img="props">
@@ -51,13 +51,13 @@
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn color="primary" round flat @click="editServiceDialog(props.row)">
-              <img src="~assets/img/icon/edit.svg" alt="">
+            <q-btn color="primary" round flat @click="editProductDialog(props.row)">
+              <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delServiceDialog(props.row)">
+            <q-btn color="negative" round flat @click="delProductDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
@@ -117,35 +117,36 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateService />
-  <EditService />
+  <CreateProduct />
+  <EditProduct />
   <DelDialog />
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
-import CreateService from './CreatServiceDialog.vue'
-import EditService from '../service/EditService.vue'
+import CreateProduct from './CreatProductDialog.vue'
+import EditProduct from '../product/EditProduct.vue'
 import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
 export default defineComponent({
-  name: 'ServiceComponent',
+  name: 'ProductComponent',
   components: {
-    CreateService,
-    EditService,
+    CreateProduct,
+    EditProduct,
     DelDialog
   },
   mixins: [inputRules],
   computed: {
-    ...mapGetters('service', ['getLoading', 'getServiceList'])
+    ...mapGetters('product', ['getLoading', 'getProductList'])
   },
   props: {
   },
   data() {
     return {
       columns: [
+        { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
         {
           name: 'name',
           required: true,
@@ -156,12 +157,7 @@ export default defineComponent({
           sortable: true,
           style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
-        {
-          name: 'img', align: 'left', label: 'Img', field: 'img', sortable: false, style: 'width: 100px'
-        },
-        { name: 'state', align: 'center', label: 'Status', field: 'state', sortable: true },
-        { name: 'url', align: 'left', label: 'URL', field: 'url', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'description', align: 'left', label: 'Description', field: 'description', sortable: true, style: 'max-width: 200px;text-overflow: ellipsis;overflow: hidden;' },
+        { name: 'cdn', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       loading: false,
@@ -171,23 +167,23 @@ export default defineComponent({
   created() {
   },
   mounted() {
-    this.getService()
+    // this.getProduct()
   },
   methods: {
-    ...mapMutations('service', ['setLoading', 'serviceList']),
-    refreshService() {
-      this.$store.dispatch('service/getService')
+    ...mapMutations('product', ['setLoading', 'productList']),
+    refreshProduct() {
+      this.$store.dispatch('product/getProductList')
     },
-    getService() {
-      this.$store.dispatch('service/getService')
+    getProduct() {
+      this.$store.dispatch('product/getProductList')
     },
-    createService() {
+    createProduct() {
       this.$q
         .dialog({
-          component: CreateService
+          component: CreateProduct
         })
     },
-    editServiceDialog(props) {
+    editProductDialog(props) {
       const Data = {
         id: props.id,
         name: props.name,
@@ -196,22 +192,22 @@ export default defineComponent({
         description: props.description,
         img: props.img
       }
-      this.$store.commit('service/editService', Data)
+      this.$store.commit('product/editProduct', Data)
       this.$q
         .dialog({
-          component: EditService
+          component: EditProduct
         })
     },
-    delServiceDialog(props) {
+    delProductDialog(props) {
       this.$q.dialog({
         component: DelDialog,
         componentProps: {
-          title: 'Are you sure you want to delete this service?',
+          title: 'Are you sure you want to delete this product?',
           okBtn: 'Delete',
           cancelBtn: 'Cancel'
         }
       }).onOk(() => {
-        this.$store.dispatch('service/delService', props.id)
+        this.$store.dispatch('product/delProduct', props.id)
       })
     }
   }

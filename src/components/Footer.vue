@@ -1,25 +1,5 @@
 <template>
   <q-footer>
-    <div class="top">
-      <!-- <div class="flex">
-        <div class="sub">
-          <div class="img"><img :src="logo" :alt="title" /></div>
-        </div>
-        <div class="subTitle normal"><a href="https://www.vivitekusa.com/" target="_blank"
-            title="Vivitek - US &amp; Canada"><span class="service_link">US & Canada</span></a><a
-            href="https://www.vivitek.eu/" target="_blank" title="Vivitek - EMEA"> <span
-              class="service_link">EMEA</span></a></div>
-      </div> -->
-      <div class="block right">
-        <div class="sub"><span class="st">About</span><span class="subTitle link"><a title="Privacy Policy"
-              href="/privacypolicy"><span class="service_link">Privacy Policy</span></a> | <a title="Data Collection"
-              href="/datacollection"><span class="service_link">Data Collection</span></a> | <a title="Terms of Use"
-              href="/serviceterms"><span class="service_link">Terms of Use</span></a></span></div>
-      </div>
-      <div class="block right">
-        <div class="sub"><span class="st">Browser Compatibility</span><span class="subTitle">Chrome</span></div>
-      </div>
-    </div>
     <div class="main">Copyright © {{ new Date().getFullYear() }} Delta Electronics,Inc. All rights reserved. Version {{
       version }}
     </div>
@@ -48,7 +28,7 @@ export default defineComponent({
     height: 100px
     line-height: 26px
     padding: 16px 0px
-    background-color: rgb(52,56,65)
+    background-color: #aaaaaa
     color: rgb(158, 156, 156)
     text-align: center
     font-size: 14px
@@ -105,7 +85,7 @@ export default defineComponent({
           align-items: flex-start
           color: rgba(255, 255, 255, 0.38)
     .main
-      color: rgba(255, 255, 255, 0.32)
+      color: white
 
 @media (max-width: 1200px)
   .q-footer

@@ -2,52 +2,32 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Create New Service</div>
+        <div class="text-h6 text-bold">Add New Product</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="createService">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="createProduct">
           <div class="row q-col-gutter-md">
-            <div :class="[imageUrl || data.img ? 'col-6' : 'col-12']">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.name" label="Name" lazy-rules :rules="[
+            <div class="col-12">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.appid" label="AppId" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a service name']">
+                  (val !== null && val !== '') || 'Please enter a product appid']">
               </q-input>
-              <q-file v-model="image" class="q-mt-xs q-mb-lg" label="Upload Image" filled
-                @update:model-value="handleUpload()">
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" />
-                </template>
-              </q-file>
-              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.url" label="URL" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.name" label="Name" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a service URL']">
-              </q-input>
-              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.description" label="Description">
+                  (val !== null && val !== '') || 'Please enter a product name']">
               </q-input>
             </div>
-            <div v-if="imageUrl || data.img" class="col-6">
-              <div class="theme-bg q-pa-md">
-                <div v-if="imageUrl" class="">
-                  <q-img :src="imageUrl" spinner-color="white" style="max-width: 300px; height: 200px;"
-                    fit="contain"></q-img>
-                </div>
-                <div v-else-if="data.img" class="">
-                  <q-img :src="data.img" spinner-color="white" style="max-width: 300px; height: 200px;" :fit="contain">
-                    <template v-slot:error>
-                      <div class="absolute-full flex flex-center bg-gery text-white">
-                        Cannot load image
-                      </div>
-                    </template>
-                  </q-img>
-                </div>
-              </div>
+            <div class="q-gutter-sm flex items-center">
+              <span>CDN:</span>
+              <q-radio v-model="data.cdn" val="1" label="true" />
+              <q-radio v-model="data.cdn" val="0" label="false" />
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" label="Create" type="submit" color="primary" />
+            <q-btn unelevated class="q-mb-xs q-px-lg" label="Apply" type="submit" color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -60,17 +40,15 @@ import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
 
 export default defineComponent({
-  name: 'CreatServiceDialog',
+  name: 'CreatProductDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
         name: '',
-        url: '',
-        description: '',
-        state: '0',
-        img: ''
+        appid: '',
+        cdn: ''
       },
       image: null,
       imageUrl: ''
@@ -128,7 +106,7 @@ export default defineComponent({
       // }
       this.imageUrl = URL.createObjectURL(file)
     },
-    createService() {
+    createProduct() {
       if (!this.image) {
         this.$q.notify({
           color: 'red-5',
@@ -139,7 +117,7 @@ export default defineComponent({
         return
       }
       this.$refs.Form.validate().then(success => {
-        this.$store.commit('service/setLoading', true)
+        this.$store.commit('product/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
           const formData = new FormData()
@@ -148,7 +126,7 @@ export default defineComponent({
           formData.append('state', this.data.state)
           formData.append('url', this.data.url)
           formData.append('description', this.data.description)
-          this.$store.dispatch('service/createService', formData)
+          this.$store.dispatch('product/createProduct', formData)
             .then(() => {
               this.$refs.dialog.hide()
               this.reset()

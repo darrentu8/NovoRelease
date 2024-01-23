@@ -1,26 +1,16 @@
 <template>
   <div class="brandTabBtnWrap">
-    <q-btn stack @click="toPage('service')" :class="['brandTabBtn', pathTab == 'service' ? 'active' : '']" flat
-      type="button">
-      <img v-if="pathTab == 'service'" src="~assets/img/icon/globe-alt-g.svg" alt="">
-      <img v-else src="~assets/img/icon/globe-alt.svg" alt="">
-      <span>Service</span>
+    <q-btn stack @click="toPage('product')" :class="['brandTabBtn', pathTab == 'product' ? 'active' : '']" flat
+      type="button" icon="dns">
+      <span>Product</span>
     </q-btn>
-    <q-btn stack @click="toPage('devices')" :class="['brandTabBtn', pathTab == 'devices' ? 'active' : '']" flat
-      type="button">
-      <img v-if="pathTab == 'devices'" src="~assets/img/icon/device-g.svg" alt="">
-      <img v-else src="~assets/img/icon/device.svg" alt="">
-      <span>Devices</span>
+    <q-btn stack @click="toPage('upgrade')" :class="['brandTabBtn', pathTab == 'upgrade' ? 'active' : '']" flat
+      type="button" icon="layers">
+      <span>Upgrade Number</span>
     </q-btn>
-    <q-btn stack @click="toPage('announcement')" :class="['brandTabBtn', pathTab == 'announcement' ? 'active' : '']" flat
-      type="button">
-      <img v-if="pathTab == 'announcement'" src="~assets/img/icon/org-g.svg" alt="">
-      <img v-else src="~assets/img/icon/org.svg" alt="">
-      <span>Announcement</span>
-    </q-btn>
-    <q-btn stack @click="toPage('licenses')" :class="['brandTabBtn', pathTab == 'licenses' ? 'active' : '']" flat
-      type="button" icon="vpn_key">
-      <span>Licenses</span>
+    <q-btn stack @click="toPage('bsp')" :class="['brandTabBtn', pathTab == 'bsp' ? 'active' : '']" flat type="button"
+      icon="developer_board">
+      <span>BSP</span>
     </q-btn>
   </div>
 </template>

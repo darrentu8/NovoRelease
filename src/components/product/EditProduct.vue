@@ -2,18 +2,18 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Edit Service</div>
+        <div class="text-h6 text-bold">Edit Product</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="editService">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="editProduct">
           <div class="row q-col-gutter-md">
             <div class="col-6">
               <q-input filled class="q-mt-xs" type="text" v-model="data.name" label="Name" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a service name']">
+                  (val !== null && val !== '') || 'Please enter a product name']">
               </q-input>
               <q-file v-model="data.img" class="q-mt-xs q-mb-lg" label="Upload Image" filled
                 @update:model-value="handleUpload()">
@@ -23,7 +23,7 @@
               </q-file>
               <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.url" label="URL" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a service URL']">
+                  (val !== null && val !== '') || 'Please enter a product URL']">
               </q-input>
               <q-input filled class="q-mt-xs" type="textarea" rows="4" v-model="data.description" label="Description">
               </q-input>
@@ -67,18 +67,16 @@ import inputRules from 'src/mixins/inputRules.js'
 import { mapState } from 'vuex'
 
 export default defineComponent({
-  name: 'EditServiceDialog',
+  name: 'EditProductDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
         id: '',
+        appid: '0',
         name: '',
-        state: '0',
-        url: '',
-        description: '',
-        img: ''
+        cdn: ''
       },
       imageUrl: ''
     }
@@ -86,10 +84,10 @@ export default defineComponent({
   created() {
   },
   computed: {
-    ...mapState('service', ['currentService'])
+    ...mapState('product', ['currentProduct'])
   },
   mounted() {
-    this.data = Object.assign({}, this.currentService)
+    this.data = Object.assign({}, this.currentProduct)
   },
   methods: {
     handleUpload() {
@@ -121,7 +119,7 @@ export default defineComponent({
       // }
       this.imageUrl = URL.createObjectURL(file)
     },
-    editService() {
+    editproduct() {
       // if (!this.image) {
       //   this.$q.notify({
       //     color: 'red-5',
@@ -132,16 +130,16 @@ export default defineComponent({
       //   return
       // }
       this.$refs.Form.validate().then(success => {
-        this.$store.commit('service/setLoading', true)
+        this.$store.commit('product/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
           const formData = new FormData()
           formData.append('name', this.data.name)
-          formData.append('img', this.data.img ? this.data.img : this.currentService.img)
+          formData.append('img', this.data.img ? this.data.img : this.currentproduct.img)
           formData.append('state', Number(this.data.state))
           formData.append('url', this.data.url)
           formData.append('description', this.data.description)
-          this.$store.dispatch('service/editService', formData)
+          this.$store.dispatch('product/editProduct', formData)
             .then(() => {
               this.$refs.dialog.hide()
             })

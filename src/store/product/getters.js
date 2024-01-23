@@ -4,6 +4,6 @@ export function getLoading(state) {
 export function getBID(state) {
   return state.bid
 }
-export function getServiceList(state) {
-  return state.serviceList
+export function getProductList(state) {
+  return state.productList
 }

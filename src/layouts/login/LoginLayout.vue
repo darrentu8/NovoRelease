@@ -3,10 +3,13 @@
     <q-header class="bg-theme-grey">
       <q-toolbar class="bg-theme-grey" style="height:56px;">
         <div class="logoBox">
-          <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
+          <router-link to="/" class="desktop-only">
+            <span class="text-dark text-bold text-h5">Novo Management</span>
+          </router-link>
+          <!-- <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
           <div class="spaceLine border-r-b"></div>
           <router-link class="logoBox-r" to="/"><img class="q-ml-md" :src="logoFont" :alt="title" /></router-link>
-          <router-link class="" to="/"><img class="q-ml-md" :src="logoFontServer" :alt="title" /></router-link>
+          <router-link class="" to="/"><img class="q-ml-md" :src="logoFontServer" :alt="title" /></router-link> -->
         </div>
         <q-toolbar-title></q-toolbar-title>
         <q-btn v-if="currentRouteName === 'register'" unelevated color="transparent" text-color="white" label="Sign in"

@@ -1,4 +1,4 @@
-# Quasar App (whiteboard)
+# Quasar App
 
 A Quasar Project
 

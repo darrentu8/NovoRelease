@@ -6,7 +6,7 @@
       </div>
       <div class="col-md-8 col-12 q-mb-lg">
         <BreadCrumbComponent style="height: 31px;" />
-        <LicComponent />
+        <UpgradeComponent />
       </div>
     </div>
   </q-page>
@@ -14,13 +14,13 @@
 
 <script>
 import MenuTabComponent from 'src/components/MenuTab.vue'
-import LicComponent from 'src/components/licenses/LicComponent.vue'
+import UpgradeComponent from 'src/components/upgrade/UpgradeComponent.vue'
 import BreadCrumbComponent from 'src/components/BreadCrumb.vue'
 export default {
   components: {
     MenuTabComponent,
     BreadCrumbComponent,
-    LicComponent
+    UpgradeComponent
   },
   setup() {
     return {

@@ -2,7 +2,7 @@
 export default function () {
   return {
     loading: false,
-    currentLic:
+    currentBsp:
     {
       id: 1,
       maincode: 'LRMC-AAAA-BBBB-CCCC',
@@ -14,6 +14,12 @@ export default function () {
       cdate: '1692255710886',
       adate: '1692255710886'
     },
-    licList: []
+    bspList: [
+      {
+        id: 1,
+        product: 'novods',
+        model: 'ds310',
+        comment: 'NovoDS-DS310'
+      }]
   }
 }

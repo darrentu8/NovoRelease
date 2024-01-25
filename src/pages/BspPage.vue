@@ -6,7 +6,7 @@
       </div>
       <div class="col-md-8 col-12 q-mb-lg">
         <BreadCrumbComponent style="height: 31px;" />
-        <DeviceComponent />
+        <BspComponent />
       </div>
     </div>
   </q-page>
@@ -14,13 +14,13 @@
 
 <script>
 import MenuTabComponent from 'src/components/MenuTab.vue'
-import DeviceComponent from 'src/components/device/DeviceComponent.vue'
+import BspComponent from 'src/components/bsp/BspComponent.vue'
 import BreadCrumbComponent from 'src/components/BreadCrumb.vue'
 export default {
   components: {
     MenuTabComponent,
     BreadCrumbComponent,
-    DeviceComponent
+    BspComponent
   },
   setup() {
     return {

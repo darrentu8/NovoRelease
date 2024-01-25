@@ -2,28 +2,31 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Export Licenses</div>
+        <div class="text-h6 text-bold">Create New Upgrade Number</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="exportLic">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="createUpgrade">
           <div class="row q-col-gutter-md">
-            <div class="col-12 flex items-center">
-              <span>Export by comment:</span>
-            </div>
-            <div class="col-12 flex items-center">
-              <span class="">Comment:</span>
-              <q-input style="width: 410px;" hide-bottom-space type="textarea" rows="1" filled dense class="q-ml-md"
-                v-model.number="data.comment" lazy-rules :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please enter comment']">
+            <div class="col-12">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.osid" label="OsId" lazy-rules :rules="[
+                (val) =>
+                  (val !== null && val !== '') || 'Please enter a osid']">
+              </q-input>
+              <q-input filled class="q-mt-xs" type="text" v-model="data.comment" label="Comment" lazy-rules :rules="[
+                (val) =>
+                  (val !== null && val !== '') || 'Please enter a comment']">
+              </q-input>
+              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
+                (val) =>
+                  (val !== null && val !== '') || 'Please enter a version']">
               </q-input>
             </div>
           </div>
-          <q-card-actions class="q-mt-lg q-pa-none">
-            <q-btn unelevated class="q-mx-auto q-mb-xs q-px-lg" label="Export" type="submit" color="primary" />
+          <q-card-actions class="q-mt-lg q-pa-none" align="right">
+            <q-btn unelevated class="q-mb-xs q-px-lg" label="Apply" type="submit" color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -34,13 +37,17 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
+
 export default defineComponent({
-  name: 'ExportLicDialog',
+  name: 'CreatUpgradeDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
+        id: '',
+        osid: '',
+        version: '',
         comment: ''
       }
     }
@@ -56,14 +63,18 @@ export default defineComponent({
   methods: {
     reset() {
       this.data = {
+        id: '',
+        osid: '',
+        version: '',
         comment: ''
       }
     },
-    exportLic() {
+    createUpgrade() {
       this.$refs.Form.validate().then(success => {
-        // this.$store.commit('lic/setLoading', true)
+        this.$store.commit('upgrade/setLoading', true)
+        // console.log('this.userData', this.userData)
         if (success) {
-          this.$store.dispatch('lic/exportLic', this.data)
+          this.$store.dispatch('upgrade/createUpgrade', this.data)
             .then(() => {
               this.$refs.dialog.hide()
               this.reset()

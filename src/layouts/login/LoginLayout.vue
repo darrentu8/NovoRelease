@@ -3,9 +3,9 @@
     <q-header class="bg-theme-grey">
       <q-toolbar class="bg-theme-grey" style="height:56px;">
         <div class="logoBox">
-          <router-link to="/" class="desktop-only">
+          <!-- <router-link to="/" class="desktop-only">
             <span class="text-dark text-bold text-h5">Novo Management</span>
-          </router-link>
+          </router-link> -->
           <!-- <router-link to="/" class="desktop-only"><img :src="vvklogo" :alt="vvktitle" /></router-link>
           <div class="spaceLine border-r-b"></div>
           <router-link class="logoBox-r" to="/"><img class="q-ml-md" :src="logoFont" :alt="title" /></router-link>

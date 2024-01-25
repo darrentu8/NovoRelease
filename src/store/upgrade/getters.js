@@ -4,6 +4,6 @@ export function getLoading(state) {
 export function getBID(state) {
   return state.bid
 }
-export function getDeviceList(state) {
-  return state.deviceList
+export function getUpgradeList(state) {
+  return state.upgradeList
 }

@@ -4,6 +4,6 @@ export function getLoading(state) {
 export function getBID(state) {
   return state.bid
 }
-export function getLicList(state) {
-  return state.licList
+export function getBspList(state) {
+  return state.bspList
 }

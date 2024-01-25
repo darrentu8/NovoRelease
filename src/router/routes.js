@@ -46,232 +46,77 @@ export const PublicRoutes = [
             }
           ]
         },
-        component: () => import('src/pages/ProductPage.vue')
-      }
-    ]
-  },
-  {
-    path: '/',
-    component: () => import('layouts/dashboard/DashboardLayout.vue'),
-    children: [
+        component: () => import('src/pages/ProductPage.vue'),
+        children: [
+          {
+            path: ':id',
+            name: 'productdetail',
+            meta: {
+              auth: true,
+              title: ':id',
+              breadcrumb: [
+                {
+                  text: 'Product',
+                  disabled: true,
+                  href: '/product',
+                  link: true,
+                  exact: true,
+                  to: { name: 'product', path: '/product' }
+                },
+                {
+                  text: ':id',
+                  disabled: true,
+                  href: '/:id',
+                  link: true,
+                  exact: true,
+                  to: { name: ':id', path: '/:id' }
+                }
+              ]
+            },
+            component: () => import('src/pages/ProductDetailPage.vue')
+          }
+        ]
+      },
       {
-        path: 'announcement',
-        name: 'announcement',
+        path: 'upgrade',
+        name: 'upgrade',
         meta: {
           auth: true,
-          title: 'System Announcement',
+          title: 'Upgrade',
           breadcrumb: [
             {
-              text: 'System Announcement',
+              text: 'Upgrade',
               disabled: true,
-              href: '/announcement',
+              href: '/upgrade',
               link: true,
               exact: true,
-              to: { name: 'announcement', path: '/announcement' }
+              to: { name: 'upgrade', path: '/upgrade' }
             }
           ]
         },
-        component: () => import('src/pages/AnnPage.vue')
-      }
-    ]
-  },
-  {
-    path: '/',
-    component: () => import('layouts/dashboard/DashboardLayout.vue'),
-    children: [
+        component: () => import('src/pages/UpgradePage.vue')
+      },
       {
-        path: 'devices',
-        name: 'devices',
+        path: 'bsp',
+        name: 'bsp',
         meta: {
           auth: true,
-          title: 'Devices',
+          title: 'Bsp',
           breadcrumb: [
             {
-              text: 'Devices',
+              text: 'Bsp',
               disabled: true,
-              href: '/devices',
+              href: '/bsp',
               link: true,
               exact: true,
-              to: { name: 'devices', path: '/devices' }
+              to: { name: 'bsp', path: '/bsp' }
             }
           ]
         },
-        component: () => import('src/pages/DevicesPage.vue')
+        component: () => import('src/pages/BspPage.vue')
       }
     ]
   },
-  {
-    path: '/',
-    component: () => import('layouts/dashboard/DashboardLayout.vue'),
-    children: [
-      {
-        path: 'licenses',
-        name: 'licenses',
-        meta: {
-          auth: true,
-          title: 'Licenses',
-          breadcrumb: [
-            {
-              text: 'Licenses',
-              disabled: true,
-              href: '/licenses',
-              link: true,
-              exact: true,
-              to: { name: 'licenses', path: '/licenses' }
-            }
-          ]
-        },
-        component: () => import('src/pages/LicensesPage.vue')
-      }
-    ]
-  },
-  // {
-  //   path: '/register',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'register',
-  //       meta: {
-  //         title: 'register',
-  //         breadcrumb: [
-  //           {
-  //             text: 'Register',
-  //             disabled: true,
-  //             href: '/register',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'register', path: '/register' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Register.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/activation',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'activation',
-  //       meta: {
-  //         title: 'activation',
-  //         breadcrumb: [
-  //           {
-  //             text: 'activation',
-  //             disabled: true,
-  //             href: '/activation',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'activation', path: '/activation' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Activation.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/resetpassword',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'resetpassword',
-  //       meta: {
-  //         title: 'resetpassword',
-  //         breadcrumb: [
-  //           {
-  //             text: 'resetpassword',
-  //             disabled: true,
-  //             href: '/resetpassword',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'resetpassword', path: '/resetpassword' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/ResetPassword.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/forget',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'forget',
-  //       meta: {
-  //         title: 'forget',
-  //         breadcrumb: [
-  //           {
-  //             text: 'forget',
-  //             disabled: true,
-  //             href: '/forget',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'forget', path: '/forget' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Forget.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/active',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'active',
-  //       meta: {
-  //         title: 'active',
-  //         breadcrumb: [
-  //           {
-  //             text: 'active',
-  //             disabled: true,
-  //             href: '/active',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'active', path: '/active' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Active.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/terms',
-  //   component: () => import('layouts/login/LoginLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'terms',
-  //       meta: {
-  //         title: 'terms',
-  //         breadcrumb: [
-  //           {
-  //             text: 'terms',
-  //             disabled: true,
-  //             href: '/terms',
-  //             link: true,
-  //             exact: true,
-  //             to: { name: 'terms', path: '/terms' }
-  //           }
-  //         ]
-  //       },
-  //       component: () => import('src/pages/Terms.vue')
-  //     }
-  //   ]
-  // },
-  // 以下內容在動態路由中添加，解決刷新404的問題:store-permission-actions
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
     component: () => import('layouts/login/LoginLayout.vue'),

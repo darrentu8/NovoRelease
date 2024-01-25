@@ -1,15 +1,15 @@
 import { Notify } from 'quasar'
 import { postAction, postBlobAction, getAction, deleteAction } from 'src/api/manage'
 
-export function getLic({ state, commit, rootGetters }) {
+export function getBsp({ state, commit, rootGetters }) {
   const BID = {
     bid: rootGetters['auth/getBID']
   }
   commit('setLoading', true)
-  getAction('webapi/rmcLicense', BID)
+  getAction('webapi/rmcBspense', BID)
     .then((response) => {
       console.log(response)
-      commit('setLic', response.data.data)
+      commit('setBsp', response.data.data)
       commit('setLoading', false)
     })
     .catch((error) => {
@@ -25,12 +25,12 @@ export function getLic({ state, commit, rootGetters }) {
       })
     })
 }
-export function editLic({ state, commit, dispatch, rootGetters }, data) {
+export function editBsp({ state, commit, dispatch, rootGetters }, data) {
   commit('setLoading', true)
-  postAction('webapi/rmcLicense/' + state.currentLic.id + '?bid=' + rootGetters['auth/getBID'], data)
+  postAction('webapi/rmcBspense/' + state.currentBsp.id + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
       console.log(response)
-      dispatch('getLic')
+      dispatch('getBsp')
       commit('setLoading', false)
     })
     .catch((error) => {
@@ -46,10 +46,10 @@ export function editLic({ state, commit, dispatch, rootGetters }, data) {
       })
     })
 }
-export function createLic({ state, commit, dispatch, rootGetters }, data) {
-  postAction('webapi/rmcLicense' + '?bid=' + rootGetters['auth/getBID'], data)
+export function createBsp({ state, commit, dispatch, rootGetters }, data) {
+  postAction('webapi/rmcBspense' + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
-      dispatch('getLic')
+      dispatch('getBsp')
       // console.log(response)
       // Notify.create({
       //   color: 'primary',
@@ -70,11 +70,11 @@ export function createLic({ state, commit, dispatch, rootGetters }, data) {
       })
     })
 }
-export function exportLic({ state, commit, dispatch, rootGetters }, data) {
-  postBlobAction('webapi/rmcLicense/export' + '?bid=' + rootGetters['auth/getBID'], data)
+export function exportBsp({ state, commit, dispatch, rootGetters }, data) {
+  postBlobAction('webapi/rmcBspense/export' + '?bid=' + rootGetters['auth/getBID'], data)
     .then((response) => {
       // console.log(response)
-      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const blob = new Blob([response.data], { type: 'appBspation/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
@@ -94,8 +94,8 @@ export function exportLic({ state, commit, dispatch, rootGetters }, data) {
       console.log(error)
     })
 }
-export function delLic({ state, commit, dispatch, rootGetters }, id) {
-  deleteAction('webapi/rmcLicense/' + id + '?bid=' + rootGetters['auth/getBID'])
+export function delBsp({ state, commit, dispatch, rootGetters }, id) {
+  deleteAction('webapi/rmcBspense/' + id + '?bid=' + rootGetters['auth/getBID'])
     .then((response) => {
       // console.log(response)
       // Notify.create({
@@ -104,7 +104,7 @@ export function delLic({ state, commit, dispatch, rootGetters }, id) {
       //   icon: 'check',
       //   message: response.description
       // })
-      dispatch('getLic')
+      dispatch('getBsp')
     })
     .catch((error) => {
       const { description } = error.response.data

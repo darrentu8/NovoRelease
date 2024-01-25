@@ -3,62 +3,51 @@
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
-        <img class="q-mr-sm" src="~assets/img/icon/device-g.svg" alt="">
-        <span class="text-h6">Device</span>
+        <q-icon class="q-mr-sm" color="primary" name="developer_board" size="sm" alt="" />
+        <span class="text-h6">BSP</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshDevice" icon="refresh" label="">
+      <q-input class="q-mr-md" rounded outlined v-model="filter" dense>
+        <template v-slot:append>
+          <q-icon v-if="filter !== ''" name="close" @click="filter = ''" class="cursor-pointer" />
+          <q-icon name="search" color="primary" />
+        </template>
+      </q-input>
+      <q-btn flat round color="primary" @click="refreshBsp" icon="refresh">
         <q-tooltip>
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createDevice" icon="add" label="">
+      <q-btn flat round color="primary" @click="createBsp" icon="add">
         <q-tooltip>
-          Create New Device Version
+          Create New BSP
         </q-tooltip>
       </q-btn>
     </div>
     <!-- Table -->
     <div v-if="!getLoading">
-      <q-table
+      <q-table :filter="filter" v-model:pagination="pagination"
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getDeviceList"
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getBspList"
         :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
-        <!-- img -->
-        <template v-slot:body-cell-img="props">
-          <q-td :props="props">
-            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img"
-              style="height:50px;">
-              <q-tooltip class="bg-grey-5 no-border-radius flex flex-center" anchor="center right" self="center left"
-                :offset="[10, 10]" style="width: 300px; height: 250px;">
-                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;"
-                  :fit="contain" />
-              </q-tooltip>
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-grey-4 text-white">
-                  <q-icon name="close"></q-icon>
-                </div>
-              </template>
-            </q-img>
-          </q-td>
-        </template>
-        <!-- State -->
-        <template v-slot:body-cell-state="props">
-          <q-td :props="props">
-            <q-chip v-if="props.row.state === 1" outline color="primary" size="sm">Active</q-chip>
-            <q-chip v-else-if="props.row.state === 0" outline color="grey-6" size="sm">Pending</q-chip>
-          </q-td>
+        <!-- Search -->
+        <template v-slot:top-right>
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </template>
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn color="primary" round flat @click="editDeviceDialog(props.row)">
-              <img src="~assets/img/icon/edit.svg" alt="">
+            <q-btn color="primary" round flat @click="editBspDialog(props.row)">
+              <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delDeviceDialog(props.row)">
+            <q-btn color="negative" round flat @click="delBspDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
@@ -118,52 +107,61 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateDevice />
-  <EditDevice />
+  <CreatBspDialog />
+  <EditBsp />
   <DelDialog />
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
-import CreateDevice from './CreatDeviceDialog.vue'
-import EditDevice from './EditDevice.vue'
+import CreatBspDialog from './CreatBspDialog.vue'
+import EditBsp from './EditBsp.vue'
 import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
 export default defineComponent({
-  name: 'DeviceComponent',
+  name: 'BspComponent',
   components: {
-    CreateDevice,
-    EditDevice,
+    EditBsp,
+    CreatBspDialog,
     DelDialog
   },
   mixins: [inputRules],
   computed: {
-    ...mapGetters('device', ['getLoading', 'getDeviceList'])
+    ...mapGetters('bsp', ['getLoading', 'getBspList'])
   },
   props: {
   },
   data() {
     return {
+      filter: '',
+      pagination: {
+        rowsPerPage: 25,
+        sortBy: 'model',
+        descending: true
+      },
       columns: [
         {
-          name: 'model',
+          name: 'product',
           required: true,
-          label: 'Model',
+          label: 'Product',
           align: 'left',
-          field: row => row.model,
+          field: row => row.product,
           format: val => `${val}`,
           sortable: true,
           style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
-        { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+        { name: 'model', align: 'left', label: 'Model', field: 'model', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+        { name: 'comment', align: 'left', label: 'Comment', field: 'comment', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       rows: [
         {
-          model: 'NovoConnect-NC-X700',
-          version: 'v4.0.1520'
+          id: 1,
+          product: 'novods',
+          model: 'ds310',
+          comment: 'NovoDS-DS310'
         }
       ],
       loading: false,
@@ -173,39 +171,47 @@ export default defineComponent({
   created() {
   },
   mounted() {
-    this.getDevice()
+    this.getBsp()
   },
   methods: {
-    ...mapMutations('device', ['setLoading', 'DeviceList']),
-    refreshDevice() {
-      this.$store.dispatch('device/getDevice')
+    ...mapMutations('bsp', ['setLoading', 'bspList']),
+    refreshBsp() {
+      this.$store.dispatch('bsp/getBsp')
     },
-    getDevice() {
-      this.$store.dispatch('device/getDevice')
+    getBsp() {
+      this.$store.dispatch('bsp/getBsp')
     },
-    createDevice() {
+    createBsp() {
       this.$q
         .dialog({
-          component: CreateDevice
+          component: CreatBspDialog
         })
     },
-    editDeviceDialog(props) {
-      this.$store.commit('device/editDevice', props)
+    editBspDialog(props) {
+      const Data = {
+        id: props.id,
+        name: props.name,
+        state: props.state.toString(),
+        url: props.url,
+        description: props.description,
+        img: props.img
+      }
+      this.$store.commit('bsp/editBsp', Data)
       this.$q
         .dialog({
-          component: EditDevice
+          component: EditBsp
         })
     },
-    delDeviceDialog(props) {
+    delBspDialog(props) {
       this.$q.dialog({
         component: DelDialog,
         componentProps: {
-          title: 'Are you sure you want to delete this Device?',
+          title: 'Are you sure you want to delete this BSP?',
           okBtn: 'Delete',
           cancelBtn: 'Cancel'
         }
       }).onOk(() => {
-        this.$store.dispatch('device/delDevice', props.id)
+        this.$store.dispatch('bsp/delBsp', props.id)
       })
     }
   }

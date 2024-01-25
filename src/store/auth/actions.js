@@ -25,7 +25,7 @@ export function loginAndSetBid({ state, commit }, loginData) {
       //   icon: 'check',
       //   message: 'Login Success'
       // })
-      this.$router.push({ path: '/service' })
+      this.$router.push({ path: '/product' })
     })
     .catch((error) => {
       const { description } = error.response.data

@@ -4,7 +4,9 @@
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
         <q-icon class="q-mr-sm" color="primary" name="dns" size="sm" alt="" />
-        <span class="text-h6">Product</span>
+        <span class="text-h6">{{ $store.state.product.currentProduct.name }}, APP ID: {{
+          $store.state.product.currentProduct.appid }}, CDN: {{ $store.state.product.currentProduct.cdn ?
+    'true' : 'false' }}</span>
       </div>
       <q-space />
       <q-btn flat round color="primary" @click="refreshProduct" icon="refresh" label="">
@@ -12,7 +14,7 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createProduct" icon="add" label="">
+      <q-btn flat round color="primary" @click="creatRelease" icon="add" label="">
         <q-tooltip>
           Create New Product
         </q-tooltip>
@@ -22,8 +24,9 @@
     <div v-if="!getLoading">
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getProductList"
-        :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height"
+        :rows="getCurrentProductList" :columns="columns" row-key="id" :loading="getLoading" color="primary"
+        no-data-icon="success">
         <!-- img -->
         <template v-slot:body-cell-img="props">
           <q-td :props="props">
@@ -44,14 +47,14 @@
         <!-- State -->
         <template v-slot:body-cell-state="props">
           <q-td :props="props">
-            <q-chip v-if="props.row.state === 1" outline color="primary" size="sm">Active</q-chip>
-            <q-chip v-else-if="props.row.state === 0" outline color="grey-6" size="sm">Pending</q-chip>
+            <q-chip v-if="props.row.state === 1" outline color="primary" size="sm">Enable</q-chip>
+            <q-chip v-else-if="props.row.state === 0" outline color="grey-6" size="sm">Disable</q-chip>
           </q-td>
         </template>
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn color="primary" round flat @click="toProductDetail(props.row)">
+            <q-btn color="primary" round flat @click="editProductDialog(props.row)">
               <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
@@ -118,6 +121,7 @@
     </q-markup-table>
   </q-card>
   <CreateProduct />
+  <CreatRelease />
   <EditProduct />
   <DelDialog />
 </template>
@@ -126,38 +130,44 @@
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
 import CreateProduct from './CreatProductDialog.vue'
+import CreatRelease from './CreatReleaseDialog.vue'
 import EditProduct from '../product/EditProduct.vue'
 import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
 export default defineComponent({
-  name: 'ProductComponent',
+  name: 'ProductDetailComponent',
   components: {
     CreateProduct,
+    CreatRelease,
     EditProduct,
     DelDialog
   },
   mixins: [inputRules],
   computed: {
-    ...mapGetters('product', ['getLoading', 'getProductList'])
+    ...mapGetters('product', ['getLoading', 'getProductList', 'getCurrentProductList'])
   },
   props: {
   },
   data() {
     return {
       columns: [
-        { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
+        { name: 'id', align: 'center', label: 'ID', field: 'id', sortable: true },
+        { name: 'version', align: 'center', label: 'Version', field: 'version', sortable: true },
+        { name: 'filename', align: 'center', label: 'Filename', field: 'filename', sortable: true },
+        { name: 'description', align: 'center', label: 'Description', field: 'description', sortable: true },
+        { name: 'state', align: 'center', label: 'State', field: 'state', sortable: true, format: val => val ? 'enable' : 'disable' },
         {
-          name: 'name',
+          name: 'md5',
           required: true,
-          label: 'Name',
+          label: 'MD5',
           align: 'left',
-          field: row => row.name,
+          field: row => row.md5,
           format: val => `${val}`,
           sortable: true,
           style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
         },
-        { name: 'cdn', format: val => val ? 'true' : 'false', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+        { name: 'parameters', align: 'left', label: 'Parameters', field: 'parameters', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
         { name: 'actions', label: '', field: 'actions', sortable: false }
       ],
       loading: false,
@@ -177,15 +187,17 @@ export default defineComponent({
     getProduct() {
       this.$store.dispatch('product/getProduct')
     },
+    creatRelease() {
+      this.$q
+        .dialog({
+          component: CreatRelease
+        })
+    },
     createProduct() {
       this.$q
         .dialog({
           component: CreateProduct
         })
-    },
-    toProductDetail(props) {
-      this.$store.commit('product/editProduct', props)
-      this.$router.push({ path: '/product/' + props.id })
     },
     editProductDialog(props) {
       const Data = {

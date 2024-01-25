@@ -4,9 +4,9 @@ import auth from './auth'
 import permission from './permission'
 import product from './product'
 import ann from './ann'
-import device from './device'
+import upgrade from './upgrade'
 import user from './user'
-import lic from './lic'
+import bsp from './bsp'
 
 /*
  * If not building with SSR mode, you can
@@ -23,9 +23,9 @@ const Store = createStore({
     permission,
     product,
     ann,
-    device,
+    upgrade,
     user,
-    lic
+    bsp
   },
   state: {
     wsNotify: {}

@@ -37,7 +37,7 @@ export default defineComponent({
   },
   methods: {
     toHome() {
-      this.$router.push({ path: '/service' })
+      this.$router.push({ path: '/product' })
     }
   }
 })

@@ -5,6 +5,9 @@ export function setLoading(state, payload) {
 export function setProduct(state, payload) {
   state.productList = payload
 }
+export function setCurrentProductList(state, payload) {
+  state.currentProductList = payload
+}
 export function editProduct(state, payload) {
   state.currentProduct = payload
 }

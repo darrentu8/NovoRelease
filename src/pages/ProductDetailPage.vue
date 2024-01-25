@@ -1,34 +1,21 @@
 <template>
   <q-page>
     <div class="flex items-start justify-center q-mx-md q-mt-lg">
-      <div v-if="currentRouteName === 'product'" class="col-md-4 col-12 q-mr-lg q-mb-lg" style="margin-top: 29px;">
-        <MenuTabComponent />
-      </div>
-      <div class="col-md-8 col-12 q-mb-lg">
+      <div class="col-md-12 col-12 q-mb-lg">
         <BreadCrumbComponent style="height: 31px;" />
-        <ProductComponent v-if="currentRouteName === 'product'" />
-        <ProductDetailComponent v-else-if="currentRouteName === 'productdetail'" />
+        <ProductDetailComponent />
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
-import MenuTabComponent from 'src/components/MenuTab.vue'
-import ProductComponent from 'src/components/product/ProductComponent.vue'
 import ProductDetailComponent from 'src/components/product/ProductDetailComponent.vue'
 import BreadCrumbComponent from 'src/components/BreadCrumb.vue'
 export default {
   components: {
-    MenuTabComponent,
     BreadCrumbComponent,
-    ProductComponent,
     ProductDetailComponent
-  },
-  computed: {
-    currentRouteName() {
-      return this.$route.name
-    }
   },
   setup() {
     return {

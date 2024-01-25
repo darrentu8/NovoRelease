@@ -2,7 +2,7 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Edit Release</div>
+        <div class="text-h6 text-bold">Edit Bsp</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -10,28 +10,50 @@
       <q-card-section class="q-mx-lg q-my-md">
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editProduct">
           <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
+            <div class="col-6">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.name" label="Name" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a product version']">
+                  (val !== null && val !== '') || 'Please enter a product name']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.filename" label="Filename" lazy-rules :rules="[
+              <q-file v-model="data.img" class="q-mt-xs q-mb-lg" label="Upload Image" filled
+                @update:model-value="handleUpload()">
+                <template v-slot:prepend>
+                  <q-icon name="cloud_upload" />
+                </template>
+              </q-file>
+              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.url" label="URL" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a product filename']">
+                  (val !== null && val !== '') || 'Please enter a product URL']">
+              </q-input>
+              <q-input filled class="q-mt-xs" type="textarea" rows="4" v-model="data.description" label="Description">
               </q-input>
               <div class="q-gutter-sm flex items-center">
                 <span>Status:</span>
                 <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
                   v-model="data.state" checked-icon="check" unchecked-icon="clear" />
               </div>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.parameters" label="Parameters" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product parameters']">
-              </q-input>
+
+            </div>
+            <div class="col-6">
+              <div class="theme-bg q-pa-md q-mt-lg">
+                <div v-if="imageUrl" class="">
+                  <q-img :src="imageUrl" spinner-color="white" style="max-width: 300px; height: 200px;"
+                    fit="contain"></q-img>
+                </div>
+                <div v-else-if="data.img" class="">
+                  <q-img :src="data.img" spinner-color="white" style="max-width: 300px; height: 200px;" fit="contain">
+                    <template v-slot:error>
+                      <div class="absolute-full flex flex-center bg-gery text-white">
+                        Cannot load image
+                      </div>
+                    </template>
+                  </q-img>
+                </div>
+              </div>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" label="Apply" type="submit" color="primary" />
+            <q-btn unelevated class="q-mb-xs q-px-lg" label="Update" type="submit" color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -42,28 +64,26 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default defineComponent({
-  name: 'EditProductDialog',
+  name: 'EditBspDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
         id: '',
-        appid: '0',
-        name: '',
-        cdn: ''
-      },
-      imageUrl: ''
+        osid: '',
+        version: '',
+        comment: ''
+      }
     }
   },
   created() {
   },
   computed: {
-    ...mapGetters('product', ['getLoading', 'getProductList', 'getCurrentProductList']),
-    ...mapState('product', ['currentProduct'])
+    ...mapState('bsp', ['currentBsp'])
   },
   mounted() {
     this.data = Object.assign({}, this.currentProduct)

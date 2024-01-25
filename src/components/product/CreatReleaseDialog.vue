@@ -2,15 +2,21 @@
   <q-dialog ref="dialog">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Edit Release</div>
+        <div class="text-h6 text-bold">Add New Release</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="editProduct">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="createProduct">
           <div class="row q-col-gutter-md">
             <div class="col-12">
+              <q-file v-model="data.img" class="q-mt-xs q-mb-lg" label="Upload File" filled
+                @update:model-value="handleUpload()">
+                <template v-slot:prepend>
+                  <q-icon name="cloud_upload" />
+                </template>
+              </q-file>
               <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product version']">
@@ -19,11 +25,6 @@
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product filename']">
               </q-input>
-              <div class="q-gutter-sm flex items-center">
-                <span>Status:</span>
-                <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
-                  v-model="data.state" checked-icon="check" unchecked-icon="clear" />
-              </div>
               <q-input filled class="q-mt-xs" type="text" v-model="data.parameters" label="Parameters" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product parameters']">
@@ -42,39 +43,51 @@
 <script>
 import { defineComponent } from 'vue'
 import inputRules from 'src/mixins/inputRules.js'
-import { mapState, mapGetters } from 'vuex'
 
 export default defineComponent({
-  name: 'EditProductDialog',
+  name: 'CreatProductDialog',
   mixins: [inputRules],
   data() {
     return {
       dense: true,
       data: {
-        id: '',
-        appid: '0',
         name: '',
+        appid: '',
         cdn: ''
       },
+      image: null,
       imageUrl: ''
     }
   },
   created() {
+    this.reset()
   },
   computed: {
-    ...mapGetters('product', ['getLoading', 'getProductList', 'getCurrentProductList']),
-    ...mapState('product', ['currentProduct'])
-  },
-  mounted() {
-    this.data = Object.assign({}, this.currentProduct)
+    userData() {
+      return this.$store.state.auth.userData
+    }
   },
   methods: {
-    handleUpload() {
-      if (this.data.img) {
-        this.imageUrl = URL.createObjectURL(this.data.img)
+    reset() {
+      if (this.imageUrl) {
+        URL.revokeObjectURL(this.imageUrl)
+        this.image = null
+        this.imageUrl = ''
       }
-      const file = this.data.img
-      const typeCheck = file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg'
+      this.data = {
+        name: '',
+        url: '',
+        description: '',
+        state: '0',
+        img: ''
+      }
+    },
+    handleUpload() {
+      if (this.image) {
+        this.imageUrl = URL.createObjectURL(this.image)
+      }
+      const file = this.image
+      const typeCheck = file.type === 'image/svg' || file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg'
       if (!typeCheck) {
         this.$q.notify({
           color: 'red-5',
@@ -98,29 +111,30 @@ export default defineComponent({
       // }
       this.imageUrl = URL.createObjectURL(file)
     },
-    editproduct() {
-      // if (!this.image) {
-      //   this.$q.notify({
-      //     color: 'red-5',
-      //     textColor: 'white',
-      //     icon: 'warning',
-      //     message: 'Please upload a image'
-      //   })
-      //   return
-      // }
+    createProduct() {
+      if (!this.image) {
+        this.$q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'warning',
+          message: 'Please upload a image'
+        })
+        return
+      }
       this.$refs.Form.validate().then(success => {
         this.$store.commit('product/setLoading', true)
         // console.log('this.userData', this.userData)
         if (success) {
           const formData = new FormData()
           formData.append('name', this.data.name)
-          formData.append('img', this.data.img ? this.data.img : this.currentproduct.img)
-          formData.append('state', Number(this.data.state))
+          formData.append('img', this.image)
+          formData.append('state', this.data.state)
           formData.append('url', this.data.url)
           formData.append('description', this.data.description)
-          this.$store.dispatch('product/editProduct', formData)
+          this.$store.dispatch('product/createProduct', formData)
             .then(() => {
               this.$refs.dialog.hide()
+              this.reset()
             })
         } else {
           this.$q.notify({

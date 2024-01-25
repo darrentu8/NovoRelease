@@ -17,7 +17,7 @@ export default defineComponent({
     return {
       title: 'vivitek',
       logo: require('../assets/img/logo/vvkLogoFooter.svg'),
-      version: 'v1.0.1.68880'
+      version: 'v0.0.1'
     }
   }
 })

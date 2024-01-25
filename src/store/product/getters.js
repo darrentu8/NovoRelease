@@ -7,3 +7,9 @@ export function getBID(state) {
 export function getProductList(state) {
   return state.productList
 }
+export function getCurrentProduct(state) {
+  return state.currentProduct
+}
+export function getCurrentProductList(state) {
+  return state.currentProductList
+}

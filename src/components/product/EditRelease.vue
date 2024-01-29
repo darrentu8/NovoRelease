@@ -2,21 +2,15 @@
   <q-dialog ref="dialog" @before-show="beforeShow">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Add New Release</div>
+        <div class="text-h6 text-bold">Edit Release</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="createRelease">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="submitRelease">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-file v-model="data.file" class="q-mt-xs q-mb-lg" label="Upload File" filled
-                @update:model-value="handleUpload()">
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" />
-                </template>
-              </q-file>
               <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product version']">
@@ -25,10 +19,20 @@
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product filename']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.parameters" label="Parameters" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product parameters']">
+              <div class="q-gutter-sm flex items-center">
+                <span>Status:</span>
+                <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
+                  v-model="data.state" checked-icon="check" unchecked-icon="clear" />
+              </div>
+              <q-input filled bottom-slots v-model="parameters" label="Parameters">
+                <template v-slot:hint>
+                  Please enter a product parameters
+                </template>
+                <template v-slot:append>
+                  <q-btn round dense flat icon="add" @click="addParameters" />
+                </template>
               </q-input>
+              <q-badge v-for="tag in data.parameters" :key="tag"> {{ tag }}</q-badge>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
@@ -41,8 +45,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, onBeforeMount } from 'vue'
+import { ref, reactive } from 'vue'
 // import inputRules from 'src/mixins/inputRules.js'
+import { useProductStore } from 'src/stores/product'
+
+const productStore = useProductStore()
 
 const Form = ref(null)
 const data = reactive({
@@ -52,18 +59,11 @@ const data = reactive({
   parameters: ''
 })
 
-onBeforeMount(() => {
-})
-
 const beforeShow = () => {
-  data.value = {
-    file: null,
-    version: '',
-    filename: '',
-    parameters: ''
-  }
+  data.value = productStore.currentRelease
 }
-const createRelease = () => {
+
+const submitRelease = () => {
   Form.value.validate().then(success => {
     this.$store.commit('product/setLoading', true)
     // console.log('this.userData', this.userData)

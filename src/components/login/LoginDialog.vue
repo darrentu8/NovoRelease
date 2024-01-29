@@ -42,48 +42,39 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import inputRules from 'src/mixins/inputRules.js'
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCommonStore } from 'src/stores/common'
+const commonStore = useCommonStore()
+const router = useRouter()
 
-export default defineComponent({
-  name: 'LoginDialog',
-  mixins: [inputRules],
-  props: {
-  },
-  data() {
-    return {
-      title: 'NovoConnect Cloud',
-      logo: require('../../assets/img/logo/cloud.svg'),
-      loading: false,
-      dense: false,
-      isPwd: true,
-      isPwdMy: true,
-      email: '',
-      password: ''
-    }
-  },
-  methods: {
-    onSubmit() {
-      this.$refs.loginForm.validate().then(success => {
-        if (success) {
-          const loginData = {
-            name: this.email,
-            password: this.password
-          }
-          this.$store.dispatch('auth/loginAndSetBid', loginData)
-        } else {
-          this.$q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            message: 'You need to filled'
-          })
-        }
+const loginForm = ref(null)
+const dense = ref(false)
+const isPwd = ref(true)
+const email = ref('')
+const password = ref('')
+
+const onSubmit = () => {
+  loginForm.value.validate().then(success => {
+    if (success) {
+      const loginData = {
+        name: email.value,
+        password: password.value
+      }
+      commonStore.loginAndSetBid(loginData).then(() => {
+        router.push({ path: '/product' })
+      })
+    } else {
+      this.$q.notify({
+        color: 'red-5',
+        textColor: 'white',
+        icon: 'warning',
+        message: 'You need to filled'
       })
     }
-  }
-})
+  })
+}
 </script>
 <style lang="sass" scoped>
 .login

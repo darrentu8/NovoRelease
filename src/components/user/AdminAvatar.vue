@@ -17,54 +17,34 @@
       </q-avatar>
     </q-btn>
   </div>
-  <ProfileDialog />
-  <ChangePasswordDialog />
-  <AboutDialog />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { ref } from 'vue'
 import { colors } from 'quasar'
-import ProfileDialog from 'src/components/user/ProfileDialog.vue'
-import ChangePasswordDialog from 'src/components/user/ChangePasswordDialog.vue'
-import AboutDialog from 'src/components/user/AboutDialog.vue'
-import { mapGetters } from 'vuex'
+import { useCommonStore } from 'src/stores/common'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const commonStore = useCommonStore()
 const { luminosity } = colors
+const colorArr = ref(['#5f5f5f'])
 
-export default defineComponent({
-  name: 'AdminAvatarDialog',
-  components: {
-    ProfileDialog,
-    ChangePasswordDialog,
-    AboutDialog
-  },
-  data() {
-    return {
-      loading: true,
-      selfProfile: {},
-      colorArr: ['#5f5f5f']
-    }
-  },
-  computed: {
-    ...mapGetters('auth', ['getUserData'])
-  },
-  mounted() {
-  },
-  methods: {
-    avatarName() {
-      return 'NU'
-    },
-    logOut() {
-      this.$store.dispatch('auth/Logout')
-      console.log('Logout')
-    },
-    getLuminosity(color) {
-      return luminosity(color)
-    }
-  }
-})
+const avatarName = () => {
+  return 'NU'
+}
+const logOut = () => {
+  commonStore.Logout().then(() => {
+    router.push({ path: '/' })
+    console.log('Logout')
+  })
+}
+const getLuminosity = (color) => {
+  return luminosity(color)
+}
+
 </script>
+
 <style lang='sass' scoped>
 // .q-header .header-avatar
 //   margin-left: 15px

@@ -95,7 +95,7 @@ module.exports = configure(function (ctx) {
       open: true, // opens browser window automatically
       proxy: {
         '/webapi': {
-          target: 'https://backend.novohyspace.com/',
+          target: 'https://editor.swagger.io/',
           changeOrigin: true,
           ws: false,
           secure: false

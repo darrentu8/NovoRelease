@@ -117,105 +117,84 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateProduct />
-  <EditProduct />
-  <DelDialog />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import inputRules from 'src/mixins/inputRules.js'
+<script setup>
+import { api } from 'src/boot/axios'
+import { Notify, useQuasar } from 'quasar'
+import { computed, onBeforeMount } from 'vue'
+import { useRouter } from 'vue-router'
+import { useProductStore } from 'src/stores/product'
+import { useCommonStore } from 'src/stores/common'
 import CreateProduct from './CreatProductDialog.vue'
-import EditProduct from '../product/EditProduct.vue'
-import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
-export default defineComponent({
-  name: 'ProductComponent',
-  components: {
-    CreateProduct,
-    EditProduct,
-    DelDialog
-  },
-  mixins: [inputRules],
-  computed: {
-    ...mapGetters('product', ['getLoading', 'getProductList'])
-  },
-  props: {
-  },
-  data() {
-    return {
-      columns: [
-        { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
-        {
-          name: 'name',
-          required: true,
-          label: 'Name',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true,
-          style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
-        },
-        { name: 'cdn', format: val => val ? 'true' : 'false', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'actions', label: '', field: 'actions', sortable: false }
-      ],
-      loading: false,
-      dense: false
-    }
-  },
-  created() {
-  },
-  mounted() {
-    // this.getProduct()
-  },
-  methods: {
-    ...mapMutations('product', ['setLoading', 'productList']),
-    refreshProduct() {
-      this.$store.dispatch('product/getProduct')
-    },
-    getProduct() {
-      this.$store.dispatch('product/getProduct')
-    },
-    createProduct() {
-      this.$q
-        .dialog({
-          component: CreateProduct
-        })
-    },
-    toProductDetail(props) {
-      this.$store.commit('product/editProduct', props)
-      this.$router.push({ path: '/product/' + props.id })
-    },
-    editProductDialog(props) {
-      const Data = {
-        id: props.id,
-        name: props.name,
-        state: props.state.toString(),
-        url: props.url,
-        description: props.description,
-        img: props.img
-      }
-      this.$store.commit('product/editProduct', Data)
-      this.$q
-        .dialog({
-          component: EditProduct
-        })
-    },
-    delProductDialog(props) {
-      this.$q.dialog({
-        component: DelDialog,
-        componentProps: {
-          title: 'Are you sure you want to delete this product?',
-          okBtn: 'Delete',
-          cancelBtn: 'Cancel'
-        }
-      }).onOk(() => {
-        this.$store.dispatch('product/delProduct', props.id)
+const $q = useQuasar()
+const router = useRouter()
+const commonStore = useCommonStore()
+const productStore = useProductStore()
+const getLoading = computed(() => productStore.getLoading)
+const getProductList = computed(() => productStore.getProductList)
+
+onBeforeMount(() => {
+  api.get('webapi/product', commonStore.BID)
+    .then((response) => {
+      console.log(response)
+      commonStore.setProduct(response.data.data)
+      commonStore.loading = false
+    })
+    .catch((error) => {
+      commonStore.loading = false
+      const { description } = error.response.data
+      // console.log(error.response.data)
+      Notify.create({
+        color: 'red-5',
+        textColor: 'white',
+        icon: 'warning',
+        // caption: code,
+        message: description
       })
-    }
-  }
+    })
 })
+
+const columns = [
+  { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
+  {
+    name: 'name',
+    required: true,
+    label: 'Name',
+    align: 'left',
+    field: row => row.name,
+    format: val => `${val}`,
+    sortable: true,
+    style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
+  },
+  { name: 'cdn', format: val => val ? 'true' : 'false', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'actions', label: '', field: 'actions', sortable: false }
+]
+const refreshProduct = () => {
+  commonStore.getProduct()
+}
+const createProduct = () => {
+  $q.dialog({
+    component: CreateProduct
+  })
+}
+const toProductDetail = (props) => {
+  router.push({ path: '/product/' + props.id })
+}
+const delProductDialog = (props) => {
+  $q.dialog({
+    component: DelDialog,
+    componentProps: {
+      title: 'Are you sure you want to delete this product?',
+      okBtn: 'Delete',
+      cancelBtn: 'Cancel'
+    }
+  }).onOk(() => {
+    commonStore.delProduct(props.id)
+  })
+}
 </script>
 <style lang="sass" scoped>
 </style>

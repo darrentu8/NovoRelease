@@ -24,7 +24,24 @@
                 <q-toggle :label="data.state == 1 ? 'Enable' : 'Disable'" true-value="1" false-value="0" color="primary"
                   v-model="data.state" checked-icon="check" unchecked-icon="clear" />
               </div>
-              <q-input filled bottom-slots v-model="parameters" label="Parameters">
+              <q-select class="q-mb-md" hide-dropdown-icon use-input v-model="parameter" use-chips stack-label
+                label="Parameters">
+                <template v-slot:hint>
+                  Please enter a product parameters
+                </template>
+                <template v-slot:append>
+                  <q-btn round dense flat icon="add" @click="addParameters" />
+                </template>
+                <q-badge v-for="tag in data.parameters" :key="tag" class="q-pl-sm q-py-xs q-mr-xs q-mb-xs">
+                  {{ tag }}
+                </q-badge>
+              </q-select>
+              <q-select class="q-mb-md" v-model="data.parameters" hide-dropdown-icon use-chips stack-label>
+                <q-badge class="q-mb-md">
+                  {{ data.parameters }}
+                </q-badge>
+              </q-select>
+              <!-- <q-input filled bottom-slots v-model="parameter" class="q-mb-md" label="Parameters">
                 <template v-slot:hint>
                   Please enter a product parameters
                 </template>
@@ -32,7 +49,8 @@
                   <q-btn round dense flat icon="add" @click="addParameters" />
                 </template>
               </q-input>
-              <q-badge v-for="tag in data.parameters" :key="tag"> {{ tag }}</q-badge>
+              <q-badge v-for="tag in data.parameters" :key="tag" class="q-px-sm q-py-xs q-mr-xs q-mb-xs"> {{ tag
+              }}</q-badge> -->
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
@@ -45,22 +63,34 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { computed, ref } from 'vue'
 // import inputRules from 'src/mixins/inputRules.js'
 import { useProductStore } from 'src/stores/product'
 
 const productStore = useProductStore()
 
 const Form = ref(null)
-const data = reactive({
+const data = ref({
+  id: '',
   file: null,
   version: '',
   filename: '',
-  parameters: ''
+  parameters: []
 })
 
 const beforeShow = () => {
-  data.value = productStore.currentRelease
+  data.value.id = productStore.currentRelease.id
+  data.value.version = productStore.currentRelease.version
+}
+const parameter = computed(() => {
+  if (productStore.currentRelease.parameters) {
+    console.log('data.value.parameters', data.value.parameters)
+    return productStore.currentRelease.parameters.split(',')
+  } else {
+    return []
+  }
+})
+const addParameters = () => {
 }
 
 const submitRelease = () => {

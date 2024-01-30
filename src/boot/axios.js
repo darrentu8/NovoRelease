@@ -1,6 +1,9 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import { Cookies, Notify } from 'quasar'
+import { useCommonStore } from 'src/stores/common'
+
+const commonStore = useCommonStore()
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -8,13 +11,14 @@ import { Cookies, Notify } from 'quasar'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-
 const api = axios.create({
+  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/' : 'https://download.staging.launchnovo.com/',
   // baseURL: process.env.API_URL,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
-    'Cache-Control': 'no-cache'
+    'Cache-Control': 'no-cache',
+    authorization: commonStore.getToken || ''
   },
   timeout: 40000,
   withCredentials: false
@@ -34,18 +38,18 @@ export default boot(({ app, urlPath, redirect }) => {
     }
   }, error => {
     if (error.response) {
-      const { status } = error.response
+      // const { status } = error.response
       Notify.create({
         position: 'top',
         type: 'negative',
         message: error.response.data.description
       })
 
-      if (status === 401 || status === 403) {
-        if (urlPath !== '/') {
-          redirect({ path: '/' })
-        }
-      }
+      // if (status === 401 || status === 403) {
+      //   if (urlPath !== '/') {
+      //     redirect({ path: '/' })
+      //   }
+      // }
     }
     return Promise.reject(error)
   })

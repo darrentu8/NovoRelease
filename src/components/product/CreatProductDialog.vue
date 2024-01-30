@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialog">
+  <q-dialog :model-value="isShow" @before-show="beforeShow">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6 text-bold">Add New Product</div>
@@ -22,12 +22,12 @@
             </div>
             <div class="q-gutter-sm flex items-center">
               <span>CDN:</span>
-              <q-radio v-model="data.cdn" val="1" label="true" />
-              <q-radio v-model="data.cdn" val="0" label="false" />
+              <q-radio v-model="data.cdn" :val="1" label="true" />
+              <q-radio v-model="data.cdn" :val="0" label="false" />
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" label="Apply" type="submit" color="primary" />
+            <q-btn unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply" type="submit" color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -35,120 +35,49 @@
   </q-dialog>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import inputRules from 'src/mixins/inputRules.js'
+<script setup>
+import { ref, reactive, onBeforeMount, computed } from 'vue'
+import { useProductStore } from 'src/stores/product'
 
-export default defineComponent({
-  name: 'CreatProductDialog',
-  mixins: [inputRules],
-  data() {
-    return {
-      dense: true,
-      data: {
-        name: '',
-        appid: '',
-        cdn: ''
-      },
-      image: null,
-      imageUrl: ''
-    }
-  },
-  created() {
-    this.reset()
-  },
-  computed: {
-    userData() {
-      return this.$store.state.auth.userData
-    }
-  },
-  methods: {
-    reset() {
-      if (this.imageUrl) {
-        URL.revokeObjectURL(this.imageUrl)
-        this.image = null
-        this.imageUrl = ''
-      }
-      this.data = {
-        name: '',
-        url: '',
-        description: '',
-        state: '0',
-        img: ''
-      }
-    },
-    handleUpload() {
-      if (this.image) {
-        this.imageUrl = URL.createObjectURL(this.image)
-      }
-      const file = this.image
-      const typeCheck = file.type === 'image/svg' || file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg'
-      if (!typeCheck) {
-        this.$q.notify({
-          color: 'red-5',
-          position: 'bottom',
-          textColor: 'white',
-          icon: 'error',
-          message: 'The format is wrong, please re-upload!'
-        })
-        return
-      }
-      // // 限制2MB
-      // if (file.size > 2000000) {
-      //   this.$q.notify({
-      //     color: 'red-5',
-      //     position: 'bottom',
-      //     textColor: 'white',
-      //     icon: 'error',
-      //     message: 'The file is too large, please re-upload!'
-      //   })
-      //   return
-      // }
-      this.imageUrl = URL.createObjectURL(file)
-    },
-    createProduct() {
-      if (!this.image) {
-        this.$q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'warning',
-          message: 'Please upload a image'
-        })
-        return
-      }
-      this.$refs.Form.validate().then(success => {
-        this.$store.commit('product/setLoading', true)
-        // console.log('this.userData', this.userData)
-        if (success) {
-          const formData = new FormData()
-          formData.append('name', this.data.name)
-          formData.append('img', this.image)
-          formData.append('state', this.data.state)
-          formData.append('url', this.data.url)
-          formData.append('description', this.data.description)
-          this.$store.dispatch('product/createProduct', formData)
-            .then(() => {
-              this.$refs.dialog.hide()
-              this.reset()
-            })
-        } else {
-          this.$q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            message: 'Need filled'
-          })
-        }
-      })
-    },
-    show() {
-      this.$refs.dialog.show()
-    },
-    hide() {
-      this.$refs.dialog.hide()
-    }
-  }
+defineProps(['isShow'])
+const emit = defineEmits(['update:isShow'])
+
+const hideDialog = () => {
+  emit('update:isShow', false)
+}
+const productStore = useProductStore()
+const getLoading = computed(() => productStore.getLoading)
+// import inputRules from 'src/mixins/inputRules.js'
+
+const Form = ref(null)
+const data = reactive({
+  appid: '',
+  name: '',
+  cdn: 0
 })
+
+onBeforeMount(() => {
+})
+
+const beforeShow = () => {
+  data.appid = ''
+  data.name = ''
+  data.cdn = 0
+}
+const createProduct = () => {
+  Form.value.validate().then(success => {
+    if (success) {
+      const Data = {
+        appid: data.appid,
+        name: data.name,
+        cdn: data.cdn ? 1 : 0
+      }
+      productStore.createProduct(Data).then(() => {
+        hideDialog()
+      })
+    }
+  })
+}
 </script>
 <style lang="sass" scoped>
 </style>

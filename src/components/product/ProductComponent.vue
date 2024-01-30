@@ -12,7 +12,7 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createProduct" icon="add" label="">
+      <q-btn flat round color="primary" @click="isShowDialogCreateProduct = true" icon="add" label="">
         <q-tooltip>
           Create New Product
         </q-tooltip>
@@ -57,12 +57,12 @@
                 Edit
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delProductDialog(props.row)">
+            <!-- <q-btn color="negative" round flat @click="delProductDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
               </q-tooltip>
-            </q-btn>
+            </q-btn> -->
           </q-td>
         </template>
       </q-table>
@@ -116,46 +116,26 @@
         </tr>
       </tbody>
     </q-markup-table>
+    <CreateProduct v-model:isShow="isShowDialogCreateProduct" />
   </q-card>
 </template>
 
 <script setup>
-import { api } from 'src/boot/axios'
-import { Notify, useQuasar } from 'quasar'
-import { computed, onBeforeMount } from 'vue'
+// import { useQuasar } from 'quasar'
+import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from 'src/stores/product'
-import { useCommonStore } from 'src/stores/common'
+// import { useCommonStore } from 'src/stores/common'
 import CreateProduct from './CreatProductDialog.vue'
-import DelDialog from '../dialog/DelDialog.vue'
+// import DelDialog from '../dialog/DelDialog.vue'
 
-const $q = useQuasar()
+// const $q = useQuasar()
 const router = useRouter()
-const commonStore = useCommonStore()
+// const commonStore = useCommonStore()
 const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
 const getProductList = computed(() => productStore.getProductList)
-
-onBeforeMount(() => {
-  api.get('webapi/product', commonStore.BID)
-    .then((response) => {
-      console.log(response)
-      commonStore.setProduct(response.data.data)
-      commonStore.loading = false
-    })
-    .catch((error) => {
-      commonStore.loading = false
-      const { description } = error.response.data
-      // console.log(error.response.data)
-      Notify.create({
-        color: 'red-5',
-        textColor: 'white',
-        icon: 'warning',
-        // caption: code,
-        message: description
-      })
-    })
-})
+const isShowDialogCreateProduct = ref(false)
 
 const columns = [
   { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
@@ -172,29 +152,32 @@ const columns = [
   { name: 'cdn', format: val => val ? 'true' : 'false', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ]
+
+onBeforeMount(() => {
+  productStore.getProduct()
+})
+
 const refreshProduct = () => {
-  commonStore.getProduct()
-}
-const createProduct = () => {
-  $q.dialog({
-    component: CreateProduct
-  })
+  productStore.getProduct()
 }
 const toProductDetail = (props) => {
-  router.push({ path: '/product/' + props.id })
+  if (props) {
+    productStore.currentProduct = props
+    router.push({ path: '/product/' + props.id })
+  }
 }
-const delProductDialog = (props) => {
-  $q.dialog({
-    component: DelDialog,
-    componentProps: {
-      title: 'Are you sure you want to delete this product?',
-      okBtn: 'Delete',
-      cancelBtn: 'Cancel'
-    }
-  }).onOk(() => {
-    commonStore.delProduct(props.id)
-  })
-}
+// const delProductDialog = (props) => {
+//   $q.dialog({
+//     component: DelDialog,
+//     componentProps: {
+//       title: 'Are you sure you want to delete this product?',
+//       okBtn: 'Delete',
+//       cancelBtn: 'Cancel'
+//     }
+//   }).onOk(() => {
+//     commonStore.delProduct(props.id)
+//   })
+// }
 </script>
 <style lang="sass" scoped>
 </style>

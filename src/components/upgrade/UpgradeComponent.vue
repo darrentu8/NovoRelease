@@ -12,7 +12,7 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createUpgrade" icon="add" label="">
+      <q-btn flat round color="primary" @click="upgradeStore.getUpgarde()" icon="add" label="">
         <q-tooltip>
           Add New Upgrade Number
         </q-tooltip>
@@ -118,100 +118,41 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateUpgrade />
+  <CreateUpgrade v-model:isShow="isShowDialogCreateUpgrade" />
   <EditUpgrade />
   <DelDialog />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import inputRules from 'src/mixins/inputRules.js'
+<script setup>
+import { ref, computed, onBeforeMount } from 'vue'
+import { useUpgradeStore } from 'src/stores/upgrade'
 import CreateUpgrade from './CreatUpgradeDialog.vue'
 import EditUpgrade from './EditUpgrade.vue'
-import { mapMutations, mapGetters } from 'vuex'
 import DelDialog from '../dialog/DelDialog.vue'
 
-export default defineComponent({
-  name: 'UpgradeComponent',
-  components: {
-    CreateUpgrade,
-    EditUpgrade,
-    DelDialog
+const upgradeStore = useUpgradeStore()
+const getLoading = computed(() => upgradeStore.getLoading)
+const getUpgradeList = computed(() => upgradeStore.getUpgradeList)
+const isShowDialogCreateUpgrade = ref(false)
+
+const columns = [
+  {
+    name: 'osid',
+    required: true,
+    label: 'OsId',
+    align: 'left',
+    field: row => row.osid,
+    format: val => `${val}`,
+    sortable: true,
+    style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
   },
-  mixins: [inputRules],
-  computed: {
-    ...mapGetters('upgrade', ['getLoading', 'getUpgradeList'])
-  },
-  props: {
-  },
-  data() {
-    return {
-      columns: [
-        {
-          name: 'osid',
-          required: true,
-          label: 'OsId',
-          align: 'left',
-          field: row => row.osid,
-          format: val => `${val}`,
-          sortable: true,
-          style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
-        },
-        { name: 'comment', align: 'left', label: 'Comment', field: 'comment', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'actions', label: '', field: 'actions', sortable: false }
-      ],
-      rows: [
-        {
-          id: 1,
-          osid: '4 or NovoDS-DS110',
-          version: 'v9.9.9',
-          comment: 'NovoDS-DS310'
-        }
-      ],
-      loading: false,
-      dense: false
-    }
-  },
-  created() {
-  },
-  mounted() {
-    this.getUpgrade()
-  },
-  methods: {
-    ...mapMutations('upgrade', ['setLoading', 'UpgradeList']),
-    refreshUpgrade() {
-      this.$store.dispatch('upgrade/getUpgrade')
-    },
-    getUpgrade() {
-      this.$store.dispatch('upgrade/getUpgrade')
-    },
-    createUpgrade() {
-      this.$q
-        .dialog({
-          component: CreateUpgrade
-        })
-    },
-    editUpgradeDialog(props) {
-      this.$store.commit('upgrade/editUpgrade', props)
-      this.$q
-        .dialog({
-          component: EditUpgrade
-        })
-    },
-    delUpgradeDialog(props) {
-      this.$q.dialog({
-        component: DelDialog,
-        componentProps: {
-          title: 'Are you sure you want to delete this Upgrade?',
-          okBtn: 'Delete',
-          cancelBtn: 'Cancel'
-        }
-      }).onOk(() => {
-        this.$store.dispatch('upgrade/delUpgrade', props.id)
-      })
-    }
-  }
+  { name: 'comment', align: 'left', label: 'Comment', field: 'comment', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'actions', label: '', field: 'actions', sortable: false }
+]
+
+onBeforeMount(() => {
+  upgradeStore.getUpgarde()
 })
 </script>
 <style lang="sass" scoped>

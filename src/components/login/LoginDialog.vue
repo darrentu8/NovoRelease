@@ -10,10 +10,8 @@
             </span>
             <!-- <span class="text-primary cursor-pointer" @click="toRegister">Create account</span> -->
           </div>
-          <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
+          <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="username"
             label="Username" lazy-rules>
-            <!-- <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="email"
-            label="Email" lazy-rules :rules="[checkEmail]"> -->
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
@@ -52,17 +50,17 @@ const router = useRouter()
 const loginForm = ref(null)
 const dense = ref(false)
 const isPwd = ref(true)
-const email = ref('')
+const username = ref('')
 const password = ref('')
 
 const onSubmit = () => {
   loginForm.value.validate().then(success => {
     if (success) {
       const loginData = {
-        name: email.value,
+        username: username.value,
         password: password.value
       }
-      commonStore.loginAndSetBid(loginData).then(() => {
+      commonStore.LoginAndSetToken(loginData).then(() => {
         router.push({ path: '/product' })
       })
     } else {

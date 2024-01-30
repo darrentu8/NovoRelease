@@ -5,38 +5,13 @@ import { useCommonStore } from 'src/stores/common'
 
 const commonStore = useCommonStore()
 
-export const useProductStore = defineStore('product', {
+export const useBspStore = defineStore('bsp', {
   state: () => ({
     loading: false,
-    currentProduct: {},
-    currentRelease: {
-      id: 1,
-      productid: 1,
-      version: 'v1.0.0',
-      filename: 'DS110_DS210_DS310_1.0.0.9999.apk',
-      md5: '6f8de3b7719e9ec3d9c5b107dcc92b9c',
-      filesize: 81414,
-      description: 'Build 9999',
-      parameters: 'DS110,DS220,DS310',
-      state: 1
-    },
-    productList: [
-      { id: 11, appid: 13, name: 'NovoDS(PC)', cdn: 1 },
-      { id: 12, appid: 14, name: 'NovoRDM', cdn: 0 }
-    ],
-    currentProductList: [
-      {
-        id: 1,
-        productid: 1,
-        version: 'v1.0.0',
-        filename: 'DS110_DS210_DS310_1.0.0.9999.apk',
-        md5: '6f8de3b7719e9ec3d9c5b107dcc92b9c',
-        filesize: 81414,
-        description: 'Build 9999',
-        parameters: 'DS110,DS220,DS310',
-        state: 1
-      }
-    ]
+    currentBsp: {},
+    currentRelease: {},
+    bspList: [],
+    currentBspList: []
   }),
   getters: {
     getLoading() {
@@ -45,23 +20,23 @@ export const useProductStore = defineStore('product', {
     getToken() {
       return this.Token
     },
-    getProductList() {
-      return this.productList
+    getBspList() {
+      return this.bspList
     },
-    getCurrentProduct() {
-      return this.currentProduct
+    getCurrentBsp() {
+      return this.currentBsp
     },
-    getCurrentProductList() {
-      return this.currentProductList
+    getCurrentBspList() {
+      return this.currentBspList
     }
   },
   actions: {
-    getProduct() {
+    getBsp() {
       this.loading = true
-      api.get('webapi/product')
+      api.get('webapi/bsp')
         .then((response) => {
           // console.log(response)
-          this.productList = response.data
+          this.bspList = response.data
           this.loading = false
         })
         .catch((error) => {
@@ -98,7 +73,7 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    editProduct(data) {
+    editBsp(data) {
       this.loading = true
       api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
         .then((response) => {
@@ -140,12 +115,12 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    createProduct(data) {
+    createBsp(data) {
       this.loading = true
-      return api.post('webapi/product', data)
+      return api.post('webapi/bsp', data)
         .then((response) => {
           this.loading = false
-          this.getProduct()
+          this.getBsp()
           // console.log(response)
           // Notify.create({
           //   color: 'primary',
@@ -167,8 +142,8 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    delProduct(id) {
-      api.delete('webapi/activeProduct/' + id + '?Token=' + commonStore.getToken)
+    delBsp(id) {
+      api.delete('webapi/bsp/' + id + '?Token=' + commonStore.getToken)
         .then((response) => {
           // console.log(response)
           // Notify.create({
@@ -177,7 +152,7 @@ export const useProductStore = defineStore('product', {
           //   icon: 'check',
           //   message: response.description
           // })
-          this.getProduct()
+          this.getBsp()
         })
         .catch((error) => {
           const { description } = error.response.data

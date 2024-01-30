@@ -6,51 +6,51 @@ import { api } from 'src/boot/axios'
 export const useCommonStore = defineStore('common', {
   state: () => ({
     htmlVersion: packageInfo.version,
-    bid: undefined,
+    role: undefined,
+    token: undefined,
     loginStatus: false,
     userData: {},
     language: undefined,
-    loading: false,
-    userList: []
+    loading: false
   }),
   getters: {
     getLoading() {
       return this.loading
     },
     getLoginStatus() {
-      const BID = Cookies.get('bid')
-      if (BID) {
+      const Token = Cookies.get('token')
+      if (Token) {
         return true
       } else {
         return this.loginStatus
       }
     },
-    getBID() {
-      return this.bid || Cookies.get('bid')
+    getToken() {
+      return this.token || Cookies.get('token')
     },
     getUserData() {
       return this.userData
     }
   },
   actions: {
-    GetBID() {
-      if (LocalStorage.getItem('bid')) {
-        return LocalStorage.getItem('bid')
-      } else if (Cookies.get('bid')) {
-        return Cookies.get('bid')
+    GetToken() {
+      if (LocalStorage.getItem('token')) {
+        return LocalStorage.getItem('token')
+      } else if (Cookies.get('token')) {
+        return Cookies.get('token')
       } else {
-        return this.bid
+        return this.token
       }
     },
-    loginAndSetBid(loginData) {
+    LoginAndSetToken(loginData) {
       return api.post('webapi/auth', loginData)
         .then((response) => {
-          Cookies.remove('bid')
+          Cookies.remove('token')
           console.log(response)
           this.loginStatus = true
-          this.bid = response.data.bid
-          this.userData = response.data
-          Cookies.set('bid', response.data.bid, { expires: 1 })
+          this.token = response.token
+          this.userData = response
+          Cookies.set('token', response.token, { expires: 1 })
           // Notify.create({
           //   color: 'primary',
           //   textColor: 'white',
@@ -72,9 +72,9 @@ export const useCommonStore = defineStore('common', {
     },
     async Logout() {
       this.loginStatus = false
-      this.bid = undefined
+      this.token = undefined
       this.userData = {}
-      await Cookies.remove('bid')
+      await Cookies.remove('token')
       return true
       // Notify.create({
       //   color: 'red-5',

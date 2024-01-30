@@ -128,7 +128,7 @@
 
 <script setup>
 import { useQuasar } from 'quasar'
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 // import { useRouter } from 'vue-router'
 import { useProductStore } from 'src/stores/product'
 // import { useCommonStore } from 'src/stores/common'
@@ -166,8 +166,12 @@ const columns = ref([
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ])
 
+onBeforeMount(() => {
+  productStore.getProductDetail()
+})
+
 const getProduct = () => {
-  productStore.getProduct()
+  productStore.getProductDetail()
 }
 const creatRelease = () => {
   $q.dialog({

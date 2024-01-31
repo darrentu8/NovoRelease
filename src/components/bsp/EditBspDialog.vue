@@ -1,27 +1,28 @@
 <template>
-  <q-dialog :model-value="isShow" @before-hide="hideDialog" @before-show="beforeShow">
+  <q-dialog :model-value="isShow" @before-hide="hideDialog" @before-show="initData">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 text-bold">Create New BSP</div>
+        <div class="text-h6 text-bold">Edit BSP</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
       <q-card-section class="q-mx-lg q-my-md">
-        <q-form ref="Form" class="q-gutter-md" @submit.stop="createBsp">
+        <q-form ref="Form" class="q-gutter-md" @submit.stop="editBsp">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.product" label="Product" lazy-rules :rules="[
+              <!-- <q-input filled class="q-mt-xs" type="text" v-model="data.osid" label="OsId" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a product']">
+                  (val !== null && val !== '') || 'Please enter a osid']">
+              </q-input> -->
+              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.value.comment" label="Comment"
+                lazy-rules :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a comment']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.model" label="Model" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.version" label="Version" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a model']">
-              </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.comment" label="Comment" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a comment']">
+                  (val !== null && val !== '') || 'Please enter a version']">
               </q-input>
             </div>
           </div>
@@ -50,33 +51,32 @@ const getLoading = computed(() => bspStore.getLoading)
 const Form = ref(null)
 const data = reactive({
   id: '',
-  product: '',
-  model: '',
+  osid: '',
+  version: '',
   comment: ''
 })
 
 onBeforeMount(() => {
 })
 
-const beforeShow = () => {
-  data.product = ''
-  data.model = ''
-  data.comment = ''
+const initData = () => {
+  data.value = bspStore.currentBsp
 }
-const createBsp = () => {
+
+const editBsp = () => {
   Form.value.validate().then(success => {
     if (success) {
       const Data = {
-        product: data.product,
-        model: data.model,
-        comment: data.comment
+        id: data.value.id,
+        version: data.value.version
       }
-      bspStore.createBsp(Data).then(() => {
+      bspStore.editBsp(Data).then(() => {
         hideDialog()
       })
     }
   })
 }
 </script>
+
 <style lang="sass" scoped>
 </style>

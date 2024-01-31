@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="isShow" @before-show="beforeShow">
+  <q-dialog :model-value="isShow" @before-hide="hideDialog" @before-show="beforeShow">
     <q-card style="width: 100%;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6 text-bold">Add New Product</div>

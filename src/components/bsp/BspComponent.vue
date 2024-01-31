@@ -3,41 +3,28 @@
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
-        <q-icon class="q-mr-sm" color="primary" name="developer_board" size="sm" alt="" />
+        <q-icon class="q-mr-sm" color="primary" name="layers" size="sm" alt="" />
         <span class="text-h6">BSP</span>
       </div>
       <q-space />
-      <q-input class="q-mr-md" rounded outlined v-model="filter" dense>
-        <template v-slot:append>
-          <q-icon v-if="filter !== ''" name="close" @click="filter = ''" class="cursor-pointer" />
-          <q-icon name="search" color="primary" />
-        </template>
-      </q-input>
-      <q-btn flat round color="primary" @click="refreshBsp" icon="refresh">
+      <q-btn flat round color="primary" @click="bspStore.getBsp" icon="refresh" label="">
         <q-tooltip>
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="createBsp" icon="add">
+      <q-btn flat round color="primary" @click="addBsp" icon="add" label="">
         <q-tooltip>
-          Create New BSP
+          Add New BSP
         </q-tooltip>
       </q-btn>
     </div>
     <!-- Table -->
     <div v-if="!getLoading">
-      <q-table :filter="filter" v-model:pagination="pagination"
+      <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
         table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getBspList"
-        :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
-        <!-- Search -->
-        <template v-slot:top-right>
-          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
+        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
+        no-data-icon="success">
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
@@ -107,115 +94,79 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreatBspDialog />
-  <EditBsp />
+  <CreateBspDialog v-model:isShow="isShowCreateBsp" />
+  <EditBspDialog v-model:isShow="isShowEditBsp" />
   <DelDialog />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import inputRules from 'src/mixins/inputRules.js'
-import CreatBspDialog from './CreatBspDialog.vue'
-import EditBsp from './EditBsp.vue'
-import { mapMutations, mapGetters } from 'vuex'
+<script setup>
+import { useQuasar } from 'quasar'
+import { ref, computed, onBeforeMount } from 'vue'
+import { useBspStore } from 'src/stores/bsp'
+import CreateBspDialog from './CreatBspDialog.vue'
+import EditBspDialog from './EditBspDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
-export default defineComponent({
-  name: 'BspComponent',
-  components: {
-    EditBsp,
-    CreatBspDialog,
-    DelDialog
+const $q = useQuasar()
+const bspStore = useBspStore()
+const getLoading = computed(() => bspStore.getLoading)
+const getBspList = computed(() => bspStore.getBspList)
+const isShowCreateBsp = ref(false)
+const isShowEditBsp = ref(false)
+
+const columns = [
+  // {
+  //   name: 'id',
+  //   required: true,
+  //   label: 'ID',
+  //   align: 'left',
+  //   field: 'id',
+  //   visible: false,
+  //   sortable: true,
+  //   sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+  //   style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
+  // },
+  {
+    name: 'product',
+    required: true,
+    label: 'Product',
+    align: 'left',
+    field: 'product',
+    sortable: true,
+    style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
   },
-  mixins: [inputRules],
-  computed: {
-    ...mapGetters('bsp', ['getLoading', 'getBspList'])
-  },
-  props: {
-  },
-  data() {
-    return {
-      filter: '',
-      pagination: {
-        rowsPerPage: 25,
-        sortBy: 'model',
-        descending: true
-      },
-      columns: [
-        {
-          name: 'product',
-          required: true,
-          label: 'Product',
-          align: 'left',
-          field: row => row.product,
-          format: val => `${val}`,
-          sortable: true,
-          style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
-        },
-        { name: 'model', align: 'left', label: 'Model', field: 'model', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'comment', align: 'left', label: 'Comment', field: 'comment', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
-        { name: 'actions', label: '', field: 'actions', sortable: false }
-      ],
-      rows: [
-        {
-          id: 1,
-          product: 'novods',
-          model: 'ds310',
-          comment: 'NovoDS-DS310'
-        }
-      ],
-      loading: false,
-      dense: false
-    }
-  },
-  created() {
-  },
-  mounted() {
-    this.getBsp()
-  },
-  methods: {
-    ...mapMutations('bsp', ['setLoading', 'bspList']),
-    refreshBsp() {
-      this.$store.dispatch('bsp/getBsp')
-    },
-    getBsp() {
-      this.$store.dispatch('bsp/getBsp')
-    },
-    createBsp() {
-      this.$q
-        .dialog({
-          component: CreatBspDialog
-        })
-    },
-    editBspDialog(props) {
-      const Data = {
-        id: props.id,
-        name: props.name,
-        state: props.state.toString(),
-        url: props.url,
-        description: props.description,
-        img: props.img
-      }
-      this.$store.commit('bsp/editBsp', Data)
-      this.$q
-        .dialog({
-          component: EditBsp
-        })
-    },
-    delBspDialog(props) {
-      this.$q.dialog({
-        component: DelDialog,
-        componentProps: {
-          title: 'Are you sure you want to delete this BSP?',
-          okBtn: 'Delete',
-          cancelBtn: 'Cancel'
-        }
-      }).onOk(() => {
-        this.$store.dispatch('bsp/delBsp', props.id)
-      })
-    }
-  }
+  { name: 'model', align: 'left', label: 'Model', field: 'model', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'comment', align: 'left', label: 'Comment', field: 'comment', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'actions', label: '', field: 'actions', sortable: false }
+]
+const pagination = ref({
+  rowsPerPage: 10,
+  sortBy: 'product',
+  descending: true
 })
+onBeforeMount(() => {
+  bspStore.getBsp()
+})
+
+const addBsp = () => {
+  isShowCreateBsp.value = true
+}
+const editBspDialog = (props) => {
+  isShowEditBsp.value = true
+  bspStore.currentBsp = props
+}
+const delBspDialog = (props) => {
+  $q.dialog({
+    component: DelDialog,
+    componentProps: {
+      title: 'Are you sure you want to delete this bsp number?',
+      okBtn: 'Delete',
+      cancelBtn: 'Cancel'
+    }
+  }).onOk(() => {
+    bspStore.delBsp(props.id)
+  })
+}
 </script>
 <style lang="sass" scoped>
 </style>

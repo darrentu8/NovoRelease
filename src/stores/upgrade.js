@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
 import { Notify } from 'quasar'
 import { api } from 'src/boot/axios'
-import { useCommonStore } from 'src/stores/common'
-
-const commonStore = useCommonStore()
 
 export const useUpgradeStore = defineStore('upgrade', {
   state: () => ({
@@ -32,31 +29,10 @@ export const useUpgradeStore = defineStore('upgrade', {
   actions: {
     getUpgrade() {
       this.loading = true
-      api.get('webapi/upgrade')
+      api.get('/webapi/upgradeNumber')
         .then((response) => {
           // console.log(response)
-          this.UpgradeList = response.data
-          this.loading = false
-        })
-        .catch((error) => {
-          this.loading = false
-          const { description } = error.response.data
-          // console.log(error.response.data)
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
-        })
-    },
-    getUpgradeDetail() {
-      this.loading = true
-      api.get('webapi/upgrade/' + this.currentUpgrade.id + '/release')
-        .then((response) => {
-          console.log(response)
-          this.currentUpgradeList = response.data
+          this.upgradeList = response.data
           this.loading = false
         })
         .catch((error) => {
@@ -74,30 +50,9 @@ export const useUpgradeStore = defineStore('upgrade', {
     },
     editUpgrade(data) {
       this.loading = true
-      api.post('webapi/upgrade/' + this.currentUpgrade.id + '?Token=' + commonStore.getToken, data)
+      return api.post('webapi/upgradeNumber/' + data.id, { version: data.version })
         .then((response) => {
-          console.log(response)
-          this.getUpgrade()
-          this.loading = false
-        })
-        .catch((error) => {
-          this.loading = false
-          const { description } = error.response.data
-          // console.log(error.response.data)
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
-        })
-    },
-    editRelease(data) {
-      this.loading = true
-      api.post('webapi/upgrade/' + this.currentUpgrade.id + '?Token=' + commonStore.getToken, data)
-        .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.getUpgrade()
           this.loading = false
         })
@@ -116,7 +71,7 @@ export const useUpgradeStore = defineStore('upgrade', {
     },
     createUpgrade(data) {
       this.loading = true
-      return api.post('webapi/upgrade', data)
+      return api.post('webapi/upgradeNumber', data)
         .then((response) => {
           this.loading = false
           this.getUpgrade()
@@ -142,7 +97,7 @@ export const useUpgradeStore = defineStore('upgrade', {
         })
     },
     delUpgrade(id) {
-      api.delete('webapi/upgrade/' + id + '?Token=' + commonStore.getToken)
+      api.delete('webapi/upgradeNumber/' + id)
         .then((response) => {
           // console.log(response)
           // Notify.create({

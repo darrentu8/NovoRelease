@@ -21,7 +21,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const pathTab = computed(() => router.currentRoute.value.name)
 const toPage = (val) => {
-  console.log('router.currentRoute.value.name', router.currentRoute.value.name)
+  // console.log('router.currentRoute.value.name', router.currentRoute.value.name)
   router.push({ path: '/' + val })
 }
 </script>

@@ -6,22 +6,12 @@
   </q-footer>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { ref } from 'vue'
+const version = ref('v0.0.1')
 
-export default defineComponent({
-  name: 'FooterComponent',
-  props: {
-  },
-  data() {
-    return {
-      title: 'vivitek',
-      logo: require('../assets/img/logo/vvkLogoFooter.svg'),
-      version: 'v0.0.1'
-    }
-  }
-})
 </script>
+
 <style lang="sass" scoped>
 .q-footer
     width: 100%

@@ -21,62 +21,59 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 
-export default ({
+export default {
   name: 'DelDialog',
-  data() {
-    return {
-    }
-  },
   emits: [
     ...useDialogPluginComponent.emits
   ],
   props: {
-    title: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    message: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    okBtn: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    cancelBtn: {
-      type: String,
-      required: false,
-      default: ''
+    title: String,
+    message: String,
+    okBtn: String,
+    cancelBtn: String
+  },
+  setup(props, { emit }) {
+    const dialog = ref(null)
+
+    const show = () => {
+      if (dialog.value) {
+        dialog.value.show()
+      }
     }
-  },
-  computed: {
-  },
-  methods: {
-    show() {
-      this.$refs.dialog.show()
-    },
-    hide() {
-      this.$refs.dialog.hide()
-    },
-    onDialogHide() {
-      // required to be emitted
-      // when QDialog emits "hide" event
-      this.$emit('hide')
-    },
-    onOKClick() {
-      this.$emit('ok')
-      this.hide()
-    },
-    onCancelClick() {
-      this.hide()
+
+    const hide = () => {
+      if (dialog.value) {
+        dialog.value.hide()
+      }
+    }
+
+    const onDialogHide = () => {
+      emit('hide')
+    }
+
+    const onOKClick = () => {
+      emit('ok')
+      hide()
+    }
+
+    const onCancelClick = () => {
+      hide()
+    }
+
+    return {
+      dialog,
+      show,
+      hide,
+      onDialogHide,
+      onOKClick,
+      onCancelClick
     }
   }
-})
+}
 </script>
+
 <style lang="sass" scoped>
 </style>

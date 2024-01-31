@@ -5,12 +5,11 @@ module.exports = {
   root: true,
 
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module' // Allows for the use of imports
+    ecmaVersion: '2021' // Allows for the parsing of modern ECMAScript features
   },
 
   env: {
+    node: true,
     browser: true,
     'vue/setup-compiler-macros': true
   },
@@ -34,7 +33,7 @@ module.exports = {
   plugins: [
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
     // required to lint *.vue files
-    'vue',
+    'vue'
 
   ],
 
@@ -70,13 +69,10 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
-
-    'prefer-promise-reject-errors': 'off',
+    'no-multiple-empty-lines': ['error', { max: 1 }],
     'space-before-function-paren': 'off',
-    'indent': 'off',
-    'no-eval': 'off',
-
     'prefer-promise-reject-errors': 'off',
+    indent: 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

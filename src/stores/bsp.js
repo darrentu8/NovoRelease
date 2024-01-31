@@ -1,15 +1,11 @@
 import { defineStore } from 'pinia'
 import { Notify } from 'quasar'
 import { api } from 'src/boot/axios'
-import { useCommonStore } from 'src/stores/common'
-
-const commonStore = useCommonStore()
 
 export const useBspStore = defineStore('bsp', {
   state: () => ({
     loading: false,
     currentBsp: {},
-    currentRelease: {},
     bspList: [],
     currentBspList: []
   }),
@@ -33,31 +29,10 @@ export const useBspStore = defineStore('bsp', {
   actions: {
     getBsp() {
       this.loading = true
-      api.get('webapi/bsp')
-        .then((response) => {
-          // console.log(response)
-          this.bspList = response.data
-          this.loading = false
-        })
-        .catch((error) => {
-          this.loading = false
-          const { description } = error.response.data
-          // console.log(error.response.data)
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
-        })
-    },
-    getProductDetail() {
-      this.loading = true
-      api.get('webapi/product/' + this.currentProduct.id + '/release')
+      return api.get('webapi/bsp')
         .then((response) => {
           console.log(response)
-          this.currentProductList = response.data
+          this.bspList = response.data
           this.loading = false
         })
         .catch((error) => {
@@ -75,28 +50,7 @@ export const useBspStore = defineStore('bsp', {
     },
     editBsp(data) {
       this.loading = true
-      api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
-        .then((response) => {
-          console.log(response)
-          this.getProduct()
-          this.loading = false
-        })
-        .catch((error) => {
-          this.loading = false
-          const { description } = error.response.data
-          // console.log(error.response.data)
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
-        })
-    },
-    editRelease(data) {
-      this.loading = true
-      api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
+      api.post('/webapi/activeProduct/' + this.currentProduct.id, data)
         .then((response) => {
           console.log(response)
           this.getProduct()
@@ -143,7 +97,7 @@ export const useBspStore = defineStore('bsp', {
         })
     },
     delBsp(id) {
-      api.delete('webapi/bsp/' + id + '?Token=' + commonStore.getToken)
+      api.delete('webapi/bsp/' + id)
         .then((response) => {
           // console.log(response)
           // Notify.create({

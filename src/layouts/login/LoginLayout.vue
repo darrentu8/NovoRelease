@@ -26,45 +26,54 @@
   </q-layout>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import FooterComponent from 'src/components/Footer.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import FooterComponent from 'src/components/FooterComponent.vue'
+// import AdminAvatarComponent from '@/components/user/AdminAvatar.vue'
 
-export default defineComponent({
-  name: 'LoginLayout',
-  components: {
-    FooterComponent
-  },
-  data() {
-    return {
-      BgG: false,
-      vvktitle: 'vivitek',
-      vvklogo: require('../../assets/img/logo/vvkLogo.svg'),
-      title: 'NovoConnect Cloud Server',
-      logo: require('../../assets/img/logo/cloud-sign.svg'),
-      logoFont: require('../../assets/img/logo/cloud-g.svg'),
-      logoFontServer: require('../../assets/img/logo/brand_logo_server.svg')
-    }
-  },
-  computed: {
-    currentRouteName() {
-      return this.$route.name
-    }
-  },
-  methods: {
-    changeBgG: function (childValue) {
-      this.BgG = childValue
-    },
-    toLogin() {
-      const _self = this
-      _self.$router.push({ path: '/login' })
-    },
-    toRegister() {
-      const _self = this
-      _self.$router.push({ path: '/register' })
-    }
-  }
+// const store = useStore()
+// const router = useRouter()
+const route = useRoute()
+
+const BgG = ref(false)
+// const loading = ref(true)
+// const loading = ref(true)
+// const vvktitle = 'vivitek'
+// const title = 'NovoConnect Cloud'
+
+// 將圖片和資源用 import 語法導入
+// import vvklogo from '@/assets/img/logo/vvkLogo.svg'
+// import logo from '@/assets/img/logo/cloud-sign.svg'
+// import logoFont from '@/assets/img/logo/cloud-g.svg'
+// import logoFontServer from '@/assets/img/logo/brand_logo_server.svg'
+
+const currentRouteName = computed(() => route.name)
+
+// const toDashboard = computed(() => {
+//   const uid = store.getters['auth/getUID']
+//   return uid ? '/list/all' : '/login'
+// })
+
+onMounted(async () => {
 })
+const changeBgG = (childValue) => {
+  BgG.value = childValue
+}
+// async function getAdminData() {
+//   loading.value = true
+//   await store.dispatch('user/getProfile')
+//   loading.value = false
+// }
+
+// function toLogin() {
+//   router.push({ path: '/login' })
+// }
+
+// function toRegister() {
+//   router.push({ path: '/register' })
+// }
 </script>
+
 <style lang='sass' scoped>
 </style>

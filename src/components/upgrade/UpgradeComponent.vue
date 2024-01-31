@@ -7,12 +7,12 @@
         <span class="text-h6">Upgrade Number</span>
       </div>
       <q-space />
-      <q-btn flat round color="primary" @click="refreshUpgrade" icon="refresh" label="">
+      <q-btn flat round color="primary" @click="upgradeStore.getUpgrade" icon="refresh" label="">
         <q-tooltip>
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="upgradeStore.getUpgarde()" icon="add" label="">
+      <q-btn flat round color="primary" @click="addUpgarde" icon="add" label="">
         <q-tooltip>
           Add New Upgrade Number
         </q-tooltip>
@@ -23,32 +23,8 @@
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
         table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getUpgradeList"
-        :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
-        <!-- img -->
-        <template v-slot:body-cell-img="props">
-          <q-td :props="props">
-            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img"
-              style="height:50px;">
-              <q-tooltip class="bg-grey-5 no-border-radius flex flex-center" anchor="center right" self="center left"
-                :offset="[10, 10]" style="width: 300px; height: 250px;">
-                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;"
-                  :fit="contain" />
-              </q-tooltip>
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-grey-4 text-white">
-                  <q-icon name="close"></q-icon>
-                </div>
-              </template>
-            </q-img>
-          </q-td>
-        </template>
-        <!-- State -->
-        <template v-slot:body-cell-state="props">
-          <q-td :props="props">
-            <q-chip v-if="props.row.state === 1" outline color="primary" size="sm">Active</q-chip>
-            <q-chip v-else-if="props.row.state === 0" outline color="grey-6" size="sm">Pending</q-chip>
-          </q-td>
-        </template>
+        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
+        no-data-icon="success">
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
@@ -118,31 +94,44 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateUpgrade v-model:isShow="isShowDialogCreateUpgrade" />
-  <EditUpgrade />
+  <CreateUpgradeDialog v-model:isShow="isShowCreateUpgrade" />
+  <EditUpgradeDialog v-model:isShow="isShowEditUpgrade" />
   <DelDialog />
 </template>
 
 <script setup>
+import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useUpgradeStore } from 'src/stores/upgrade'
-import CreateUpgrade from './CreatUpgradeDialog.vue'
-import EditUpgrade from './EditUpgrade.vue'
+import CreateUpgradeDialog from './CreatUpgradeDialog.vue'
+import EditUpgradeDialog from './EditUpgradeDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
+const $q = useQuasar()
 const upgradeStore = useUpgradeStore()
 const getLoading = computed(() => upgradeStore.getLoading)
 const getUpgradeList = computed(() => upgradeStore.getUpgradeList)
-const isShowDialogCreateUpgrade = ref(false)
+const isShowCreateUpgrade = ref(false)
+const isShowEditUpgrade = ref(false)
 
 const columns = [
+  // {
+  //   name: 'id',
+  //   required: true,
+  //   label: 'ID',
+  //   align: 'left',
+  //   field: 'id',
+  //   visible: false,
+  //   sortable: true,
+  //   sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+  //   style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
+  // },
   {
     name: 'osid',
     required: true,
     label: 'OsId',
     align: 'left',
-    field: row => row.osid,
-    format: val => `${val}`,
+    field: 'osid',
     sortable: true,
     style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
   },
@@ -150,10 +139,34 @@ const columns = [
   { name: 'version', align: 'left', label: 'Version', field: 'version', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ]
-
-onBeforeMount(() => {
-  upgradeStore.getUpgarde()
+const pagination = ref({
+  rowsPerPage: 10,
+  sortBy: 'osid',
+  descending: true
 })
+onBeforeMount(() => {
+  upgradeStore.getUpgrade()
+})
+
+const addUpgarde = () => {
+  isShowCreateUpgrade.value = true
+}
+const editUpgradeDialog = (props) => {
+  isShowEditUpgrade.value = true
+  upgradeStore.currentUpgrade = props
+}
+const delUpgradeDialog = (props) => {
+  $q.dialog({
+    component: DelDialog,
+    componentProps: {
+      title: 'Are you sure you want to delete this upgrade number?',
+      okBtn: 'Delete',
+      cancelBtn: 'Cancel'
+    }
+  }).onOk(() => {
+    upgradeStore.delUpgrade(props.id)
+  })
+}
 </script>
 <style lang="sass" scoped>
 </style>

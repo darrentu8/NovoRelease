@@ -135,7 +135,7 @@ import { useProductStore } from 'src/stores/product'
 // import inputRules from 'src/mixins/inputRules.js'
 import CreateProduct from './CreatProductDialog.vue'
 import CreatRelease from './CreatReleaseDialog.vue'
-import DialogEditRelease from './EditRelease.vue'
+import DialogEditRelease from './EditReleaseDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
 const $q = useQuasar()

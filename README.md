@@ -1,6 +1,6 @@
-# Quasar App
+# OnDeviceEditor (ondeviceeditor)
 
-A Quasar Project
+Novo DS On Device Editor
 
 ## Install the dependencies
 ```bash
@@ -30,4 +30,4 @@ quasar build
 ```
 
 ### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js).
+See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).

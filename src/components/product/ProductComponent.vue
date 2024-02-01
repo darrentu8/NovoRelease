@@ -161,9 +161,10 @@ const refreshProduct = () => {
   productStore.getProduct()
 }
 const toProductDetail = (props) => {
-  if (props) {
+  const ID = props.id
+  if (ID) {
     productStore.currentProduct = props
-    router.push({ path: '/product/' + props.id })
+    router.push({ name: 'productdetail', params: { id: ID } })
   }
 }
 // const delProductDialog = (props) => {

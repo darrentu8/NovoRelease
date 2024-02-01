@@ -9,17 +9,7 @@ export const useProductStore = defineStore('product', {
   state: () => ({
     loading: false,
     currentProduct: {},
-    currentRelease: {
-      id: 1,
-      productid: 1,
-      version: 'v1.0.0',
-      filename: 'DS110_DS210_DS310_1.0.0.9999.apk',
-      md5: '6f8de3b7719e9ec3d9c5b107dcc92b9c',
-      filesize: 81414,
-      description: 'Build 9999',
-      parameters: 'DS110,DS220,DS310',
-      state: 1
-    },
+    currentRelease: {},
     productList: [
       { id: 11, appid: 13, name: 'NovoDS(PC)', cdn: 1 },
       { id: 12, appid: 14, name: 'NovoRDM', cdn: 0 }
@@ -77,9 +67,32 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    getProductDetail() {
+    getProductByID(id) {
       this.loading = true
-      api.get('webapi/product/' + this.currentProduct.id + '/release')
+      const ID = this.currentProduct.id ? this.currentProduct.id : id
+      api.get('webapi/product/' + ID)
+        .then((response) => {
+          // console.log(response)
+          this.currentProduct = response.data
+          this.loading = false
+        })
+        .catch((error) => {
+          this.loading = false
+          const { description } = error.response.data
+          // console.log(error.response.data)
+          Notify.create({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            // caption: code,
+            message: description
+          })
+        })
+    },
+    getProductDetail(id) {
+      this.loading = true
+      const ID = this.currentProduct.id ? this.currentProduct.id : id
+      api.get('webapi/product/' + ID + '/release')
         .then((response) => {
           console.log(response)
           this.currentProductList = response.data
@@ -143,6 +156,33 @@ export const useProductStore = defineStore('product', {
     createProduct(data) {
       this.loading = true
       return api.post('webapi/product', data)
+        .then((response) => {
+          this.loading = false
+          this.getProduct()
+          // console.log(response)
+          // Notify.create({
+          //   color: 'primary',
+          //   textColor: 'white',
+          //   icon: 'check',
+          //   message: response.description
+          // })
+        })
+        .catch((error) => {
+          this.loading = false
+          const { description } = error.response.data
+          // console.log(error.response.data)
+          Notify.create({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            // caption: code,
+            message: description
+          })
+        })
+    },
+    createProductRelease(data) {
+      this.loading = true
+      return api.post('webapi/product' + data.productid + '/release', data)
         .then((response) => {
           this.loading = false
           this.getProduct()

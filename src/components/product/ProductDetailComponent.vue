@@ -1,10 +1,10 @@
 <template>
-  <q-card class="" style="min-width: 800px;">
+  <q-card class="" style="min-width: 965px;">
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
         <q-icon class="q-mr-sm" color="primary" name="dns" size="sm" alt="" />
-        <span class="text-h6">{{ currentProduct.name }}, APP ID: {{
+        <span v-if="!getLoading" class="text-h6">{{ currentProduct.name }}, APP ID: {{
           currentProduct.appid }}, CDN: {{ currentProduct.cdn ?
     'true' : 'false' }}</span>
       </div>
@@ -127,20 +127,16 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
-// import { useRouter } from 'vue-router'
 import { useProductStore } from 'src/stores/product'
-// import { useCommonStore } from 'src/stores/common'
-// import inputRules from 'src/mixins/inputRules.js'
 import CreateProduct from './CreatProductDialog.vue'
 import CreatRelease from './CreatReleaseDialog.vue'
 import DialogEditRelease from './EditReleaseDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
 const $q = useQuasar()
-// const router = useRouter()
-// const commonStore = useCommonStore()
 const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
 const currentProduct = computed(() => productStore.currentProduct)
@@ -167,7 +163,9 @@ const columns = ref([
 ])
 
 onBeforeMount(() => {
-  productStore.getProductDetail()
+  const { id } = useRoute().params
+  productStore.getProductByID(id)
+  productStore.getProductDetail(id)
 })
 
 const getProduct = () => {

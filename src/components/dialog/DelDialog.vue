@@ -3,11 +3,11 @@
     <q-card class="dialog-round q-pa-md text-center">
       <q-card-section>
         <div class="text-h6">
-          {{ title }}</div>
+          {{ props.title }}</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <p class="theme-text-color">{{ message }}</p>
+        <p class="theme-text-color">{{ props.message }}</p>
       </q-card-section>
 
       <q-card-actions align="center">
@@ -20,59 +20,50 @@
   </q-dialog>
 </template>
 
-<script>
-import { ref } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
+<script setup>
+import { ref, onMounted } from 'vue'
 
-export default {
-  name: 'DelDialog',
-  emits: [
-    ...useDialogPluginComponent.emits
-  ],
-  props: {
-    title: String,
-    message: String,
-    okBtn: String,
-    cancelBtn: String
-  },
-  setup(props, { emit }) {
-    const dialog = ref(null)
+// This defineProps call defines the props that the component will accept.
+const props = defineProps({
+  title: String,
+  message: String,
+  okBtn: String,
+  cancelBtn: String
+})
 
-    const show = () => {
-      if (dialog.value) {
-        dialog.value.show()
-      }
-    }
+// Define the event emits.
+const emit = defineEmits(['ok', 'hide'])
 
-    const hide = () => {
-      if (dialog.value) {
-        dialog.value.hide()
-      }
-    }
+const dialog = ref(null)
 
-    const onDialogHide = () => {
-      emit('hide')
-    }
-
-    const onOKClick = () => {
-      emit('ok')
-      hide()
-    }
-
-    const onCancelClick = () => {
-      hide()
-    }
-
-    return {
-      dialog,
-      show,
-      hide,
-      onDialogHide,
-      onOKClick,
-      onCancelClick
-    }
+// Make sure dialog reference is bound after component has mounted.
+onMounted(() => {
+  if (!dialog.value) {
+    console.error('Dialog reference not found')
   }
+})
+
+// const show = () => {
+//   dialog.value?.show()
+// }
+
+const hide = () => {
+  dialog.value?.hide()
 }
+
+// const onDialogHide = () => {
+//   emit('hide')
+// }
+
+const onOKClick = () => {
+  emit('ok')
+  hide()
+}
+
+const onCancelClick = () => {
+  hide()
+}
+
 </script>
 
 <style lang="sass" scoped>

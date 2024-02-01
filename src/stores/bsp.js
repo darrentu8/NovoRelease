@@ -50,7 +50,7 @@ export const useBspStore = defineStore('bsp', {
     },
     editBsp(data) {
       this.loading = true
-      api.post('/webapi/activeProduct/' + this.currentProduct.id, data)
+      api.post('/webapi/bsp/' + data.id, data)
         .then((response) => {
           console.log(response)
           this.getProduct()

@@ -3,11 +3,11 @@
     <q-card class="dialog-round q-pa-md text-center">
       <q-card-section>
         <div class="text-h6">
-          {{ title }}</div>
+          {{ props.title }}</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <p class="theme-text-color">{{ message }}</p>
+        <p class="theme-text-color">{{ props.message }}</p>
       </q-card-section>
 
       <q-card-actions align="center">
@@ -20,60 +20,45 @@
   </q-dialog>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 
-export default ({
-  name: 'ConfirmDialog',
-  data() {
-    return {
-    }
-  },
-  props: {
-    title: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    message: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    okBtn: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    cancelBtn: {
-      type: String,
-      required: false,
-      default: ''
-    }
-  },
-  computed: {
-  },
-  methods: {
-    show() {
-      this.$refs.dialog.show()
-    },
-    hide() {
-      this.$refs.dialog.hide()
-    },
-    onDialogHide() {
-      // required to be emitted
-      // when QDialog emits "hide" event
-      this.$emit('hide')
-    },
-    onOKClick() {
-      this.$emit('ok')
-      this.hide()
-    },
-    onCancelClick() {
-      this.$emit('cancel')
-      this.hide()
-    }
-  }
+// Define the props the component will accept.
+const props = defineProps({
+  title: String,
+  message: String,
+  okBtn: String,
+  cancelBtn: String
 })
+
+// Define the event emits.
+const emit = defineEmits(['ok', 'cancel', 'hide'])
+
+const dialog = ref(null)
+
+// Methods can be used directly in the script setup block.
+// function show() {
+//   dialog.value.show()
+// }
+
+function hide() {
+  dialog.value.hide()
+}
+
+// function onDialogHide() {
+//   emit('hide')
+// }
+
+function onOKClick() {
+  emit('ok')
+  hide()
+}
+
+function onCancelClick() {
+  emit('cancel')
+  hide()
+}
 </script>
+
 <style lang="sass" scoped>
 </style>

@@ -159,7 +159,7 @@ const delBspDialog = (props) => {
   $q.dialog({
     component: DelDialog,
     componentProps: {
-      title: 'Are you sure you want to delete this bsp number?',
+      title: 'Are you sure you want to delete this bsp?',
       okBtn: 'Delete',
       cancelBtn: 'Cancel'
     }

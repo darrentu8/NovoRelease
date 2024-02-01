@@ -11,18 +11,17 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editBsp">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <!-- <q-input filled class="q-mt-xs" type="text" v-model="data.osid" label="OsId" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.product" label="Product" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a osid']">
-              </q-input> -->
-              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.value.comment" label="Comment"
-                lazy-rules :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please enter a comment']">
+                  (val !== null && val !== '') || 'Please enter a product']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.version" label="Version" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.model" label="Model" lazy-rules :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Please enter a version']">
+                  (val !== null && val !== '') || 'Please enter a model']">
+              </q-input>
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.comment" label="Comment" lazy-rules :rules="[
+                (val) =>
+                  (val !== null && val !== '') || 'Please enter a comment']">
               </q-input>
             </div>
           </div>
@@ -50,9 +49,8 @@ const getLoading = computed(() => bspStore.getLoading)
 
 const Form = ref(null)
 const data = reactive({
-  id: '',
-  osid: '',
-  version: '',
+  product: '',
+  model: '',
   comment: ''
 })
 
@@ -60,6 +58,7 @@ onBeforeMount(() => {
 })
 
 const initData = () => {
+  console.log('bspStore.currentBsp', bspStore.currentBsp)
   data.value = bspStore.currentBsp
 }
 
@@ -68,7 +67,9 @@ const editBsp = () => {
     if (success) {
       const Data = {
         id: data.value.id,
-        version: data.value.version
+        product: data.value.product,
+        model: data.value.model,
+        comment: data.value.comment
       }
       bspStore.editBsp(Data).then(() => {
         hideDialog()

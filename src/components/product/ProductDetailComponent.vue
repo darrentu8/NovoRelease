@@ -1,5 +1,5 @@
 <template>
-  <q-card class="" style="min-width: 965px;">
+  <q-card class="" style="min-width: 993px;">
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
       <div class="flex items-center">
@@ -25,25 +25,8 @@
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
         table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height"
-        :rows="currentProductList" :columns="columns" row-key="id" :loading="getLoading" color="primary"
-        no-data-icon="success">
-        <!-- img -->
-        <template v-slot:body-cell-img="props">
-          <q-td :props="props">
-            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img" style="height:50px;"
-              fit="contain">
-              <q-tooltip class="bg-grey-5 no-border-radius flex flex-center" anchor="center right" self="center left"
-                :offset="[10, 10]" style="width: 300px; height: 250px;">
-                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;" fit="contain" />
-              </q-tooltip>
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-grey-4 text-white">
-                  <q-icon name="close"></q-icon>
-                </div>
-              </template>
-            </q-img>
-          </q-td>
-        </template>
+        :rows="currentProductList" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading"
+        color="primary" no-data-icon="success">
         <!-- State -->
         <template v-slot:body-cell-state="props">
           <q-td :props="props">
@@ -60,7 +43,7 @@
                 Edit
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delProductDialog(props.row)">
+            <q-btn color="negative" round flat @click="delReleaseDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
@@ -72,7 +55,7 @@
 
     </div>
     <!-- Loading Markup -->
-    <q-markup-table v-else flat class="full-width" style="max-width: 800px;">
+    <q-markup-table v-else flat class="full-width" style="max-width: 993px;">
       <thead>
         <tr>
           <th class="text-left" style="width: 100vw">
@@ -120,9 +103,8 @@
       </tbody>
     </q-markup-table>
   </q-card>
-  <CreateProduct />
-  <CreatRelease />
-  <DialogEditRelease />
+  <CreatRelease v-model:isShow="isShowDialogCreatRelease" />
+  <DialogEditRelease v-model:isShow="isShowDialogEditRelease" />
   <DelDialog />
 </template>
 
@@ -131,7 +113,6 @@ import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useProductStore } from 'src/stores/product'
-import CreateProduct from './CreatProductDialog.vue'
 import CreatRelease from './CreatReleaseDialog.vue'
 import DialogEditRelease from './EditReleaseDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
@@ -141,6 +122,8 @@ const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
 const currentProduct = computed(() => productStore.currentProduct)
 const currentProductList = computed(() => productStore.currentProductList)
+const isShowDialogCreatRelease = ref(false)
+const isShowDialogEditRelease = ref(false)
 
 const columns = ref([
   { name: 'id', align: 'center', label: 'ID', field: 'id', sortable: true },
@@ -162,6 +145,11 @@ const columns = ref([
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ])
 
+const pagination = ref({
+  rowsPerPage: 10,
+  sortBy: 'id',
+  descending: true
+})
 onBeforeMount(() => {
   const { id } = useRoute().params
   productStore.getProductByID(id)
@@ -172,26 +160,26 @@ const getProduct = () => {
   productStore.getProductDetail()
 }
 const creatRelease = () => {
-  $q.dialog({
-    component: CreatRelease
-  })
+  isShowDialogCreatRelease.value = true
 }
 const editReleaseDialog = (props) => {
   productStore.currentRelease = props
-  $q.dialog({
-    component: DialogEditRelease
-  })
+  isShowDialogEditRelease.value = true
 }
-const delProductDialog = (props) => {
+const delReleaseDialog = (props) => {
   $q.dialog({
     component: DelDialog,
     componentProps: {
-      title: 'Are you sure you want to delete this product?',
+      title: 'Are you sure you want to delete this release?',
       okBtn: 'Delete',
       cancelBtn: 'Cancel'
     }
   }).onOk(() => {
-    productStore.delProduct(props.id)
+    productStore.delRelease(props).then(() => {
+      setTimeout(() => {
+        productStore.getProductDetail()
+      }, 1000)
+    })
   })
 }
 </script>

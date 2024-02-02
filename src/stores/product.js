@@ -48,7 +48,7 @@ export const useProductStore = defineStore('product', {
   actions: {
     getProduct() {
       this.loading = true
-      api.get('webapi/product')
+      return api.get('webapi/product')
         .then((response) => {
           // console.log(response)
           this.productList = response.data
@@ -70,7 +70,7 @@ export const useProductStore = defineStore('product', {
     getProductByID(id) {
       this.loading = true
       const ID = this.currentProduct.id ? this.currentProduct.id : id
-      api.get('webapi/product/' + ID)
+      return api.get('webapi/product/' + ID)
         .then((response) => {
           // console.log(response)
           this.currentProduct = response.data
@@ -92,9 +92,9 @@ export const useProductStore = defineStore('product', {
     getProductDetail(id) {
       this.loading = true
       const ID = this.currentProduct.id ? this.currentProduct.id : id
-      api.get('webapi/product/' + ID + '/release')
+      return api.get('webapi/product/' + ID + '/release')
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.currentProductList = response.data
           this.loading = false
         })
@@ -113,7 +113,7 @@ export const useProductStore = defineStore('product', {
     },
     editProduct(data) {
       this.loading = true
-      api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
+      return api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
         .then((response) => {
           console.log(response)
           this.getProduct()
@@ -134,10 +134,9 @@ export const useProductStore = defineStore('product', {
     },
     editRelease(data) {
       this.loading = true
-      api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
+      return api.post('webapi/product/' + data.productid + '/release/' + data.id, data)
         .then((response) => {
           console.log(response)
-          this.getProduct()
           this.loading = false
         })
         .catch((error) => {
@@ -158,7 +157,6 @@ export const useProductStore = defineStore('product', {
       return api.post('webapi/product', data)
         .then((response) => {
           this.loading = false
-          this.getProduct()
           // console.log(response)
           // Notify.create({
           //   color: 'primary',
@@ -182,10 +180,9 @@ export const useProductStore = defineStore('product', {
     },
     createProductRelease(data) {
       this.loading = true
-      return api.post('webapi/product' + data.productid + '/release', data)
+      return api.postForm('webapi/product/' + this.currentProduct.id + '/release', data)
         .then((response) => {
           this.loading = false
-          this.getProduct()
           // console.log(response)
           // Notify.create({
           //   color: 'primary',
@@ -207,8 +204,8 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    delProduct(id) {
-      api.delete('webapi/activeProduct/' + id + '?Token=' + commonStore.getToken)
+    delProduct(data) {
+      return api.delete('webapi/product/' + data.productid + '/release/' + data.id)
         .then((response) => {
           // console.log(response)
           // Notify.create({
@@ -218,6 +215,30 @@ export const useProductStore = defineStore('product', {
           //   message: response.description
           // })
           this.getProduct()
+        })
+        .catch((error) => {
+          const { description } = error.response.data
+          // console.log(error.response.data)
+          Notify.create({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            // caption: code,
+            message: description
+          })
+        })
+    },
+    delRelease(data) {
+      return api.delete('webapi/product/' + data.productid + '/release/' + data.id)
+        .then((response) => {
+          // console.log(response)
+          // Notify.create({
+          //   color: 'primary',
+          //   textColor: 'white',
+          //   icon: 'check',
+          //   message: response.description
+          // })
+          return true
         })
         .catch((error) => {
           const { description } = error.response.data

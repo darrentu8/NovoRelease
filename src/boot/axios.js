@@ -17,8 +17,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
-    'Cache-Control': 'no-cache',
-    authorization: commonStore.getToken || ''
+    'Cache-Control': 'no-cache'
   },
   timeout: 40000,
   withCredentials: false
@@ -27,7 +26,7 @@ export default boot(({ app, urlPath, redirect }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   api.interceptors.request.use(request => {
-    request.headers.token = Cookies.get('token')
+    request.headers.authorization = commonStore.getToken || Cookies.get('NM_token')
     return request
   })
 

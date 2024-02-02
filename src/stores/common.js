@@ -18,7 +18,7 @@ export const useCommonStore = defineStore('common', {
       return this.loading
     },
     getLoginStatus() {
-      const Token = Cookies.get('token')
+      const Token = Cookies.get('NM_token')
       if (Token) {
         return true
       } else {
@@ -26,7 +26,7 @@ export const useCommonStore = defineStore('common', {
       }
     },
     getToken() {
-      return this.token || Cookies.get('token')
+      return this.token || Cookies.get('NM_token')
     },
     getUserData() {
       return this.userData
@@ -34,10 +34,10 @@ export const useCommonStore = defineStore('common', {
   },
   actions: {
     GetToken() {
-      if (LocalStorage.getItem('token')) {
-        return LocalStorage.getItem('token')
-      } else if (Cookies.get('token')) {
-        return Cookies.get('token')
+      if (LocalStorage.getItem('NM_token')) {
+        return LocalStorage.getItem('NM_token')
+      } else if (Cookies.get('NM_token')) {
+        return Cookies.get('NM_token')
       } else {
         return this.token
       }
@@ -45,12 +45,12 @@ export const useCommonStore = defineStore('common', {
     LoginAndSetToken(loginData) {
       return api.post('webapi/auth', loginData)
         .then((response) => {
-          Cookies.remove('token')
+          Cookies.remove('NM_token')
           console.log(response)
           this.loginStatus = true
           this.token = response.token
           this.userData = response
-          Cookies.set('token', response.token, { expires: 1 })
+          Cookies.set('NM_token', response.token, { expires: 1 })
           // Notify.create({
           //   color: 'primary',
           //   textColor: 'white',
@@ -74,7 +74,7 @@ export const useCommonStore = defineStore('common', {
       this.loginStatus = false
       this.token = undefined
       this.userData = {}
-      await Cookies.remove('token')
+      await Cookies.remove('NM_token')
       return true
       // Notify.create({
       //   color: 'red-5',

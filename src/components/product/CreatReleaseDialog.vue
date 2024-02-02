@@ -35,7 +35,7 @@
                   </q-input>
                 </div>
               </div>
-              <q-input class="q-mb-md" v-model="parameter" label="Parameters">
+              <q-input class="q-mb-md" filled v-model="parameter" label="Parameters" @keyup.enter="addParameters">
                 <template v-slot:hint>
                   Please enter a product parameters
                 </template>
@@ -48,7 +48,8 @@
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply" type="submit" color="primary" />
+            <q-btn @click="createRelease" unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply"
+              color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -59,7 +60,10 @@
 <script setup>
 import { ref, computed, reactive, onBeforeMount } from 'vue'
 import { useProductStore } from 'src/stores/product'
+// import { useQuasar } from 'quasar'
 // import inputRules from 'src/mixins/inputRules.js'
+
+// const $q = useQuasar()
 
 defineProps(['isShow'])
 const emit = defineEmits(['update:isShow'])
@@ -71,6 +75,7 @@ const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
 
 const Form = ref(null)
+// const File = ref(null)
 const parameter = ref('')
 const data = reactive({
   id: undefined,
@@ -94,6 +99,38 @@ const beforeShow = () => {
   data.version = ''
   data.parameters = []
 }
+// const onRejected = (rejectedEntries) => {
+//   $q.notify({
+//     type: 'negative',
+//     message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+//   })
+// }
+// const handleUpload = () => {
+//   console.log('data.file', data.file)
+//   const typeCheck = data.file.type === 'image/png' || data.file.type === 'image/jpeg' || data.file.type === 'image/jpg'
+//   if (!typeCheck) {
+//     $q.notify({
+//       color: 'red-5',
+//       position: 'bottom',
+//       textColor: 'white',
+//       icon: 'error',
+//       message: 'The format is wrong, please re-upload!'
+//     })
+//     return
+//   }
+//   // // 限制2MB
+//   // if (file.size > 2000000) {
+//   //   this.$q.notify({
+//   //     color: 'red-5',
+//   //     position: 'bottom',
+//   //     textColor: 'white',
+//   //     icon: 'error',
+//   //     message: 'The file is too large, please re-upload!'
+//   //   })
+//   //   return
+//   // }
+//   File.value = URL.createObjectURL(data.file)
+// }
 
 const addParameters = () => {
   const index = data.parameters.findIndex(o => o === parameter.value.toUpperCase())
@@ -117,16 +154,19 @@ const createRelease = () => {
   Form.value.validate().then(success => {
     if (success) {
       const formData = new FormData()
-      data.parameters = []
       formData.append('productid', data.id)
       formData.append('file', data.file)
-      formData.append('version', data.rename)
+      formData.append('rename', data.rename)
+      formData.append('newFileName', data.newFileName)
+      formData.append('description', data.description)
       formData.append('version', data.version)
-      formData.append('filename', data.newFileName)
-      formData.append('parameters', data.description)
       formData.append('parameters', data.parameters)
       productStore.createProductRelease(formData).then(() => {
         hideDialog()
+      }).then(() => {
+        setTimeout(() => {
+          productStore.getProductDetail()
+        }, 1000)
       })
     }
   })

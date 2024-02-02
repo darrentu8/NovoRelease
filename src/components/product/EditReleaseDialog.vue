@@ -11,20 +11,15 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editRelease">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.value.filename" label="Filename"
-                lazy-rules :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please enter a comment']">
+              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.version" label="Version">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.version" label="Version" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product version']">
+              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.filename" label="Filename">
               </q-input>
               <div class="row flex items-center">
                 <span>State:</span>
-                <q-toggle v-model="data.value.state" :true-value="1" :false-value="0" />
+                <q-toggle v-model="data.state" :true-value="1" :false-value="0" />
               </div>
-              <q-input class="q-mb-md" v-model="parameter" label="Parameters">
+              <q-input class="q-mb-md" filled v-model="parameter" label="Parameters" @keyup.enter="addParameters">
                 <template v-slot:hint>
                   Please enter a product parameters
                 </template>
@@ -32,13 +27,13 @@
                   <q-btn round dense flat icon="add" @click="addParameters" />
                 </template>
               </q-input>
-              <q-btn class="q-mr-sm q-mb-xs q-pr-sm" style="font-size: 12px;" unelevated
-                v-for="tag in data.value.parameters" :key="tag" icon-right="cancel" color="grey-5" :label="tag"
-                @click="delParameters(tag)" />
+              <q-btn class="q-mr-sm q-mb-xs q-pr-sm" style="font-size: 12px;" unelevated v-for="tag in data.parameters"
+                :key="tag" icon-right="cancel" color="grey-5" :label="tag" @click="delParameters(tag)" />
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply" type="submit" color="primary" />
+            <q-btn @click="editRelease" unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply"
+              color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -64,20 +59,34 @@ const Form = ref(null)
 const parameter = ref('')
 const data = reactive({
   id: undefined,
-  file: null,
-  rename: 0,
-  newFileName: '',
-  description: '',
+  productid: undefined,
   version: '',
-  parameters: []
+  filename: '',
+  md5: '',
+  filesize: undefined,
+  description: '',
+  parameters: [],
+  state: 0
 })
 
 onBeforeMount(() => {
 })
 
 const initData = () => {
-  console.log('productStore.currentRelease', productStore.currentRelease)
-  data.value = productStore.currentRelease
+  data.id = productStore.currentRelease.id
+  data.productid = productStore.currentRelease.productid
+  data.version = productStore.currentRelease.version
+  data.filename = productStore.currentRelease.filename
+  data.md5 = productStore.currentRelease.md5
+  data.filesize = productStore.currentRelease.filesize
+  data.description = productStore.currentRelease.description
+  data.state = productStore.currentRelease.state
+  if (productStore.currentRelease.parameters) {
+    const tagArray = productStore.currentRelease.parameters.split(',')
+    data.parameters = tagArray
+  } else {
+    data.parameters = []
+  }
 }
 
 const addParameters = () => {
@@ -101,17 +110,19 @@ const delParameters = (tag) => {
 const editRelease = () => {
   Form.value.validate().then(success => {
     if (success) {
-      const formData = new FormData()
-      data.parameters = []
-      formData.append('productid', data.id)
-      formData.append('file', data.file)
-      formData.append('version', data.rename)
-      formData.append('version', data.version)
-      formData.append('filename', data.newFileName)
-      formData.append('parameters', data.description)
-      formData.append('parameters', data.parameters)
-      productStore.createProductRelease(formData).then(() => {
+      console.log('data.parameters', data.parameters)
+      const Data = {
+        id: data.id,
+        productid: data.productid,
+        parameters: data.parameters.toString(),
+        state: data.state
+      }
+      productStore.editRelease(Data).then(() => {
         hideDialog()
+      }).then(() => {
+        setTimeout(() => {
+          productStore.getProductDetail()
+        }, 1000)
       })
     }
   })

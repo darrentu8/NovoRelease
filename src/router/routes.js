@@ -113,7 +113,36 @@ export const PublicRoutes = [
             }
           ]
         },
-        component: () => import('src/pages/BspPage.vue')
+        component: () => import('src/pages/BspPage.vue'),
+        children: [
+          {
+            path: ':id',
+            name: 'bspCon',
+            meta: {
+              auth: true,
+              title: ':id',
+              breadcrumb: [
+                {
+                  text: 'Bsp',
+                  disabled: true,
+                  href: '/bsp',
+                  link: true,
+                  exact: true,
+                  to: { name: 'bsp', path: '/bsp' }
+                },
+                {
+                  text: ':id',
+                  disabled: true,
+                  href: '/:id',
+                  link: true,
+                  exact: true,
+                  to: { name: ':id', path: '/:id' }
+                }
+              ]
+            },
+            component: () => import('src/pages/BspConPage.vue')
+          }
+        ]
       }
     ]
   },

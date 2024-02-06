@@ -57,6 +57,11 @@
                 Edit
               </q-tooltip>
             </q-btn>
+            <q-btn icon="open_in_new" color="primary" round flat @click="toProductDetail(props.row)">
+              <q-tooltip>
+                Open Edit
+              </q-tooltip>
+            </q-btn>
             <!-- <q-btn color="negative" round flat @click="delProductDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>

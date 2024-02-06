@@ -34,6 +34,11 @@
                 Edit
               </q-tooltip>
             </q-btn>
+            <q-btn icon="open_in_new" color="primary" round flat @click="tobspCon(props.row)">
+              <q-tooltip>
+                Open Edit
+              </q-tooltip>
+            </q-btn>
             <q-btn color="negative" round flat @click="delBspDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
@@ -102,12 +107,14 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
+import { useRouter } from 'vue-router'
 import { useBspStore } from 'src/stores/bsp'
 import CreateBspDialog from './CreatBspDialog.vue'
 import EditBspDialog from './EditBspDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
 const $q = useQuasar()
+const router = useRouter()
 const bspStore = useBspStore()
 const getLoading = computed(() => bspStore.getLoading)
 const getBspList = computed(() => bspStore.getBspList)
@@ -154,6 +161,13 @@ const addBsp = () => {
 const editBspDialog = (props) => {
   isShowEditBsp.value = true
   bspStore.currentBsp = props
+}
+const tobspCon = (props) => {
+  const ID = props.id
+  if (ID) {
+    bspStore.currentBsp = props
+    router.push({ name: 'bspCon', params: { id: ID } })
+  }
 }
 const delBspDialog = (props) => {
   $q.dialog({

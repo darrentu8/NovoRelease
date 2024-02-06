@@ -2,7 +2,12 @@
   <q-card class="" style="min-width: 993px;">
     <!-- Header & ToolBar -->
     <div class="theme-bg q-py-lg head flex justify-between items-center">
-      <div class="flex items-center">
+      <q-btn flat round color="primary" @click="router.push({ name: 'product' })" icon="arrow_back" label="">
+        <q-tooltip>
+          Back
+        </q-tooltip>
+      </q-btn>
+      <div class="q-ml-md flex items-center">
         <q-icon class="q-mr-sm" color="primary" name="dns" size="sm" alt="" />
         <span v-if="!getLoading" class="text-h6">{{ currentProduct.name }}, APP ID: {{
           currentProduct.appid }}, CDN: {{ currentProduct.cdn ?
@@ -109,7 +114,7 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useProductStore } from 'src/stores/product'
@@ -118,6 +123,7 @@ import DialogEditRelease from './EditReleaseDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
 const $q = useQuasar()
+const router = useRouter()
 const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
 const currentProduct = computed(() => productStore.currentProduct)

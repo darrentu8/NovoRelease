@@ -12,12 +12,6 @@
         <span v-if="!getLoading" class="text-h6">{{ currentBsp.comment }}</span>
       </div>
       <q-space />
-      <q-file ref="fileRef" v-on:update:model-value="fileOnUpdate" v-model="file" class="q-mt-xs q-mb-lg hidden"
-        label="Upload File">
-        <template v-slot:prepend>
-          <q-icon name="cloud_upload" />
-        </template>
-      </q-file>
       <q-btn outline class="q-mr-md" color="primary" v-on:click="selectFile()" label="Upload File">
         <q-tooltip>
           Upload File
@@ -128,15 +122,14 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { ref, computed, onBeforeMount, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { inject, ref, computed, onBeforeMount, onUnmounted } from 'vue'
 import { useBspStore } from 'src/stores/bsp'
 import CreatBspCon from './CreatBspConDialog.vue'
 import DialogEditBspCon from './EditBspConDialog.vue'
 import DialogBspConFileList from './DialogBspConFileList.vue'
 import DelDialog from '../dialog/DelDialog.vue'
-import DialogProgress from '../dialog/DialogProgress.vue'
 
 const $q = useQuasar()
 const router = useRouter()
@@ -147,8 +140,8 @@ const currentBspList = computed(() => bspStore.currentBspList)
 const isShowDialogCreatBspCon = ref(false)
 const isShowDialogEditBspCon = ref(false)
 const isShowDialogBspConFileList = ref(false)
-const file = ref(null)
-const fileRef = ref(null)
+
+const bus = inject('bus')
 
 const columns = ref([
   { name: 'updateno', align: 'center', label: 'Updateno', field: 'updateno', sortable: true },
@@ -172,70 +165,13 @@ onBeforeMount(() => {
   bspStore.getBspByID(id)
   bspStore.getBspCon(id)
 })
-function selectFile() {
-  fileRef.value.pickFiles()
-}
-
-function fileOnUpdate(selectedFile) {
-  console.log('selectedFile', selectedFile)
-  console.log('bspStore.percentCompleted', bspStore.percentCompleted)
-  bspStore.setPercentCompleted(0)
-  const dialog = $q.dialog({
-    component: DialogProgress,
-    componentProps: {
-      title: '',
-      message: '',
-      progressVal: bspStore.percentCompleted
-    },
-    progress: true,
-    ok: false
-  })
-  const interval = setInterval(() => {
-    dialog.update({
-      title: '',
-      message: '',
-      progressVal: bspStore.percentCompleted
-    })
-    if (bspStore.percentCompleted === 1) {
-      clearInterval(interval)
-      dialog.update({
-        title: '',
-        message: 'Save successfully!',
-        progressVal: bspStore.percentCompleted
-      })
-    }
-  }, 100)
-  const formData = new FormData()
-  formData.append('file', selectedFile)
-  bspStore.uploadBspConFile(bspStore.currentBsp.id, formData).catch(error => {
-    console.error('Error during upload:', error)
-    dialog.update({
-      title: 'Upload Failed',
-      message: 'An error occurred during the upload.'
-    })
-    clearInterval(interval)
-    setTimeout(() => {
-      dialog.hide()
-      clearInterval(interval)
-    }, 700)
-  }).then(() => {
-    setTimeout(() => {
-      if (dialog) {
-        dialog.hide()
-      }
-    }, 700)
-    bspStore.getBspConFile(bspStore.currentBspCon.id).then(() => {
-      isShowDialogBspConFileList.value = true
-    })
-    file.value = null
-  })
-}
 
 onUnmounted(() => {
-  if (file.value) {
-    URL.revokeObjectURL(file.value)
-  }
 })
+function selectFile() {
+  console.log('pickFiles')
+  bus.emit('pickFiles')
+}
 const getProduct = () => {
   bspStore.getBspCon()
 }

@@ -1,11 +1,12 @@
+import { EventBus } from 'quasar'
 import { boot } from 'quasar/wrappers'
-import Mitt from 'mitt'
-
-const mitt = new Mitt()
 
 export default boot(({ app }) => {
-    // Set Bus instance on Vue
-    app.config.globalProperties.$bus = mitt
-})
+  const bus = new EventBus()
 
-export { mitt }
+  // for Options API
+  app.config.globalProperties.$bus = bus
+
+  // for Composition API
+  app.provide('bus', bus)
+})

@@ -24,6 +24,9 @@ export const useBspStore = defineStore('bsp', {
     getDialogBtnLoading() {
       return this.dialogBtnLoading
     },
+    getFileUploading() {
+      return this.percentCompleted
+    },
     getToken() {
       return this.Token
     },

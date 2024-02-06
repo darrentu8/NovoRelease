@@ -50,7 +50,6 @@ const getLuminosity = (color) => {
 //   margin-left: 15px
 .adminAvatar-warp
   border-left: .75px solid #F1F1F1
-  margin-left: 16px
   height: 50px
   width: 70px
   align-items: center

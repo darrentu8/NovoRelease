@@ -8,6 +8,9 @@
           </router-link>
         </div>
         <q-toolbar-title></q-toolbar-title>
+        <keep-alive>
+          <DialogUploadFile />
+        </keep-alive>
         <div>
           <AdminAvatarComponent />
         </div>
@@ -23,6 +26,7 @@
 <script setup>
 import FooterComponent from 'src/components/FooterComponent.vue'
 import AdminAvatarComponent from 'src/components/user/AdminAvatar.vue'
+import DialogUploadFile from 'src/components/dialog/DialogUploadFile.vue'
 
 </script>
 

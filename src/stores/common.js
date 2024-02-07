@@ -46,11 +46,40 @@ export const useCommonStore = defineStore('common', {
       return api.post('webapi/auth', loginData)
         .then((response) => {
           Cookies.remove('NM_token')
-          console.log(response)
+          // console.log(response)
           this.loginStatus = true
           this.token = response.token
           this.userData = response
           Cookies.set('NM_token', response.token, { expires: 1 })
+          // Notify.create({
+          //   color: 'primary',
+          //   textColor: 'white',
+          //   icon: 'check',
+          //   message: 'Login Success'
+          // })
+        })
+        .catch((error) => {
+          console.log(error)
+          const { description } = error.response.data
+          Notify.create({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            // caption: code,
+            message: description
+          })
+        })
+    },
+    GetUser() {
+      return api.get('webapi/user', {
+        headers: {
+          Authorization: this.token || Cookies.get('NM_token')
+        }
+      })
+        .then((response) => {
+          // console.log(response)
+          this.loginStatus = true
+          this.userData = response.data
           // Notify.create({
           //   color: 'primary',
           //   textColor: 'white',

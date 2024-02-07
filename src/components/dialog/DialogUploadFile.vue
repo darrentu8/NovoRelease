@@ -1,7 +1,10 @@
 <template>
   <div class="flex flex-center">
-    <q-circular-progress v-if="getFileUploading && getFileUploading !== 1" indeterminate :min="0" :max="1"
-      :thickness="0.22" :value="getFileUploading" size="32px" track-color="orange" class="q-ma-md" />
+    <!-- <q-icon v-if="getFileUploading && getFileUploading !== 1" name="cloud_upload" color="orange" size="sm" /> -->
+    <q-circular-progress v-if="getFileUploading && getFileUploading !== 1" font-size="10px" class="text-orange q-ma-md"
+      show-value :min="0" :max="1" :thickness="0.22" :value="uploadPercentCompleted" size="32px" color="orange"
+      track-color="grey-3">{{ Math.round(uploadPercentCompleted * 100)
+      }}%</q-circular-progress>
     <q-file ref="fileRef" v-on:update:model-value="fileOnUpdate" v-model="file" class="q-mt-xs q-mb-lg hidden"
       label="Upload File">
       <template v-slot:prepend>
@@ -13,7 +16,7 @@
 
 <script setup>
 import { useQuasar } from 'quasar'
-import { inject, ref, computed } from 'vue'
+import { inject, ref, watch, computed } from 'vue'
 import DialogProgress from '../dialog/DialogProgress.vue'
 import { useBspStore } from 'src/stores/bsp'
 const $q = useQuasar()
@@ -23,46 +26,52 @@ const bus = inject('bus')
 
 const file = ref(null)
 const fileRef = ref(null)
+const uploadPercentCompleted = ref(0)
+watch(() => bspStore.percentCompleted, (newVal, oldVal) => {
+  uploadPercentCompleted.value = newVal
+}, { immediate: true })
 
 bus.on('pickFiles', () => {
-  console.log('pickFiles')
   fileRef.value.pickFiles()
 })
 
 function fileOnUpdate(selectedFile) {
-  console.log('selectedFile', selectedFile)
-  console.log('bspStore.percentCompleted', bspStore.percentCompleted)
+  // console.log('selectedFile', selectedFile)
   bspStore.setPercentCompleted(0)
   const formData = new FormData()
   formData.append('file', selectedFile)
-  bspStore.uploadBspConFile(bspStore.currentBsp.id, formData).catch(error => {
-    console.error('Error during upload:', error)
-    const dialog = $q.dialog({
-      title: 'Upload Failed',
-      message: 'An error occurred during the upload.'
-    })
-    setTimeout(() => {
-      dialog.hide()
-    }, 700)
-  }).then(() => {
-    const dialog = $q.dialog({
-      component: DialogProgress,
-      componentProps: {
-        title: '',
-        message: 'Save successfully!',
-        progressVal: bspStore.percentCompleted
+  bspStore.uploadBspConFile(bspStore.currentBsp.id, formData)
+    .then(() => {
+      if (bspStore.percentCompleted === 1) {
+        $q.dialog({
+          component: DialogProgress,
+          componentProps: {
+            title: '',
+            message: selectedFile.name + ' uploaded Successfully!',
+            progressVal: bspStore.percentCompleted
+          }
+        })
+        // setTimeout(() => {
+        //   if (dialog) {
+        //     dialog.hide()
+        //   }
+        // }, 2000)
+        bspStore.getBspConFile(bspStore.currentBspCon.id).then(() => {
+          // isShowDialogBspConFileList.value = true
+        })
       }
+      file.value = null
+    }).catch(error => {
+      console.error('Error during upload:', error)
+      file.value = null
+      $q.dialog({
+        title: selectedFile.name + ' upload Failed!',
+        message: 'An error occurred during the upload.'
+      })
+      // setTimeout(() => {
+      //   dialog.hide()
+      // }, 2000)
     })
-    setTimeout(() => {
-      if (dialog) {
-        dialog.hide()
-      }
-    }, 700)
-    bspStore.getBspConFile(bspStore.currentBspCon.id).then(() => {
-      // isShowDialogBspConFileList.value = true
-    })
-    file.value = null
-  })
 }
 
 </script>

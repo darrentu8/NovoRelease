@@ -10,8 +10,11 @@
             </span>
             <!-- <span class="text-primary cursor-pointer" @click="toRegister">Create account</span> -->
           </div>
-          <q-input autocomplete autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="username"
-            label="Username" lazy-rules>
+          <q-input autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="username" label="Username"
+            lazy-rules :rules="[
+              (val) =>
+                (val !== null && val !== '') || 'Please enter your username',
+            ]">
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>

@@ -75,8 +75,8 @@ onBeforeMount(() => {
 })
 
 const initData = () => {
-  console.log('bspStore.currentBspConFileList', bspStore.currentBspConFileList)
-  data.value = bspStore.currentBspConFileList
+  // console.log('bspStore.currentBspConFileList', bspStore.currentBspConFileList)
+  data.value = bspStore.currentBspCon
 }
 const editBspCon = () => {
   Form.value.validate().then(success => {

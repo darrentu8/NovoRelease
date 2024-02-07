@@ -51,7 +51,7 @@ export const useBspStore = defineStore('bsp', {
       this.loading = true
       return api.get('webapi/bsp')
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.bspList = response.data
           this.loading = false
         })
@@ -150,23 +150,23 @@ export const useBspStore = defineStore('bsp', {
         })
         .catch((error) => {
           this.dialogLoading = false
-          const { description } = error.response.data
-          // console.log(error.response.data)
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
+          // const { description } = error.response.data
+          console.log(error)
+          // Notify.create({
+          //   color: 'red-5',
+          //   textColor: 'white',
+          //   icon: 'warning',
+          //   // caption: code,
+          //   message: description
+          // })
         })
     },
-    editBsp(data) {
+    editBsp(id, data) {
       this.loading = true
-      return api.post('/webapi/bsp/' + data.id, data)
+      return api.post('/webapi/bsp/' + id, data)
         .then((response) => {
-          console.log(response)
-          this.getProduct()
+          // console.log(response)
+          this.getBsp()
           this.loading = false
         })
         .catch((error) => {
@@ -187,7 +187,7 @@ export const useBspStore = defineStore('bsp', {
       return api.post('webapi/bsp/' + data.bspid + '/configuration/' + data.id, data)
         .then((response) => {
           console.log(response)
-          this.getBspCon()
+          this.getBsp()
           this.loading = false
         })
         .catch((error) => {

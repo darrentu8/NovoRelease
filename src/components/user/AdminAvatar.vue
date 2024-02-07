@@ -13,14 +13,14 @@
             </q-item>
           </q-list>
         </q-menu>
-        {{ avatarName() }}
+        {{ avatarName }}
       </q-avatar>
     </q-btn>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { colors } from 'quasar'
 import { useCommonStore } from 'src/stores/common'
 import { useRouter } from 'vue-router'
@@ -30,9 +30,13 @@ const commonStore = useCommonStore()
 const { luminosity } = colors
 const colorArr = ref(['#5f5f5f'])
 
-const avatarName = () => {
-  return 'NU'
-}
+const avatarName = computed(() => {
+  if (commonStore.userData && commonStore.userData.username) {
+    return commonStore.userData.username.substr(0, 1).toUpperCase()
+  } else {
+    return ''
+  }
+})
 const logOut = () => {
   commonStore.Logout().then(() => {
     router.push({ path: '/' })

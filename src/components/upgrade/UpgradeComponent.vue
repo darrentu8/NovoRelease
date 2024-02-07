@@ -12,7 +12,7 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="addUpgarde" icon="add" label="">
+      <q-btn v-if="getUserData.role == 1" flat round color="primary" @click="addUpgarde" icon="add" label="">
         <q-tooltip>
           Add New Upgrade Number
         </q-tooltip>
@@ -34,7 +34,7 @@
                 Edit
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delUpgradeDialog(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="negative" round flat @click="delUpgradeDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
@@ -102,14 +102,17 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
+import { useCommonStore } from 'src/stores/common'
 import { useUpgradeStore } from 'src/stores/upgrade'
 import CreateUpgradeDialog from './CreatUpgradeDialog.vue'
 import EditUpgradeDialog from './EditUpgradeDialog.vue'
 import DelDialog from '../dialog/DelDialog.vue'
 
 const $q = useQuasar()
+const commonStore = useCommonStore()
 const upgradeStore = useUpgradeStore()
 const getLoading = computed(() => upgradeStore.getLoading)
+const getUserData = computed(() => commonStore.getUserData)
 const getUpgradeList = computed(() => upgradeStore.getUpgradeList)
 const isShowCreateUpgrade = ref(false)
 const isShowEditUpgrade = ref(false)

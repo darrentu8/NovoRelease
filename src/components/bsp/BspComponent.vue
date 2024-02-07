@@ -28,7 +28,7 @@
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn color="primary" round flat @click="editBspDialog(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="editBspDialog(props.row)">
               <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
@@ -36,10 +36,10 @@
             </q-btn>
             <q-btn icon="open_in_new" color="primary" round flat @click="tobspCon(props.row)">
               <q-tooltip>
-                Open Edit
+                Open List
               </q-tooltip>
             </q-btn>
-            <q-btn color="negative" round flat @click="delBspDialog(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="negative" round flat @click="delBspDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
@@ -108,6 +108,7 @@
 import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCommonStore } from 'src/stores/common'
 import { useBspStore } from 'src/stores/bsp'
 import CreateBspDialog from './CreatBspDialog.vue'
 import EditBspDialog from './EditBspDialog.vue'
@@ -116,6 +117,8 @@ import DelDialog from '../dialog/DelDialog.vue'
 const $q = useQuasar()
 const router = useRouter()
 const bspStore = useBspStore()
+const commonStore = useCommonStore()
+const getUserData = computed(() => commonStore.getUserData)
 const getLoading = computed(() => bspStore.getLoading)
 const getBspList = computed(() => bspStore.getBspList)
 const isShowCreateBsp = ref(false)

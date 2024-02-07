@@ -58,7 +58,7 @@ onBeforeMount(() => {
 })
 
 const initData = () => {
-  console.log('bspStore.currentBsp', bspStore.currentBsp)
+  // console.log('bspStore.currentBsp', bspStore.currentBsp)
   data.value = bspStore.currentBsp
 }
 
@@ -66,12 +66,11 @@ const editBsp = () => {
   Form.value.validate().then(success => {
     if (success) {
       const Data = {
-        id: data.value.id,
         product: data.value.product,
         model: data.value.model,
         comment: data.value.comment
       }
-      bspStore.editBsp(Data).then(() => {
+      bspStore.editBsp(data.value.id, Data).then(() => {
         hideDialog()
       })
     }

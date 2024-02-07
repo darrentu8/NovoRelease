@@ -169,7 +169,6 @@ onBeforeMount(() => {
 onUnmounted(() => {
 })
 function selectFile() {
-  console.log('pickFiles')
   bus.emit('pickFiles')
 }
 const getProduct = () => {

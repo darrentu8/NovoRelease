@@ -12,7 +12,8 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn flat round color="primary" @click="isShowDialogCreateProduct = true" icon="add" label="">
+      <q-btn v-if="getUserData.role == 1" flat round color="primary" @click="isShowDialogCreateProduct = true" icon="add"
+        label="">
         <q-tooltip>
           Create New Product
         </q-tooltip>
@@ -51,7 +52,7 @@
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn color="primary" round flat @click="toProductDetail(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="toProductDetail(props.row)">
               <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
@@ -130,15 +131,16 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from 'src/stores/product'
-// import { useCommonStore } from 'src/stores/common'
+import { useCommonStore } from 'src/stores/common'
 import CreateProduct from './CreatProductDialog.vue'
 // import DelDialog from '../dialog/DelDialog.vue'
 
 // const $q = useQuasar()
 const router = useRouter()
-// const commonStore = useCommonStore()
+const commonStore = useCommonStore()
 const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
+const getUserData = computed(() => commonStore.getUserData)
 const getProductList = computed(() => productStore.getProductList)
 const isShowDialogCreateProduct = ref(false)
 

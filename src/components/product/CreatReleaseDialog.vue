@@ -11,9 +11,12 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="createRelease">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-file v-model="data.file" class="q-mt-xs q-mb-lg" label="Upload File" filled lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please upload a file']">
+              <q-file v-model="data.file" v-on:update:model-value="fileOnUpdate" class="q-mt-xs q-mb-lg"
+                label="Upload File"
+                accept="application/zip, application/vnd.microsoft.portable-executable, application/x-msdownload, application/octet-stream"
+                @rejected="onRejected" filled lazy-rules :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please upload a file']">
                 <template v-slot:prepend>
                   <q-icon name="cloud_upload" />
                 </template>
@@ -60,10 +63,10 @@
 <script setup>
 import { ref, computed, reactive, onBeforeMount } from 'vue'
 import { useProductStore } from 'src/stores/product'
-// import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 // import inputRules from 'src/mixins/inputRules.js'
 
-// const $q = useQuasar()
+const $q = useQuasar()
 
 defineProps(['isShow'])
 const emit = defineEmits(['update:isShow'])
@@ -73,6 +76,93 @@ const hideDialog = () => {
 }
 const productStore = useProductStore()
 const getLoading = computed(() => productStore.getLoading)
+
+const onRejected = (rejectedEntries) => {
+  console.log('rejectedEntries', rejectedEntries)
+  $q.notify({
+    type: 'negative',
+    message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+  })
+}
+
+function fileOnUpdate(selectedFile) {
+  data.parameters = []
+  data.newFileName = ''
+  const fileName = selectedFile.name
+  const versionParameter = 'B380-v2.0'
+  const fileMappings = [
+    {
+      pattern: 'NovoConnect_Software_',
+      subPatterns: [
+        { keyword: 'Usb', parameters: [versionParameter, 'USB'], newFileName: 'NovoConnect_Software_Win_ev_code_signed.exe' },
+        { keyword: 'Lite_LauncherOne_Win_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_WIN'], newFileName: 'launcherOneDSALite_Win.zip' },
+        { keyword: 'Lite_LauncherOne_Mac_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_MAC'], newFileName: 'launcherOneDSALite_Mac.zip' },
+        { keyword: 'Portable_Win_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_WIN'], newFileName: 'dsaFullPortable_OTA_Win.zip' },
+        { keyword: 'Portable_Mac_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_MAC'], newFileName: 'dsaFullPortable_OTA_Mac.zip' },
+        { keyword: 'Setup_Mac', parameters: [versionParameter, 'SIGN_OSX'], newFileName: 'NovoConnect_Software_Setup_Mac_Signed_OTA.zip' },
+        { keyword: 'LauncherOneFw', parameters: [versionParameter, 'LAUNCHER_ONE_FW_OTA'], newFileName: 'launcherOneFw.zip' },
+        { keyword: 'Ubuntu_OTA', parameters: [versionParameter, 'HDD_FULL_LINUX'], newFileName: 'NovoConnect_Software_Ubuntu_OTA.zip' }
+      ],
+      defaultParameters: [versionParameter, 'WIN'],
+      defaultNewFileName: 'NovoConnect_Software_Win_ev_code_signed.exe'
+    },
+    {
+      pattern: 'Novo_launcherPlusRun_Excutable_',
+      subPatterns: [
+        { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win.zip' }
+      ],
+      defaultParameters: [versionParameter, 'LAUNCHER_PLUS_OSX'],
+      defaultNewFileName: 'launcherPlusDSAFull_OTA_Mac.zip'
+    },
+    {
+      pattern: 'Novo_launcherPlusRun_Lite_',
+      subPatterns: [
+        { keyword: 'Slim_Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_WIN'], newFileName: 'launcherPlusDSALite_Win.zip' },
+        { keyword: 'Slim_', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_MAC'], newFileName: 'launcherPlusDSALite_Mac.zip' },
+        { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win.zip' }
+      ],
+      defaultParameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_MAC'],
+      defaultNewFileName: 'launcherPlusDSA_Mac.zip'
+    },
+    {
+      pattern: 'NovoLauncher_',
+      parameters: [versionParameter, 'LAUNCHER_MIX_LITE_OTA_LINUX'],
+      newFileName: 'NovoLauncher_Ubuntu_OTA.zip'
+    }
+  ]
+
+  let patternMatched = false
+  for (const mapping of fileMappings) {
+    if (fileName.startsWith(mapping.pattern)) {
+      let subPatternMatched = false
+      if (mapping.subPatterns) {
+        for (const subPattern of mapping.subPatterns) {
+          if (fileName.includes(subPattern.keyword)) {
+            data.parameters = [...data.parameters, ...subPattern.parameters]
+            data.newFileName = subPattern.newFileName
+            subPatternMatched = true
+            break
+          }
+        }
+      }
+      if (!subPatternMatched && mapping.defaultParameters) {
+        data.parameters = [...data.parameters, ...mapping.defaultParameters]
+        data.newFileName = mapping.defaultNewFileName
+      } else if (!subPatternMatched) {
+        data.parameters = [...data.parameters, ...mapping.parameters]
+        data.newFileName = mapping.newFileName
+      }
+
+      patternMatched = true
+
+      data.rename = 1
+      break
+    }
+  }
+  if (!patternMatched) {
+    console.log('No matching pattern for file name.')
+  }
+}
 
 const Form = ref(null)
 // const File = ref(null)
@@ -140,14 +230,15 @@ const addParameters = () => {
   data.parameters.push(parameter.value.toUpperCase())
   parameter.value = ''
 }
-
 const delParameters = (tag) => {
-  const index = data.parameters.findIndex(o => o === tag.toUpperCase())
+  const upperTag = tag.trim()
+  const index = data.parameters.findIndex(o => o === upperTag)
   if (index === -1) {
     return
   }
-  const Data = data.parameters.filter(o => o !== tag.toUpperCase())
+  const Data = data.parameters.filter(o => o !== upperTag)
   data.parameters = Data
+  console.log('data.parameters', data.parameters)
 }
 
 const createRelease = () => {

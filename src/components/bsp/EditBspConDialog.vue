@@ -11,28 +11,31 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editBspCon">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.updateno" label="UpdateNo" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a update no']">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.updateno" label="UpdateNo" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a update no']">
               </q-input>
               <q-select filled class="q-mt-xs" :options="[{ label: 'BSP', value: 1 }, { label: 'Patch', value: 2 }]"
-                v-model="data.datatype" label="DataType" lazy-rules emit-value map-options :rules="[
+                v-model="data.value.datatype" label="DataType" lazy-rules emit-value map-options :rules="[
                   (val) =>
                     (val !== null && val !== '') || 'Please enter a datatype']">
               </q-select>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.filename" label="Filename" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a filename']">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.filename" label="Filename" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a filename']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.md5" label="MD5" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.md5" label="MD5" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a md5']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.filesize" label="Filesize(KB)" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a filesize']">
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.filesize" label="Filesize(KB)" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a filesize']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model="data.value.version" label="Version" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a version']">
               </q-input>
@@ -82,14 +85,14 @@ const editBspCon = () => {
   Form.value.validate().then(success => {
     if (success) {
       const Data = {
-        id: data.id,
-        bspid: data.bspid,
-        updateno: data.updateno,
-        datatype: data.datatype,
-        filename: data.filename,
-        md5: data.md5,
-        filesize: data.filesize,
-        version: data.version
+        id: data.value.id,
+        bspid: data.value.bspid,
+        updateno: data.value.updateno,
+        datatype: data.value.datatype,
+        filename: data.value.filename,
+        md5: data.value.md5,
+        filesize: data.value.filesize,
+        version: data.value.version
       }
       bspStore.editBspCon(Data).then(() => {
         hideDialog()

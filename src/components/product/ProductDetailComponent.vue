@@ -134,8 +134,8 @@ const isShowDialogEditRelease = ref(false)
 const columns = ref([
   { name: 'id', align: 'center', label: 'ID', field: 'id', sortable: true },
   { name: 'version', align: 'center', label: 'Version', field: 'version', sortable: true },
-  { name: 'filename', align: 'center', label: 'Filename', field: 'filename', sortable: true },
-  { name: 'description', align: 'center', label: 'Description', field: 'description', sortable: true },
+  { name: 'filename', align: 'center', label: 'Filename', field: 'filename', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'description', align: 'center', label: 'Description', field: 'description', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
   { name: 'state', align: 'center', label: 'State', field: 'state', sortable: true, format: val => val ? 'enable' : 'disable' },
   {
     name: 'md5',
@@ -143,11 +143,10 @@ const columns = ref([
     label: 'MD5',
     align: 'left',
     field: row => row.md5,
-    format: val => `${val}`,
     sortable: true,
     style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;'
   },
-  { name: 'parameters', align: 'left', label: 'Parameters', field: 'parameters', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
+  { name: 'parameters', align: 'left', label: 'Parameters', field: 'parameters', sortable: true, style: 'max-width: 100px;text-overflow: ellipsis;overflow: hidden;' },
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ])
 

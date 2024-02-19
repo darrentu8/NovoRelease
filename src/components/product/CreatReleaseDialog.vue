@@ -90,21 +90,22 @@ function fileOnUpdate(selectedFile) {
   data.newFileName = ''
   const fileName = selectedFile.name
   const versionParameter = 'B380-v2.0'
+  const fileExtension = fileName.slice(fileName.lastIndexOf('.'))
   const fileMappings = [
     {
       pattern: 'NovoConnect_Software_',
       subPatterns: [
-        { keyword: 'Usb', parameters: [versionParameter, 'USB'], newFileName: 'NovoConnect_Software_Win_ev_code_signed.exe' },
-        { keyword: 'Lite_LauncherOne_Win_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_WIN'], newFileName: 'launcherOneDSALite_Win.zip' },
-        { keyword: 'Lite_LauncherOne_Mac_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_MAC'], newFileName: 'launcherOneDSALite_Mac.zip' },
-        { keyword: 'Portable_Win_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_WIN'], newFileName: 'dsaFullPortable_OTA_Win.zip' },
-        { keyword: 'Portable_Mac_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_MAC'], newFileName: 'dsaFullPortable_OTA_Mac.zip' },
-        { keyword: 'Setup_Mac', parameters: [versionParameter, 'SIGN_OSX'], newFileName: 'NovoConnect_Software_Setup_Mac_Signed_OTA.zip' },
-        { keyword: 'LauncherOneFw', parameters: [versionParameter, 'LAUNCHER_ONE_FW_OTA'], newFileName: 'launcherOneFw.zip' },
-        { keyword: 'Ubuntu_OTA', parameters: [versionParameter, 'HDD_FULL_LINUX'], newFileName: 'NovoConnect_Software_Ubuntu_OTA.zip' }
+        { keyword: 'Usb', parameters: [versionParameter, 'USB'], newFileName: 'NovoConnect_Software_Excutable_Win_Usb_OTA' },
+        { keyword: 'Lite_LauncherOne_Win_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_WIN'], newFileName: 'launcherOneDSALite_Win' },
+        { keyword: 'Lite_LauncherOne_Mac_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_MAC'], newFileName: 'launcherOneDSALite_Mac' },
+        { keyword: 'Portable_Win_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_WIN'], newFileName: 'dsaFullPortable_OTA_Win' },
+        { keyword: 'Portable_Mac_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_MAC'], newFileName: 'dsaFullPortable_OTA_Mac' },
+        { keyword: 'Setup_Mac', parameters: [versionParameter, 'SIGN_OSX'], newFileName: 'NovoConnect_Software_Setup_Mac_Signed_OTA' },
+        { keyword: 'LauncherOneFw', parameters: [versionParameter, 'LAUNCHER_ONE_FW_OTA'], newFileName: 'launcherOneFw' },
+        { keyword: 'Ubuntu_OTA', parameters: [versionParameter, 'HDD_FULL_LINUX'], newFileName: 'NovoConnect_Software_Ubuntu_OTA' }
       ],
       defaultParameters: [versionParameter, 'WIN'],
-      defaultNewFileName: 'NovoConnect_Software_Win_ev_code_signed.exe'
+      defaultNewFileName: 'NovoConnect_Software_Win_ev_code_signed'
     },
     {
       pattern: 'Novo_launcherPlusRun_Excutable_',
@@ -112,7 +113,7 @@ function fileOnUpdate(selectedFile) {
         { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win.zip' }
       ],
       defaultParameters: [versionParameter, 'LAUNCHER_PLUS_OSX'],
-      defaultNewFileName: 'launcherPlusDSAFull_OTA_Mac.zip'
+      defaultNewFileName: 'launcherPlusDSAFull_OTA_Mac'
     },
     {
       pattern: 'Novo_launcherPlusRun_Lite_',
@@ -122,7 +123,7 @@ function fileOnUpdate(selectedFile) {
         { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win.zip' }
       ],
       defaultParameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_MAC'],
-      defaultNewFileName: 'launcherPlusDSA_Mac.zip'
+      defaultNewFileName: 'launcherPlusDSA_Mac'
     },
     {
       pattern: 'NovoLauncher_',
@@ -139,7 +140,7 @@ function fileOnUpdate(selectedFile) {
         for (const subPattern of mapping.subPatterns) {
           if (fileName.includes(subPattern.keyword)) {
             data.parameters = [...data.parameters, ...subPattern.parameters]
-            data.newFileName = subPattern.newFileName
+            data.newFileName = subPattern.newFileName + fileExtension
             subPatternMatched = true
             break
           }
@@ -147,10 +148,10 @@ function fileOnUpdate(selectedFile) {
       }
       if (!subPatternMatched && mapping.defaultParameters) {
         data.parameters = [...data.parameters, ...mapping.defaultParameters]
-        data.newFileName = mapping.defaultNewFileName
+        data.newFileName = mapping.defaultNewFileName + fileExtension
       } else if (!subPatternMatched) {
         data.parameters = [...data.parameters, ...mapping.parameters]
-        data.newFileName = mapping.newFileName
+        data.newFileName = mapping.newFileName + fileExtension
       }
 
       patternMatched = true

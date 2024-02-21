@@ -11,7 +11,7 @@ import { useCommonStore } from './stores/common'
 const commonStore = useCommonStore()
 
 onBeforeMount(async () => {
-  if (!commonStore.userData.role) {
+  if (commonStore.getToken && !commonStore.userData.role) {
     try {
       api.get('webapi/user', {
         headers: {

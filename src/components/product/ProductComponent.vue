@@ -24,7 +24,8 @@
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
         table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getProductList"
-        :columns="columns" row-key="id" :loading="getLoading" color="primary" no-data-icon="success">
+        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
+        no-data-icon="success">
         <!-- img -->
         <template v-slot:body-cell-img="props">
           <q-td :props="props">
@@ -52,12 +53,12 @@
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="toProductDetail(props.row)">
+            <!-- <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="toProductDetail(props.row)">
               <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
               </q-tooltip>
-            </q-btn>
+            </q-btn> -->
             <q-btn icon="open_in_new" color="primary" round flat @click="toProductDetail(props.row)">
               <q-tooltip>
                 Open Edit
@@ -159,6 +160,11 @@ const columns = [
   { name: 'cdn', format: val => val ? 'true' : 'false', align: 'left', label: 'CDN', field: 'cdn', sortable: true, style: 'max-width: 300px;text-overflow: ellipsis;overflow: hidden;' },
   { name: 'actions', label: '', field: 'actions', sortable: false }
 ]
+const pagination = ref({
+  rowsPerPage: 10,
+  sortBy: 'appid',
+  descending: true
+})
 
 onBeforeMount(() => {
   productStore.getProduct()

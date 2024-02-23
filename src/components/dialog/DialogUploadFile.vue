@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-center">
     <!-- <q-icon v-if="getFileUploading && getFileUploading !== 1" name="cloud_upload" color="orange" size="sm" /> -->
-    <q-circular-progress v-if="getFileUploading && getFileUploading !== 1" font-size="10px" class="text-orange q-ma-md"
-      show-value :min="0" :max="1" :thickness="0.22" :value="uploadPercentCompleted" size="32px" color="orange"
-      track-color="grey-3">{{ Math.round(uploadPercentCompleted * 100)
+    <q-circular-progress v-if="getFileUploading" font-size="10px" class="text-orange q-ma-md" show-value :min="0" :max="1"
+      :thickness="0.1" :value="uploadPercentCompleted" size="32px" color="orange" track-color="grey-3">{{
+        Math.round(uploadPercentCompleted * 100)
       }}%</q-circular-progress>
     <q-file ref="fileRef" v-on:update:model-value="fileOnUpdate" v-model="file" class="q-mt-xs q-mb-lg hidden"
       label="Upload File">
@@ -48,7 +48,8 @@ function fileOnUpdate(selectedFile) {
           componentProps: {
             title: '',
             message: selectedFile.name + ' uploaded Successfully!',
-            progressVal: bspStore.percentCompleted
+            progressVal: bspStore.percentCompleted,
+            persistent: false
           }
         })
         // setTimeout(() => {
@@ -58,6 +59,9 @@ function fileOnUpdate(selectedFile) {
         // }, 2000)
         bspStore.getBspConFile(bspStore.currentBspCon.id).then(() => {
           // isShowDialogBspConFileList.value = true
+          setTimeout(() => {
+            bspStore.setPercentCompleted(0)
+          }, 2000)
         })
       }
       file.value = null
@@ -71,6 +75,9 @@ function fileOnUpdate(selectedFile) {
       // setTimeout(() => {
       //   dialog.hide()
       // }, 2000)
+      setTimeout(() => {
+        bspStore.setPercentCompleted(0)
+      }, 2000)
     })
 }
 

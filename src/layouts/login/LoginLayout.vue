@@ -30,7 +30,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import FooterComponent from 'src/components/FooterComponent.vue'
-// import AdminAvatarComponent from '@/components/user/AdminAvatar.vue'
 
 // const store = useStore()
 // const router = useRouter()

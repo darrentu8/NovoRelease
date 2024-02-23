@@ -11,13 +11,14 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="createProduct">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.appid" label="AppId" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.appid" label="AppId" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product appid']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model="data.name" label="Name" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product name']">
+              <q-input filled class="q-mt-xs" type="textarea" rows="3" v-model.trim="data.name" label="Name" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a product name']">
               </q-input>
             </div>
             <div class="q-gutter-sm flex items-center">

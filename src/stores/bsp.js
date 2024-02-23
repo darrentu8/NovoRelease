@@ -149,6 +149,7 @@ export const useBspStore = defineStore('bsp', {
           this.dialogLoading = false
         })
         .catch((error) => {
+          this.setPercentCompleted(0)
           this.dialogLoading = false
           // const { description } = error.response.data
           console.log(error)

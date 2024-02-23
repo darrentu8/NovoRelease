@@ -11,17 +11,19 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editBsp">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.product" label="Product" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product']">
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.product" label="Product" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a product']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.model" label="Model" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.model" label="Model" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a model']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.comment" label="Comment" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a comment']">
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.comment" label="Comment" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a comment']">
               </q-input>
             </div>
           </div>

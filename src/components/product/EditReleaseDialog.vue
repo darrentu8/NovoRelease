@@ -11,15 +11,15 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editRelease">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.version" label="Version">
+              <q-input borderless disable class="q-mt-xs" type="text" v-model.trim="data.version" label="Version">
               </q-input>
-              <q-input borderless disable class="q-mt-xs" type="text" v-model="data.filename" label="Filename">
+              <q-input borderless disable class="q-mt-xs" type="text" v-model.trim="data.filename" label="Filename">
               </q-input>
               <div class="row flex items-center">
                 <span>State:</span>
                 <q-toggle v-model="data.state" :true-value="1" :false-value="0" />
               </div>
-              <q-input class="q-mb-md" filled v-model="parameter" label="Parameters" @keyup.enter="addParameters">
+              <q-input class="q-mb-md" filled v-model.trim="parameter" label="Parameters" @keyup.enter="addParameters">
                 <template v-slot:hint>
                   Please enter a product parameters
                 </template>
@@ -90,7 +90,10 @@ const initData = () => {
 }
 
 const addParameters = () => {
-  const index = data.parameters.findIndex(o => o === parameter.value.toUpperCase())
+  if (!parameter.value) {
+    return
+  }
+  const index = data.parameters.findIndex(o => o === parameter.value.trim().toUpperCase())
   if (index >= 0) {
     return
   }

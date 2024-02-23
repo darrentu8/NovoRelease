@@ -7,6 +7,7 @@ const commonStore = useCommonStore()
 
 export const useProductStore = defineStore('product', {
   state: () => ({
+    percentCompleted: 0,
     loading: false,
     currentProduct: {},
     currentRelease: {},
@@ -32,6 +33,9 @@ export const useProductStore = defineStore('product', {
     getLoading() {
       return this.loading
     },
+    getFileUploading() {
+      return this.percentCompleted
+    },
     getToken() {
       return this.Token
     },
@@ -46,6 +50,9 @@ export const useProductStore = defineStore('product', {
     }
   },
   actions: {
+    setPercentCompleted(val) {
+      this.percentCompleted = val
+    },
     getProduct() {
       this.loading = true
       return api.get('webapi/product')
@@ -180,7 +187,12 @@ export const useProductStore = defineStore('product', {
     },
     createProductRelease(data) {
       this.loading = true
-      return api.postForm('webapi/product/' + this.currentProduct.id + '/release', data)
+      return api.postForm('webapi/product/' + this.currentProduct.id + '/release', data, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          this.setPercentCompleted(percentCompleted / 100)
+        }
+      })
         .then((response) => {
           this.loading = false
           // console.log(response)

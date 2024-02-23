@@ -11,15 +11,15 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="createUpgrade">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.osid" label="OsId" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.osid" label="OsId" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a osid']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.comment" label="Comment" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.comment" label="Comment" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a comment']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.version" label="Version" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a version']">
               </q-input>

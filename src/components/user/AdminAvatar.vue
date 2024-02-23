@@ -29,7 +29,7 @@ const avatarName = computed(() => {
     const capitalized = commonStore.userData.username.charAt(0) + commonStore.userData.username.slice(1)
     return 'Hi, ' + capitalized
   } else {
-    return ''
+    return 'Hi, '
   }
 })
 const logOut = () => {
@@ -47,7 +47,7 @@ const logOut = () => {
 .adminAvatar-warp
   border-left: .75px solid #F1F1F1
   height: 50px
-  width: 200px
+  width: 120px
   align-items: center
   justify-content: center
   display: flex

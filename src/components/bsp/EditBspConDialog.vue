@@ -11,7 +11,7 @@
         <q-form ref="Form" class="q-gutter-md" @submit.stop="editBspCon">
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.updateno" label="UpdateNo" lazy-rules
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.updateno" label="UpdateNo" lazy-rules
                 :rules="[
                   (val) =>
                     (val !== null && val !== '') || 'Please enter a update no']">
@@ -21,23 +21,24 @@
                   (val) =>
                     (val !== null && val !== '') || 'Please enter a datatype']">
               </q-select>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.filename" label="Filename" lazy-rules
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.filename" label="Filename" lazy-rules
                 :rules="[
                   (val) =>
                     (val !== null && val !== '') || 'Please enter a filename']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.md5" label="MD5" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.md5" label="MD5" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a md5']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.filesize" label="Filesize(KB)" lazy-rules
-                :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.filesize" label="Filesize(KB)"
+                lazy-rules :rules="[
                   (val) =>
                     (val !== null && val !== '') || 'Please enter a filesize']">
               </q-input>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.value.version" label="Version" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a version']">
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.version" label="Version" lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') || 'Please enter a version']">
               </q-input>
             </div>
           </div>

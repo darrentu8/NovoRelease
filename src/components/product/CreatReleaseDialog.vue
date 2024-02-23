@@ -21,7 +21,7 @@
                   <q-icon name="cloud_upload" />
                 </template>
               </q-file>
-              <q-input filled class="q-mt-xs" type="text" v-model="data.version" label="Version" lazy-rules :rules="[
+              <q-input filled class="q-mt-xs" type="text" v-model.trim="data.version" label="Version" lazy-rules :rules="[
                 (val) =>
                   (val !== null && val !== '') || 'Please enter a product version']">
               </q-input>
@@ -31,14 +31,14 @@
                   <q-checkbox v-model="data.rename" :true-value="1" :false-value="0" />
                 </div>
                 <div class="col-9">
-                  <q-input filled :disable="!data.rename" class="" type="text" v-model="data.newFileName" label="Filename"
-                    lazy-rules :rules="[
+                  <q-input filled :disable="!data.rename" class="" type="text" v-model.trim="data.newFileName"
+                    label="Filename" lazy-rules :rules="[
                       (val) =>
                         (val !== null && val !== '' && data.rename) || 'Please enter a product filename']">
                   </q-input>
                 </div>
               </div>
-              <q-input class="q-mb-md" filled v-model="parameter" label="Parameters" @keyup.enter="addParameters">
+              <q-input class="q-mb-md" filled v-model.trim="parameter" label="Parameters" @keyup.enter="addParameters">
                 <template v-slot:hint>
                   Please enter a product parameters
                 </template>
@@ -64,6 +64,7 @@
 import { ref, computed, reactive, onBeforeMount } from 'vue'
 import { useProductStore } from 'src/stores/product'
 import { useQuasar } from 'quasar'
+import DialogProgress from '../dialog/DialogProgress.vue'
 // import inputRules from 'src/mixins/inputRules.js'
 
 const $q = useQuasar()
@@ -224,7 +225,10 @@ const beforeShow = () => {
 // }
 
 const addParameters = () => {
-  const index = data.parameters.findIndex(o => o === parameter.value.toUpperCase())
+  if (!parameter.value) {
+    return
+  }
+  const index = data.parameters.findIndex(o => o === parameter.value.trim().toUpperCase())
   if (index >= 0) {
     return
   }
@@ -245,6 +249,34 @@ const delParameters = (tag) => {
 const createRelease = () => {
   Form.value.validate().then(success => {
     if (success) {
+      const dialog = $q.dialog({
+        component: DialogProgress,
+        componentProps: {
+          title: '',
+          message: '',
+          progressVal: productStore.percentCompleted,
+          persistent: true
+        },
+        progress: true,
+        ok: false
+      })
+      const interval = setInterval(() => {
+        dialog.update({
+          title: '',
+          message: '',
+          progressVal: productStore.percentCompleted,
+          persistent: true
+        })
+        if (productStore.percentCompleted === 1) {
+          clearInterval(interval)
+          dialog.update({
+            title: '',
+            message: 'Save successfully!',
+            progressVal: productStore.percentCompleted,
+            persistent: false
+          })
+        }
+      }, 100)
       const formData = new FormData()
       formData.append('productid', data.id)
       formData.append('file', data.file)
@@ -255,10 +287,13 @@ const createRelease = () => {
       formData.append('parameters', data.parameters)
       productStore.createProductRelease(formData).then(() => {
         hideDialog()
-      }).then(() => {
         setTimeout(() => {
-          productStore.getProductDetail()
-        }, 1000)
+          clearInterval(interval).then(() => {
+            dialog.hide()
+          })
+        }, 700)
+      }).then(() => {
+        productStore.getProductDetail()
       })
     }
   })

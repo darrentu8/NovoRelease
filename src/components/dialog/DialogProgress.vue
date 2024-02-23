@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="isShow" @before-hide="hideDialog">
+  <q-dialog :model-value="isShow" @before-hide="hideDialog" :persistent="persistent">
     <q-card class="text-center brand-dialog-round q-pa-lg no-scroll"
       :style="{ 'min-width': $q.platform.is.mobile ? '60%' : '250px' }">
       <q-card-section v-if="title" class="row flex justify-center items-center">
@@ -30,7 +30,7 @@
 import { watch } from 'vue'
 // import { usePlaylistStore } from 'src/stores/playlist'
 
-const props = defineProps(['isShow', 'progress', 'title', 'message', 'progressVal'])
+const props = defineProps(['isShow', 'progress', 'title', 'persistent', 'message', 'progressVal'])
 const emit = defineEmits(['update:isShow'])
 
 // const playlistStore = usePlaylistStore()

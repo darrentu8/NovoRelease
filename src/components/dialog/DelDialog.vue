@@ -11,9 +11,9 @@
       </q-card-section>
 
       <q-card-actions align="center">
-        <q-btn @click="onCancelClick" class="q-px-lg q-mr-md theme-btn text-capitalize" outline size='lg'
+        <q-btn @click="onCancelClick" class="q-px-lg q-mr-md theme-btn text-capitalize" outline size='md'
           :label="cancelBtn" color="grey-7" v-close-popup />
-        <q-btn unelevated @click="onOKClick" class="q-px-lg theme-btn text-capitalize q-mr-lg" size='lg' :label="okBtn"
+        <q-btn unelevated @click="onOKClick" class="q-px-lg theme-btn text-capitalize q-mr-lg" size='md' :label="okBtn"
           color="negative" v-close-popup />
       </q-card-actions>
     </q-card>

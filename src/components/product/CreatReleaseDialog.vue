@@ -189,6 +189,7 @@ const beforeShow = () => {
   data.newFileName = ''
   data.description = ''
   data.version = ''
+  data.parameters = ''
   data.parameters = []
 }
 // const onRejected = (rejectedEntries) => {
@@ -249,6 +250,7 @@ const delParameters = (tag) => {
 const createRelease = () => {
   Form.value.validate().then(success => {
     if (success) {
+      productStore.setPercentCompleted(0)
       const dialog = $q.dialog({
         component: DialogProgress,
         componentProps: {
@@ -278,20 +280,18 @@ const createRelease = () => {
         }
       }, 100)
       const formData = new FormData()
-      formData.append('productid', data.id)
       formData.append('file', data.file)
       formData.append('rename', data.rename)
-      formData.append('newFileName', data.newFileName)
+      if (data.rename) {
+        formData.append('newFileName', data.newFileName)
+      }
       formData.append('description', data.description)
       formData.append('version', data.version)
       formData.append('parameters', data.parameters)
       productStore.createProductRelease(formData).then(() => {
+        dialog.hide()
         hideDialog()
-        setTimeout(() => {
-          clearInterval(interval).then(() => {
-            dialog.hide()
-          })
-        }, 700)
+        clearInterval(interval)
       }).then(() => {
         productStore.getProductDetail()
       })

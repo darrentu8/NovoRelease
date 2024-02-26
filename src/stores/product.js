@@ -189,8 +189,8 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       return api.postForm('webapi/product/' + this.currentProduct.id + '/release', data, {
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          this.setPercentCompleted(percentCompleted / 100)
+          this.percentCompleted = (Math.round((progressEvent.loaded * 100) / progressEvent.total) / 100)
+          // console.log('setPercentCompleted', this.percentCompleted)
         }
       })
         .then((response) => {

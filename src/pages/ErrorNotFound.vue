@@ -25,7 +25,7 @@ export default defineComponent({
 })
 </script>
 <style lang="sass" scoped>
-  .errorPage
-    background: #69b7c3
-    height: calc(100vh - 150px)
+.errorPage
+  background: #69b7c3
+  height: calc(100vh - 150px)
 </style>

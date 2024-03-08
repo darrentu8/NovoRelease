@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
 import { Notify } from 'quasar'
 import { api } from 'src/boot/axios'
-import { useCommonStore } from 'src/stores/common'
-
-const commonStore = useCommonStore()
 
 export const useProductStore = defineStore('product', {
   state: () => ({
@@ -11,23 +8,8 @@ export const useProductStore = defineStore('product', {
     loading: false,
     currentProduct: {},
     currentRelease: {},
-    productList: [
-      { id: 11, appid: 13, name: 'NovoDS(PC)', cdn: 1 },
-      { id: 12, appid: 14, name: 'NovoRDM', cdn: 0 }
-    ],
-    currentProductList: [
-      {
-        id: 1,
-        productid: 1,
-        version: 'v1.0.0',
-        filename: 'DS110_DS210_DS310_1.0.0.9999.apk',
-        md5: '6f8de3b7719e9ec3d9c5b107dcc92b9c',
-        filesize: 81414,
-        description: 'Build 9999',
-        parameters: 'DS110,DS220,DS310',
-        state: 1
-      }
-    ]
+    productList: [],
+    currentProductList: []
   }),
   getters: {
     getLoading() {
@@ -120,7 +102,7 @@ export const useProductStore = defineStore('product', {
     },
     editProduct(data) {
       this.loading = true
-      return api.post('webapi/activeProduct/' + this.currentProduct.id + '?Token=' + commonStore.getToken, data)
+      return api.post('webapi/product/' + this.currentProduct.id, data)
         .then((response) => {
           console.log(response)
           this.getProduct()
@@ -216,8 +198,8 @@ export const useProductStore = defineStore('product', {
           })
         })
     },
-    delProduct(data) {
-      return api.delete('webapi/product/' + data.productid + '/release/' + data.id)
+    delProduct(id) {
+      return api.delete('webapi/product/' + id)
         .then((response) => {
           // console.log(response)
           // Notify.create({

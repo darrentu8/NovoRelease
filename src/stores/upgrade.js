@@ -29,7 +29,7 @@ export const useUpgradeStore = defineStore('upgrade', {
   actions: {
     getUpgrade() {
       this.loading = true
-      api.get('/webapi/upgradeNumber')
+      api.get('webapi/upgradeNumber')
         .then((response) => {
           // console.log(response)
           this.upgradeList = response.data

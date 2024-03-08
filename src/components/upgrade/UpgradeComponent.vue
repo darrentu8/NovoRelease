@@ -22,9 +22,9 @@
     <div v-if="!getLoading">
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getUpgradeList"
-        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
-        no-data-icon="success">
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height"
+        :rows="getUpgradeList" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading"
+        color="primary" no-data-icon="success">
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
@@ -156,7 +156,7 @@ const addUpgarde = () => {
 }
 const editUpgradeDialog = (props) => {
   isShowEditUpgrade.value = true
-  upgradeStore.currentUpgrade = props
+  upgradeStore.currentUpgrade = JSON.parse(JSON.stringify(props))
 }
 const delUpgradeDialog = (props) => {
   $q.dialog({

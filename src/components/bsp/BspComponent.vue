@@ -163,7 +163,7 @@ const addBsp = () => {
 }
 const editBspDialog = (props) => {
   isShowEditBsp.value = true
-  bspStore.currentBsp = props
+  bspStore.currentBsp = JSON.parse(JSON.stringify(props))
 }
 const tobspCon = (props) => {
   const ID = props.id

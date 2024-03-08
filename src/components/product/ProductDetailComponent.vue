@@ -10,8 +10,8 @@
       <div class="q-ml-md flex items-center">
         <q-icon class="q-mr-sm" color="primary" name="dns" size="sm" alt="" />
         <span v-if="!getLoading" class="text-h6">{{ currentProduct.name }}, APP ID: {{
-          currentProduct.appid }}, CDN: {{ currentProduct.cdn ?
-    'true' : 'false' }}</span>
+        currentProduct.appid }}, CDN: {{ currentProduct.cdn ?
+        'true' : 'false' }}</span>
       </div>
       <q-space />
       <q-btn flat round color="primary" @click="getProduct" icon="refresh" label="">
@@ -168,7 +168,7 @@ const creatRelease = () => {
   isShowDialogCreatRelease.value = true
 }
 const editReleaseDialog = (props) => {
-  productStore.currentRelease = props
+  productStore.currentRelease = JSON.parse(JSON.stringify(props))
   isShowDialogEditRelease.value = true
 }
 const delReleaseDialog = (props) => {

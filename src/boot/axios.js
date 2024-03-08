@@ -10,8 +10,7 @@ import { useCommonStore } from 'src/stores/common'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/' : 'https://download.staging.launchnovo.com/',
-  // baseURL: process.env.API_URL,
+  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/newadmin/' : 'https://download.staging.launchnovo.com/newadmin/',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
@@ -42,32 +41,32 @@ export default boot(({ app, urlPath, store, redirect }) => {
     }
   }, error => {
     if (error.response) {
-      // const { status } = error.response
+      const { status } = error.response
       Notify.create({
         position: 'top',
         type: 'negative',
         message: error.response.data.description
       })
 
-      // if (status === 401 || status === 403) {
-      //   if (urlPath !== '/') {
-      //     redirect({ path: '/' })
-      //   }
-      // }
-      // if (error + '' === 'Error: Request failed with status code 500') {
-      //   Notify.create({
-      //     title: 'Error',
-      //     message: 'Data Exception Please Relogin',
-      //     persistent: true,
-      //     ok: {
-      //       push: true,
-      //       color: 'negative',
-      //       label: 'Logout'
-      //     }
-      //   }).onOk(() => {
-      //     commonStore.Logout()
-      //   })
-      // }
+      if (status === 401 || status === 403) {
+        if (urlPath !== '/') {
+          redirect({ path: '/' })
+        }
+      }
+      if (error + '' === 'Error: Request failed with status code 500') {
+        Notify.create({
+          title: 'Error',
+          message: 'Data Exception Please Relogin',
+          persistent: true,
+          ok: {
+            push: true,
+            color: 'negative',
+            label: 'Logout'
+          }
+        }).onOk(() => {
+          commonStore.Logout()
+        })
+      }
       // 超時
       // if (error + '' === 'Error: timeout of 40000ms exceeded') {
       //   Notify.create({
@@ -84,6 +83,7 @@ export default boot(({ app, urlPath, store, redirect }) => {
           type: 'negative',
           message: 'Request Address NotFound  ' + error.response.request.responseURL
         })
+        // redirect({ path: '/' })
       }
     }
     return Promise.reject(error)

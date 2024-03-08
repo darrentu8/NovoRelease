@@ -12,8 +12,8 @@
           Refresh
         </q-tooltip>
       </q-btn>
-      <q-btn v-if="getUserData.role == 1" flat round color="primary" @click="isShowDialogCreateProduct = true" icon="add"
-        label="">
+      <q-btn v-if="getUserData.role == 1" flat round color="primary" @click="isShowDialogCreateProduct = true"
+        icon="add" label="">
         <q-tooltip>
           Create New Product
         </q-tooltip>
@@ -23,17 +23,18 @@
     <div v-if="!getLoading">
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="getProductList"
-        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
-        no-data-icon="success">
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height"
+        :rows="getProductList" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading"
+        color="primary" no-data-icon="success">
         <!-- img -->
         <template v-slot:body-cell-img="props">
           <q-td :props="props">
-            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img" style="height:50px;"
-              fit="contain">
+            <q-img :src="props.row.img" spinner-color="grey-4" spinner-size="md" :alt="props.row.img"
+              style="height:50px;" fit="contain">
               <q-tooltip class="bg-grey-5 no-border-radius flex flex-center" anchor="center right" self="center left"
                 :offset="[10, 10]" style="width: 300px; height: 250px;">
-                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;" fit="contain" />
+                <q-img :src="props.row.img" :alt="props.row.img" style="max-width: 300px; height: 200px;"
+                  fit="contain" />
               </q-tooltip>
               <template v-slot:error>
                 <div class="absolute-full flex flex-center bg-grey-4 text-white">
@@ -53,23 +54,23 @@
         <!-- Actions -->
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <!-- <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="toProductDetail(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="primary" round flat @click="editProductDialog(props.row)">
               <img src="~assets/img/icon/edit-o.svg" alt="">
               <q-tooltip>
                 Edit
               </q-tooltip>
-            </q-btn> -->
+            </q-btn>
             <q-btn icon="open_in_new" color="primary" round flat @click="toProductDetail(props.row)">
               <q-tooltip>
                 Open Edit
               </q-tooltip>
             </q-btn>
-            <!-- <q-btn color="negative" round flat @click="delProductDialog(props.row)">
+            <q-btn v-if="getUserData.role == 1" color="negative" round flat @click="delProductDialog(props.row)">
               <img src="~assets/img/icon/delete.svg" alt="">
               <q-tooltip>
                 Delete
               </q-tooltip>
-            </q-btn> -->
+            </q-btn>
           </q-td>
         </template>
       </q-table>
@@ -124,19 +125,21 @@
       </tbody>
     </q-markup-table>
     <CreateProduct v-model:isShow="isShowDialogCreateProduct" />
+    <EditProduct v-model:isShow="isShowDialogEditProduct" />
   </q-card>
 </template>
 
 <script setup>
-// import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from 'src/stores/product'
 import { useCommonStore } from 'src/stores/common'
 import CreateProduct from './CreatProductDialog.vue'
-// import DelDialog from '../dialog/DelDialog.vue'
+import EditProduct from './EditProductDialog.vue'
+import DelDialog from '../dialog/DelDialog.vue'
 
-// const $q = useQuasar()
+const $q = useQuasar()
 const router = useRouter()
 const commonStore = useCommonStore()
 const productStore = useProductStore()
@@ -144,6 +147,7 @@ const getLoading = computed(() => productStore.getLoading)
 const getUserData = computed(() => commonStore.getUserData)
 const getProductList = computed(() => productStore.getProductList)
 const isShowDialogCreateProduct = ref(false)
+const isShowDialogEditProduct = ref(false)
 
 const columns = [
   { name: 'appid', align: 'center', label: 'AppId', field: 'appid', sortable: true },
@@ -173,6 +177,10 @@ onBeforeMount(() => {
 const refreshProduct = () => {
   productStore.getProduct()
 }
+const editProductDialog = (props) => {
+  isShowDialogEditProduct.value = true
+  productStore.currentProduct = JSON.parse(JSON.stringify(props))
+}
 const toProductDetail = (props) => {
   const ID = props.id
   if (ID) {
@@ -180,18 +188,18 @@ const toProductDetail = (props) => {
     router.push({ name: 'productdetail', params: { id: ID } })
   }
 }
-// const delProductDialog = (props) => {
-//   $q.dialog({
-//     component: DelDialog,
-//     componentProps: {
-//       title: 'Are you sure you want to delete this product?',
-//       okBtn: 'Delete',
-//       cancelBtn: 'Cancel'
-//     }
-//   }).onOk(() => {
-//     commonStore.delProduct(props.id)
-//   })
-// }
+const delProductDialog = (props) => {
+  $q.dialog({
+    component: DelDialog,
+    componentProps: {
+      title: 'Are you sure you want to delete this product?',
+      okBtn: 'Delete',
+      cancelBtn: 'Cancel'
+    }
+  }).onOk(() => {
+    productStore.delProduct(props.id)
+  })
+}
 </script>
 <style lang="sass" scoped>
 </style>

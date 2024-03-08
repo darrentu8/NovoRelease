@@ -37,9 +37,9 @@
     <div v-if="!getLoading">
       <q-table
         able-style="overflow-y:auto;overflow-x:hidden;top: -1px;position: relative;background: linear-gradient(rgb(242, 242, 242), transparent) center top / 100% 100px no-repeat local, radial-gradient(at 50% -15px, rgba(0, 0, 0, 0.8), transparent 70%) center top / 100000% 12px scroll;background-repeat: no-repeat;background-attachment: local, scroll;"
-        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height" :rows="currentBspList"
-        :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading" color="primary"
-        no-data-icon="success">
+        table-header-style="color:#888888;fontWeight:bold;" flat class="full-width q-table-height"
+        :rows="currentBspList" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="getLoading"
+        color="primary" no-data-icon="success">
         <!-- State -->
         <template v-slot:body-cell-state="props">
           <q-td :props="props">
@@ -183,7 +183,7 @@ const creatBspCon = () => {
   isShowDialogCreatBspCon.value = true
 }
 const editBspConDialog = (props) => {
-  bspStore.currentBspCon = props
+  bspStore.currentBspCon = JSON.parse(JSON.stringify(props))
   isShowDialogEditBspCon.value = true
 }
 const delBspDialog = (props) => {

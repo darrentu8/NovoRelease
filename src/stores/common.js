@@ -51,13 +51,6 @@ export const useCommonStore = defineStore('common', {
           this.token = response.token
           this.userData = response
           Cookies.set('NM_token', response.token, { expires: 1 })
-          // Notify.create({
-          //   color: 'primary',
-          //   textColor: 'white',
-          //   icon: 'check',
-          //   message: 'Login Success'
-          // })
-          return response
         })
     },
     GetUser() {

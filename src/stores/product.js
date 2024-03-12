@@ -104,7 +104,7 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       return api.post('webapi/product/' + this.currentProduct.id, data)
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.getProduct()
           this.loading = false
         })
@@ -125,7 +125,7 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       return api.post('webapi/product/' + data.productid + '/release/' + data.id, data)
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.loading = false
         })
         .catch((error) => {

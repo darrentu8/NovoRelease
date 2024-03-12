@@ -12,9 +12,9 @@
           </div>
           <q-input autofocus outlined class="q-mt-xs" :dense="dense" type="text" v-model="username" label="Username"
             lazy-rules :rules="[
-              (val) =>
-                (val !== null && val !== '') || 'Please enter your username',
-            ]">
+          (val) =>
+            (val !== null && val !== '') || 'Please enter your username',
+        ]">
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
@@ -22,9 +22,9 @@
 
           <q-input label="Password" outlined class="q-mt-xs" :dense="dense" v-model="password"
             :type="isPwd ? 'password' : 'text'" hint="Password with toggle" lazy-rules :rules="[
-              (val) =>
-                (val !== null && val !== '') || 'Please enter your password',
-            ]">
+          (val) =>
+            (val !== null && val !== '') || 'Please enter your password',
+        ]">
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
@@ -44,6 +44,7 @@
 </template>
 
 <script setup>
+import { Notify } from 'quasar'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCommonStore } from 'src/stores/common'
@@ -65,9 +66,11 @@ const onSubmit = () => {
       }
       commonStore.LoginAndSetToken(loginData).then(() => {
         router.push({ path: '/product' })
+      }).catch((error) => {
+        console.log(error)
       })
     } else {
-      this.$q.notify({
+      Notify.create({
         color: 'red-5',
         textColor: 'white',
         icon: 'warning',

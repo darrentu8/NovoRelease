@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import packageInfo from '../../package.json'
-import { Notify, Cookies, LocalStorage } from 'quasar'
+import { Cookies, LocalStorage } from 'quasar'
 import { api } from 'src/boot/axios'
 
 export const useCommonStore = defineStore('common', {
@@ -57,17 +57,7 @@ export const useCommonStore = defineStore('common', {
           //   icon: 'check',
           //   message: 'Login Success'
           // })
-        })
-        .catch((error) => {
-          console.log(error)
-          const { description } = error.response.data
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
+          return response
         })
     },
     GetUser() {
@@ -86,17 +76,6 @@ export const useCommonStore = defineStore('common', {
           //   icon: 'check',
           //   message: 'Login Success'
           // })
-        })
-        .catch((error) => {
-          console.log(error)
-          const { description } = error.response.data
-          Notify.create({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            // caption: code,
-            message: description
-          })
         })
     },
     async Logout() {

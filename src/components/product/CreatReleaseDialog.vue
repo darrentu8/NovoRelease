@@ -12,18 +12,16 @@
           <div class="row q-col-gutter-md">
             <div class="col-12">
               <q-file v-model="data.file" v-on:update:model-value="fileOnUpdate" class="q-mt-xs q-mb-lg"
-                label="Upload File"
-                accept="application/zip, application/vnd.microsoft.portable-executable, application/x-msdownload, application/octet-stream"
-                @rejected="onRejected" filled lazy-rules :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please upload a file']">
+                label="Upload File" @rejected="onRejected" filled lazy-rules :rules="[
+    (val) =>
+      (val !== null && val !== '') || 'Please upload a file']">
                 <template v-slot:prepend>
                   <q-icon name="cloud_upload" />
                 </template>
               </q-file>
               <q-input filled class="q-mt-xs" type="text" v-model.trim="data.version" label="Version" lazy-rules :rules="[
-                (val) =>
-                  (val !== null && val !== '') || 'Please enter a product version']">
+    (val) =>
+      (val !== null && val !== '') || 'Please enter a product version']">
               </q-input>
               <div class="row flex items-center">
                 <div class="col-3 q-mb-md">
@@ -33,8 +31,8 @@
                 <div class="col-9">
                   <q-input filled :disable="!data.rename" class="" type="text" v-model.trim="data.newFileName"
                     label="Filename" lazy-rules :rules="[
-                      (val) =>
-                        (val !== null && val !== '' && data.rename) || 'Please enter a product filename']">
+    (val) =>
+      (val !== null && val !== '' && data.rename) || 'Please enter a product filename']">
                   </q-input>
                 </div>
               </div>

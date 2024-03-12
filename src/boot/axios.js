@@ -10,7 +10,7 @@ import { useCommonStore } from 'src/stores/common'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/newadmin/' : 'https://download.staging.launchnovo.com/newadmin/',
+  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/admin/' : 'https://download.staging.launchnovo.com/admin/',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
@@ -45,7 +45,7 @@ export default boot(({ app, urlPath, store, redirect }) => {
       Notify.create({
         position: 'top',
         type: 'negative',
-        message: error.response.data.description
+        message: error.response.data.error
       })
 
       if (status === 401 || status === 403) {

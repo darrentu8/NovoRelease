@@ -17,18 +17,19 @@
               </q-input> -->
               <q-input borderless disable class="q-mt-xs" type="text" v-model.trim="data.value.comment" label="Comment"
                 lazy-rules :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please enter a comment']">
+    (val) =>
+      (val !== null && val !== '') || 'Please enter a comment']">
               </q-input>
               <q-input filled class="q-mt-xs" type="text" v-model.trim="data.value.version" label="Version" lazy-rules
                 :rules="[
-                  (val) =>
-                    (val !== null && val !== '') || 'Please enter a version']">
+    (val) =>
+      (val !== null && val !== '') || 'Please enter a version']">
               </q-input>
             </div>
           </div>
           <q-card-actions class="q-mt-lg q-pa-none" align="right">
-            <q-btn unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply" type="submit" color="primary" />
+            <q-btn unelevated class="q-mb-xs q-px-lg" :loading="getLoading" label="Apply" type="submit"
+              color="primary" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -61,9 +62,9 @@ onBeforeMount(() => {
 })
 
 const initData = () => {
-  console.log('upgradeStore.currentUpgrade', upgradeStore.currentUpgrade)
+  // console.log('upgradeStore.currentUpgrade', upgradeStore.currentUpgrade)
   data.value = upgradeStore.currentUpgrade
-  console.log('data.value.comment', data.value.comment)
+  // console.log('data.value.comment', data.value.comment)
 }
 
 const editUpgrade = () => {

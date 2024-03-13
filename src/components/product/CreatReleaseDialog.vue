@@ -88,46 +88,60 @@ function fileOnUpdate(selectedFile) {
   data.parameters = []
   data.newFileName = ''
   const fileName = selectedFile.name
-  const versionParameter = 'B380-v2.0'
   const fileExtension = fileName.slice(fileName.lastIndexOf('.'))
   const fileMappings = [
     {
       pattern: 'NovoConnect_Software_',
       subPatterns: [
-        { keyword: 'Usb', parameters: [versionParameter, 'USB'], newFileName: 'NovoConnect_Software_Excutable_Win_Usb_OTA' },
-        { keyword: 'Lite_LauncherOne_Win_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_WIN'], newFileName: 'launcherOneDSALite_Win' },
-        { keyword: 'Lite_LauncherOne_Mac_OTA', parameters: [versionParameter, 'LAUNCHER_ONE_LITE_OTA_MAC'], newFileName: 'launcherOneDSALite_Mac' },
-        { keyword: 'Portable_Win_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_WIN'], newFileName: 'dsaFullPortable_OTA_Win' },
-        { keyword: 'Portable_Mac_OTA', parameters: [versionParameter, 'HDD_FULL_PORTABLE_OTA_MAC'], newFileName: 'dsaFullPortable_OTA_Mac' },
-        { keyword: 'Setup_Mac', parameters: [versionParameter, 'SIGN_OSX'], newFileName: 'NovoConnect_Software_Setup_Mac_Signed_OTA' },
-        { keyword: 'LauncherOneFw', parameters: [versionParameter, 'LAUNCHER_ONE_FW_OTA'], newFileName: 'launcherOneFw' },
-        { keyword: 'Ubuntu_OTA', parameters: [versionParameter, 'HDD_FULL_LINUX'], newFileName: 'NovoConnect_Software_Ubuntu_OTA' }
+        { keyword: 'Usb', parameters: ['USB'], newFileName: 'NovoConnect_Software_Excutable_Win_Usb_OTA' },
+        { keyword: 'Lite_LauncherOne_Win_OTA', parameters: ['LAUNCHER_ONE_LITE_OTA_WIN'], newFileName: 'launcherOneDSALite_Win' },
+        { keyword: 'Lite_LauncherOne_Mac_OTA', parameters: ['LAUNCHER_ONE_LITE_OTA_MAC'], newFileName: 'launcherOneDSALite_Mac' },
+        { keyword: 'Portable_Win_OTA', parameters: ['HDD_FULL_PORTABLE_OTA_WIN'], newFileName: 'dsaFullPortable_OTA_Win' },
+        { keyword: 'Portable_Mac_OTA', parameters: ['HDD_FULL_PORTABLE_OTA_MAC'], newFileName: 'dsaFullPortable_OTA_Mac' },
+        { keyword: 'Setup_Mac', parameters: ['SIGN_OSX'], newFileName: 'NovoConnect_Software_Setup_Mac_Signed_OTA' },
+        { keyword: 'LauncherOneFw', parameters: ['LAUNCHER_ONE_FW_OTA'], newFileName: 'launcherOneFw' },
+        { keyword: 'Ubuntu_OTA', parameters: ['HDD_FULL_LINUX'], newFileName: 'NovoConnect_Software_Ubuntu_OTA' }
       ],
-      defaultParameters: [versionParameter, 'WIN'],
+      defaultParameters: ['WIN'],
       defaultNewFileName: 'NovoConnect_Software_Win_ev_code_signed'
     },
     {
       pattern: 'Novo_launcherPlusRun_Excutable_',
       subPatterns: [
-        { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win.zip' }
+        { keyword: 'Lite_Excutable', parameters: ['LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win.zip' }
       ],
-      defaultParameters: [versionParameter, 'LAUNCHER_PLUS_OSX'],
+      defaultParameters: ['LAUNCHER_PLUS_OSX'],
       defaultNewFileName: 'launcherPlusDSAFull_OTA_Mac'
     },
     {
       pattern: 'Novo_launcherPlusRun_Lite_',
       subPatterns: [
-        { keyword: 'Slim_Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_WIN'], newFileName: 'launcherPlusDSALite_Win.zip' },
-        { keyword: 'Slim_', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_MAC'], newFileName: 'launcherPlusDSALite_Mac.zip' },
-        { keyword: 'Lite_Excutable', parameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win.zip' }
+        { keyword: 'Slim_Lite_Excutable', parameters: ['LAUNCHER_PLUS_LITE_WIN'], newFileName: 'launcherPlusDSALite_Win.zip' },
+        { keyword: 'Slim_', parameters: ['LAUNCHER_PLUS_LITE_MAC'], newFileName: 'launcherPlusDSALite_Mac.zip' },
+        { keyword: 'Lite_Excutable', parameters: ['LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win.zip' }
       ],
-      defaultParameters: [versionParameter, 'LAUNCHER_PLUS_LITE_OTA_MAC'],
+      defaultParameters: ['LAUNCHER_PLUS_LITE_OTA_MAC'],
       defaultNewFileName: 'launcherPlusDSA_Mac'
     },
     {
       pattern: 'NovoLauncher_',
-      parameters: [versionParameter, 'LAUNCHER_MIX_LITE_OTA_LINUX'],
+      parameters: ['LAUNCHER_MIX_LITE_OTA_LINUX'],
       newFileName: 'NovoLauncher_Ubuntu_OTA.zip'
+    },
+    {
+      pattern: 'NovoDS_Setup_Win_',
+      parameters: ['WIN'],
+      newFileName: 'NovoDS_Setup_Win.exe'
+    },
+    {
+      pattern: 'NovoDS Studio_',
+      parameters: ['MAC'],
+      newFileName: 'NovoDS_Mac.zip'
+    },
+    {
+      pattern: 'Novo_RemoteManager_Setup_',
+      parameters: ['WIN'],
+      newFileName: 'Novo_RemoteManager_Setup_Win.exe'
     }
   ]
 

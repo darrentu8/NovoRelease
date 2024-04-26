@@ -108,17 +108,19 @@ function fileOnUpdate(selectedFile) {
     {
       pattern: 'Novo_launcherPlusRun_Excutable_',
       subPatterns: [
-        { keyword: 'Lite_Excutable', parameters: ['LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win.zip' }
+        { keyword: 'Win', parameters: ['LAUNCHER_PLUS_WIN'], newFileName: 'launcherPlusDSAFull_OTA_Win' },
+        { keyword: 'Mac', parameters: ['LAUNCHER_PLUS_OSX'], newFileName: 'launcherPlusDSAFull_OTA_Mac' }
       ],
       defaultParameters: ['LAUNCHER_PLUS_OSX'],
       defaultNewFileName: 'launcherPlusDSAFull_OTA_Mac'
     },
     {
-      pattern: 'Novo_launcherPlusRun_Lite_',
+      pattern: 'Novo_launcherPlusRun_Lite_Excutable_',
       subPatterns: [
-        { keyword: 'Slim_Lite_Excutable', parameters: ['LAUNCHER_PLUS_LITE_WIN'], newFileName: 'launcherPlusDSALite_Win.zip' },
-        { keyword: 'Slim_', parameters: ['LAUNCHER_PLUS_LITE_MAC'], newFileName: 'launcherPlusDSALite_Mac.zip' },
-        { keyword: 'Lite_Excutable', parameters: ['LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win.zip' }
+        { keyword: 'Win_Usb_OTA_Slim', parameters: ['LAUNCHER_PLUS_LITE_WIN'], newFileName: 'launcherPlusDSALite_Win' },
+        { keyword: 'Mac_Usb_OTA_Slim', parameters: ['LAUNCHER_PLUS_LITE_MAC'], newFileName: 'launcherPlusDSALite_Mac' },
+        { keyword: 'Win_Usb_OTA', parameters: ['LAUNCHER_PLUS_LITE_OTA_WIN'], newFileName: 'launcherPlusDSA_Win' },
+        { keyword: 'Mac_Usb_OTA', parameters: ['LAUNCHER_PLUS_LITE_OTA_MAC'], newFileName: 'launcherPlusDSA_Mac' }
       ],
       defaultParameters: ['LAUNCHER_PLUS_LITE_OTA_MAC'],
       defaultNewFileName: 'launcherPlusDSA_Mac'
@@ -126,22 +128,22 @@ function fileOnUpdate(selectedFile) {
     {
       pattern: 'NovoLauncher_',
       parameters: ['LAUNCHER_MIX_LITE_OTA_LINUX'],
-      newFileName: 'NovoLauncher_Ubuntu_OTA.zip'
+      newFileName: 'NovoLauncher_Ubuntu_OTA'
     },
     {
       pattern: 'NovoDS_Setup_Win_',
       parameters: ['WIN'],
-      newFileName: 'NovoDS_Setup_Win.exe'
+      newFileName: 'NovoDS_Setup_Win'
     },
     {
       pattern: 'NovoDS Studio_',
       parameters: ['MAC'],
-      newFileName: 'NovoDS_Mac.zip'
+      newFileName: 'NovoDS_Mac'
     },
     {
       pattern: 'Novo_RemoteManager_Setup_',
       parameters: ['WIN'],
-      newFileName: 'Novo_RemoteManager_Setup_Win.exe'
+      newFileName: 'Novo_RemoteManager_Setup_Win'
     }
   ]
 

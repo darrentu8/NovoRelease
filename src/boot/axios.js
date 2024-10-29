@@ -10,7 +10,7 @@ import { useCommonStore } from 'src/stores/common'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: process.env.DEV ? 'https://download.staging.launchnovo.com/admin/' : 'https://download.staging.launchnovo.com/admin/',
+  baseURL: process.env.DEV ? 'https://download.launchnovo.com/admin/' : 'https://download.launchnovo.com/admin/',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',

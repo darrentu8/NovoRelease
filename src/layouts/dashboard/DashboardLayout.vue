@@ -11,6 +11,9 @@
         <keep-alive>
           <DialogUploadFile />
         </keep-alive>
+        <keep-alive>
+          <DialogUploadNTFile />
+        </keep-alive>
         <div>
           <AdminAvatarComponent />
         </div>
@@ -27,6 +30,7 @@
 import FooterComponent from 'src/components/FooterComponent.vue'
 import AdminAvatarComponent from 'src/components/user/AdminAvatar.vue'
 import DialogUploadFile from 'src/components/dialog/DialogUploadFile.vue'
+import DialogUploadNTFile from 'src/components/dialog/DialogUploadNTFile.vue'
 
 </script>
 

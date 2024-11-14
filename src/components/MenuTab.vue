@@ -2,15 +2,19 @@
   <div class="brandTabBtnWrap">
     <q-btn stack @click="toPage('product')" :class="['brandTabBtn', pathTab == 'product' ? 'active' : '']" flat
       type="button" icon="dns">
-      <span>Product</span>
+      <span class="q-mt-xs">Product</span>
     </q-btn>
     <q-btn stack @click="toPage('upgrade')" :class="['brandTabBtn', pathTab == 'upgrade' ? 'active' : '']" flat
       type="button" icon="layers">
-      <span>Upgrade Number</span>
+      <span class="q-mt-xs">Upgrade Number</span>
     </q-btn>
     <q-btn stack @click="toPage('bsp')" :class="['brandTabBtn', pathTab == 'bsp' ? 'active' : '']" flat type="button"
       icon="developer_board">
-      <span>BSP</span>
+      <span class="q-mt-xs">BSP</span>
+    </q-btn>
+    <q-btn stack @click="toPage('nt')" :class="['brandTabBtn', pathTab == 'nt' ? 'active' : '']" flat type="button"
+      icon="widgets">
+      <span class="q-mt-xs">NT App<br>Management</span>
     </q-btn>
   </div>
 </template>

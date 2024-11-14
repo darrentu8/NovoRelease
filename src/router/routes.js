@@ -143,6 +143,25 @@ export const PublicRoutes = [
             component: () => import('src/pages/BspConPage.vue')
           }
         ]
+      },
+      {
+        path: 'nt',
+        name: 'nt',
+        meta: {
+          auth: true,
+          title: 'NT',
+          breadcrumb: [
+            {
+              text: 'NT',
+              disabled: true,
+              href: '/nt',
+              link: true,
+              exact: true,
+              to: { name: 'nt', path: '/nt' }
+            }
+          ]
+        },
+        component: () => import('src/pages/NtPage.vue')
       }
     ]
   },
